@@ -63,7 +63,10 @@ export default function FeaturedTuitions() {
             ))}
           </div>
         ) : (
-          <div className="mt-10 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-10 text-center text-sm text-slate-500">
+          <div
+            aria-live="polite"
+            className="mt-10 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-10 text-center text-sm text-slate-500"
+          >
             No approved tuitions yet. Check back soon — new batches are added every week.
           </div>
         )}

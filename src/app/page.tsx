@@ -5,6 +5,7 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import FeaturedTutors from "@/components/home/FeaturedTutors";
 import FeaturedTuitions from "@/components/home/FeaturedTuitions";
 import Highlights from "@/components/home/Highlights";
 import PricingPreview from "@/components/home/PricingPreview";
@@ -12,8 +13,8 @@ import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 
 const categories = [
-  { name: "Language", icon: "🌐", bg: "bg-amber-600" },
-  { name: "Coding", icon: "💻", bg: "bg-orange-500" },
+  { name: "Language", icon: "🌐", bg: "bg-amber-600", subject: "English" },
+  { name: "Coding", icon: "💻", bg: "bg-orange-500", subject: "ICT" },
   { name: "Drum", icon: "🥁", bg: "bg-emerald-600" },
   { name: "Horns", icon: "🎺", bg: "bg-blue-600" },
   { name: "Piano", icon: "🎹", bg: "bg-indigo-600" },
@@ -248,7 +249,11 @@ export default function HomePage() {
             {categories.map((cat) => (
               <Link
                 key={cat.name}
-                href={`/tutors?category=${encodeURIComponent(cat.name)}`}
+                href={
+                  "subject" in cat && cat.subject
+                    ? `/tutors?subject=${encodeURIComponent(cat.subject)}`
+                    : "/tutors"
+                }
                 className="group flex cursor-pointer flex-col items-center gap-3"
               >
 
@@ -279,6 +284,8 @@ export default function HomePage() {
       </section>
 
       <FeaturedTuitions />
+
+      <FeaturedTutors />
 
       {/* ================= HOW IT WORKS ================= */}
 
