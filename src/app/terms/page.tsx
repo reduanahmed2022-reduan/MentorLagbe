@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
+import { SITE_URL } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: { absolute: "Terms & Conditions | MentorLagbe" },
+  description: "Terms and conditions for using the MentorLagbe tutoring platform.",
+  alternates: { canonical: `${SITE_URL}/terms` },
+};
 
 export default function TermsPage() {
   return (

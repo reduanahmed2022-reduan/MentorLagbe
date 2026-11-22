@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
+import { SITE_URL } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: { absolute: "Privacy Policy | MentorLagbe" },
+  description: "How MentorLagbe collects, uses and protects your information.",
+  alternates: { canonical: `${SITE_URL}/privacy` },
+};
 
 export default function PrivacyPage() {
   return (

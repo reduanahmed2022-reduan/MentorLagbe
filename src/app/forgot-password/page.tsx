@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { BRAND } from "@/lib/constants";
+
+export const metadata: Metadata = {
+  title: { absolute: "Forgot Password | MentorLagbe" },
+  robots: { index: false, follow: false },
+};
 
 export default function ForgotPasswordPage() {
   return (

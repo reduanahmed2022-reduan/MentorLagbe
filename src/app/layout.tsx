@@ -16,12 +16,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // TODO: Replace with the real Vercel deployment origin before going live.
+  metadataBase: new URL("https://your-vercel-app.vercel.app"),
   title: {
     default: "MentorLagbe | Find Your Perfect Tutor",
     template: "%s | MentorLagbe",
   },
   description:
     "Find experienced tutors, explore subjects, and book personalized home or online tuition with MentorLagbe.",
+  openGraph: {
+    siteName: "MentorLagbe",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({
