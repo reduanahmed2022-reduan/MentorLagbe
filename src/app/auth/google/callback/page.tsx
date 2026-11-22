@@ -1,0 +1,107 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { dashboardPathFor, saveSession } from "@/lib/auth";
+import type { AuthUser } from "@/lib/types";
+
+const ERROR_MESSAGES: Record<string, string> = {
+  unavailable: "Google sign-in is not configured on the server.",
+  session_missing: "The Google session expired. Please try again.",
+  account_failed: "We could not prepare your account. Please try again.",
+  unexpected: "Google sign-in failed unexpectedly. Please try again.",
+};
+
+export default function GoogleCallbackPage() {
+  const router = useRouter();
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading"
+  );
+  const [message, setMessage] = useState("Completing Google sign-in...");
+
+  useEffect(() => {
+    let active = true;
+
+    // Defer so state updates are not issued synchronously inside the effect,
+    // which React's lint rules flag as cascading renders.
+    queueMicrotask(() => {
+      if (!active) return;
+
+      const params = new URLSearchParams(
+        window.location.hash.replace(/^#/, "")
+      );
+      const error = params.get("error");
+      const token = params.get("token");
+      const rawUser = params.get("user");
+
+      // The token travels in the fragment so it is never sent to a server or
+      // stored in history. Clear it immediately after reading.
+      window.history.replaceState(null, "", window.location.pathname);
+
+      if (error || !token || !rawUser) {
+        setStatus("error");
+        setMessage(
+          ERROR_MESSAGES[error || ""] ||
+            "The Google response was incomplete. Please try again."
+        );
+        return;
+      }
+
+      try {
+        const user = JSON.parse(rawUser) as AuthUser;
+
+        if (!user?.id || !user?.role) {
+          throw new Error("Invalid user payload");
+        }
+
+        saveSession(token, user);
+        setStatus("success");
+        setMessage(`Welcome, ${user.name}!`);
+        toast.success(`Welcome, ${user.name}!`);
+        router.replace(dashboardPathFor(user.role));
+      } catch {
+        setStatus("error");
+        setMessage("We could not complete Google sign-in. Please try again.");
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [router]);
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+      <div className="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-xl shadow-slate-200/60">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-lg font-black text-indigo-600">
+          M
+        </div>
+
+        <h1 className="mt-6 text-2xl font-bold text-slate-900">
+          {status === "loading"
+            ? "Signing you in..."
+            : status === "success"
+              ? "Signed in successfully"
+              : "Sign-in failed"}
+        </h1>
+
+        <p className="mt-3 text-sm leading-6 text-slate-500">{message}</p>
+
+        {status === "loading" && (
+          <div className="mx-auto mt-6 h-6 w-6 animate-spin rounded-full border-2 border-indigo-200 border-t-indigo-600" />
+        )}
+
+        {status === "error" && (
+          <Link
+            href="/sign-in"
+            className="mt-6 inline-flex rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
+          >
+            Back to sign in
+          </Link>
+        )}
+      </div>
+    </main>
+  );
+}

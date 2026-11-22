@@ -4,7 +4,7 @@ Next.js 16 App Router frontend. Deploy to Vercel.
 
 ## Vercel setup
 
-- Framework preset: **Next.js**. Build command: `npm run build`. Start command: `npm start`. Node 20+.
+- Framework preset: **Next.js**. Build command: `npm run build`. Start command: `npm start`. Node **>= 20.19.0**.
 - Set this environment variable for **Production** and **Preview**, then redeploy:
 
   ```env
@@ -12,6 +12,7 @@ Next.js 16 App Router frontend. Deploy to Vercel.
   ```
 
   No trailing slash. `.env.local` is gitignored, so it is not uploaded to Vercel.
+- The client sets no BetterAuth env vars: it derives the endpoint as `<NEXT_PUBLIC_API_URL>/better-auth` (the API's `/api/better-auth`). Never add `BETTER_AUTH_SECRET` or `BETTER_AUTH_URL` in Vercel — both are server-only.
 - No `next.config` rewrites are needed. Every API call uses the absolute `NEXT_PUBLIC_API_URL`.
 - Test direct visits and hard refreshes of `/`, `/tutors`, `/tutors/[id]`, `/tuitions`, `/tuitions/[id]`, `/pricing`, `/sign-in`, `/sign-up`, `/payment/success`, and every `/dashboard/*` route.
 - Public route groups and `(dashboard)` do not appear in URLs.

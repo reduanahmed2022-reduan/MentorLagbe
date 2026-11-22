@@ -10,7 +10,7 @@ Next.js 16 App Router frontend. Goal: **15 মিনিটে Production deploy 
 
 - Vercel → **Add New → Project** → GitHub repo (`MentorLagbe`) import করুন।
 - **Root Directory** = `client` (mono-repo হলে অবশ্যই `client`; root-এ `package.json` থাকলে সেটিই বেছে নিন)।
-- Framework Preset: **Next.js** · Node **20+** · Build `npm run build` · Start `npm start` (Vercel auto-detect করে)।
+- Framework Preset: **Next.js** · Node **>= 20.19.0** · Build `npm run build` · Start `npm start` (Vercel auto-detect করে)।
 - `.env.local` gitignored → Vercel-এ upload হয় না;(env Vercel Dashboard-এই দিতে হবে)।
 
 ## ⏱ 2–4 min — Environment variable (শুধু একটি)
@@ -23,6 +23,7 @@ NEXT_PUBLIC_API_URL=https://<your-server-host>/api
 
 - শেষে **`/` (trailing slash) দেবেন না** — `.../api` ✅, `.../api/` ❌।
 - Placeholder `<your-server-host>`-এ আপনার আসল API host বসান; এখানে real secret/key লিখবেন না।
+- BetterAuth-এর জন্য client-এ কোনো env var নেই — client `NEXT_PUBLIC_API_URL` থেকেই BetterAuth endpoint বানায়।
 
 **🔑 NEXT_PUBLIC_* কেন আগে দিতে হবে:**
 `NEXT_PUBLIC_` দিয়ে শুরু হওয়া ভ্যারিয়েবলগুলো **build-time-এ JavaScript bundle-এ inline (hard-code) হয়ে যায়**, runtime-এ Vercel Settings-এ বদলালে তাৎক্ষণিক প্রভাব পড়ে না। তাই **env changed → redeploy (Deployments → ⋯ → Redeploy, "Use existing Build Cache" বন্ধ করে)** করতেই হবে। Build-এর আগে ভ্যারিয়েবল সেট করা আছে কিনা নিশ্চিত করুন।
@@ -31,7 +32,7 @@ NEXT_PUBLIC_API_URL=https://<your-server-host>/api
 
 - Deploy চালান; **Build Logs** খুলে রাখুন।
 - ✅ এগুলো দেখতে পাবেন: `Creating an optimized production build`, `Compiled successfully`, `Collecting page data`, `Generating static pages`।
-- ❌ Fail হলে: Node version 20+, Root Directory `client`, `npm install` errors, অথবা build-এ env না পাওয়া — এগুলো চেক করুন, তারপর Redeploy।
+- ❌ Fail হলে: Node version >= 20.19.0, Root Directory `client`, `npm install` errors, অথবা build-এ env না পাওয়া — এগুলো চেক করুন, তারপর Redeploy।
 
 ## ⏱ 7–10 min — Route reload / direct-visit checks
 

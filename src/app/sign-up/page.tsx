@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Navbar from "@/components/shared/Navbar";
+import GoogleButton from "@/components/auth/GoogleButton";
 import { apiFetch } from "@/lib/api";
 import { dashboardPathFor, saveSession } from "@/lib/auth";
 import type { AuthUser } from "@/lib/types";
@@ -210,6 +211,8 @@ export default function RegisterPage() {
                                     type="text"
                                     placeholder="Enter your full name"
                                     autoComplete="name"
+                                    aria-invalid={Boolean(error)}
+                                    aria-describedby={error ? "form-error" : undefined}
                                     required
                                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
                                 />
@@ -250,6 +253,8 @@ export default function RegisterPage() {
                                     type="email"
                                     placeholder="you@example.com"
                                     autoComplete="email"
+                                    aria-invalid={Boolean(error)}
+                                    aria-describedby={error ? "form-error" : undefined}
                                     required
                                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
                                 />
@@ -271,6 +276,8 @@ export default function RegisterPage() {
                                         type={showPassword ? "text" : "password"}
                                         placeholder="Minimum 8 characters"
                                         autoComplete="new-password"
+                                        aria-invalid={Boolean(error)}
+                                        aria-describedby={error ? "form-error" : undefined}
                                         required
                                         minLength={8}
                                         className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 pr-16 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
@@ -279,6 +286,7 @@ export default function RegisterPage() {
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
                                         className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-indigo-600 hover:text-indigo-800"
                                     >
                                         {showPassword ? "Hide" : "Show"}
@@ -302,6 +310,8 @@ export default function RegisterPage() {
                                         type={showConfirmPassword ? "text" : "password"}
                                         placeholder="Re-enter your password"
                                         autoComplete="new-password"
+                                        aria-invalid={Boolean(error)}
+                                        aria-describedby={error ? "form-error" : undefined}
                                         required
                                         className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 pr-16 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
                                     />
@@ -311,6 +321,7 @@ export default function RegisterPage() {
                                         onClick={() =>
                                             setShowConfirmPassword(!showConfirmPassword)
                                         }
+                                        aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
                                         className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-indigo-600 hover:text-indigo-800"
                                     >
                                         {showConfirmPassword ? "Hide" : "Show"}
@@ -351,7 +362,7 @@ export default function RegisterPage() {
 
                             {/* Error Message */}
                             {error && (
-                                <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+                                <div id="form-error" role="alert" aria-live="polite" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
                                     {error}
                                 </div>
                             )}
@@ -383,6 +394,19 @@ export default function RegisterPage() {
                                 )}
                             </button>
                         </form>
+
+                        {/* Google Sign Up */}
+                        <div className="mt-6">
+                            <div className="my-6 flex items-center gap-4">
+                                <div className="h-px flex-1 bg-slate-200" />
+                                <span className="text-xs font-medium uppercase tracking-wider text-slate-400">
+                                    Or sign up with
+                                </span>
+                                <div className="h-px flex-1 bg-slate-200" />
+                            </div>
+
+                            <GoogleButton role={role === "tutor" ? "tutor" : "student"} />
+                        </div>
 
                         {/* Sign In Link */}
                         <p className="mt-7 text-center text-sm text-slate-500">

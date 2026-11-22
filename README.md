@@ -24,8 +24,8 @@ The Next.js frontend for **MentorLagbe**, a Bangladesh-based tuition and mentors
 - **Framework:** Next.js 16.4.6 (App Router)
 - **UI:** React 19.3.0, TypeScript, Tailwind CSS 4.3.3
 - **Icons & toasts:** lucide-react, sonner
-- **Auth / styling libraries:** better-auth, styled-components
-- **API:** Express REST API (separate `server` project)
+- **Auth / styling libraries:** better-auth (BetterAuth client; the server pairs it with the MongoDB adapter), styled-components
+- **API:** Express REST API (separate `server` project) with JWT bearer tokens on protected REST routes
 
 ## Getting Started
 
@@ -57,6 +57,8 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
 If `.env.local.example` is not present in your checkout, create `.env.local` with the value above. The app also falls back to `http://localhost:5000/api` when the variable is unset.
+
+BetterAuth is part of the client stack but needs no separate client environment variable: its endpoint is derived from `NEXT_PUBLIC_API_URL` (`<NEXT_PUBLIC_API_URL>/better-auth`, i.e. the API's `/api/better-auth` path), while the server pairs it with the MongoDB adapter. Google sign-in also adds no client secret: the buttons call `GET /api/auth/google/status` and stay disabled when the server has no Google keys. Google keys belong only in the server environment.
 
 ### Run and verify
 
@@ -93,7 +95,7 @@ The admin email/password can be overridden with `ADMIN_EMAIL` and `ADMIN_PASSWOR
 ## Key Features
 
 - **Role-based dashboards:** dedicated overviews and navigation for students, tutors, and admins, including profile updates.
-- **Authentication:** JWT stored in `localStorage`, sent as a `Bearer` token on protected API requests, with automatic sign-out on `401` responses.
+- **Authentication:** BetterAuth is part of the stack alongside JWT-based REST auth: JWT stored in `localStorage`, sent as a `Bearer` token on protected API requests, with automatic sign-out on `401` responses.
 - **Protected routes:** the dashboard shell redirects unauthenticated users to sign-in and sends users to the dashboard for their role; role-specific links keep each area separate.
 - **Tuition discovery:** search, filter by subject/class level/mode/location/fee, sorting, and paginated results, plus tuition detail pages.
 - **Applications:** students apply to tuitions with schedule and notes, then track application status; tutors review and respond to applicants.
@@ -171,7 +173,7 @@ client/
 1. Deploy the API server first and note its base URL.
 2. In the Vercel project, set `NEXT_PUBLIC_API_URL` to the **deployed API URL including `/api`** (for example, `https://<your-api-host>/api`). This value is embedded in the client bundle at build time, so redeploy after changing it.
 3. On the server, set `CLIENT_URL` to this client's exact origin (for example, `https://<your-vercel-app>.vercel.app`) so CORS allows browser requests to the API. A mismatched origin will cause blocked requests.
-4. Run `npm run build` locally or let Vercel build the project; no other client environment variables are required.
+4. Run `npm run build` locally or let Vercel build the project; BetterAuth needs no separate client environment variables (its endpoint is derived from `NEXT_PUBLIC_API_URL` as `<NEXT_PUBLIC_API_URL>/better-auth`), so no other client variables are required.
 
 ## License
 
