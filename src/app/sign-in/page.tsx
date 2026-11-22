@@ -5,6 +5,7 @@ import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Navbar from "@/components/shared/Navbar";
 import { apiFetch } from "@/lib/api";
 import { dashboardPathFor, saveSession } from "@/lib/auth";
 import type { AuthUser } from "@/lib/types";
@@ -24,6 +25,7 @@ export default function LoginPage() {
 
         const email = String(formData.get("email") || "").trim();
         const password = String(formData.get("password") || "");
+        const remember = formData.get("remember") === "on";
 
         if (!email || !password) {
             setError("Please enter your email and password.");
@@ -45,7 +47,7 @@ export default function LoginPage() {
                 throw new Error("Invalid login response from server.");
             }
 
-            saveSession(data.token, data.user);
+            saveSession(data.token, data.user, remember);
             toast.success(`Welcome back, ${data.user.name}!`);
             router.push(dashboardPathFor(data.user.role));
 
@@ -63,7 +65,9 @@ export default function LoginPage() {
     };
 
     return (
-        <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#f5f7ff] px-4 py-8 sm:px-6 lg:px-8">
+        <div className="flex min-h-screen flex-col bg-[#f5f7ff]">
+            <Navbar />
+            <main className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-8 sm:px-6 lg:px-8">
 
             {/* Background Decorations */}
             <div className="absolute -left-32 -top-32 h-80 w-80 rounded-full bg-blue-200/40 blur-3xl" />
@@ -313,7 +317,7 @@ export default function LoginPage() {
 
                         {/* Register Link */}
                         <p className="mt-8 text-center text-sm text-slate-500">
-                            Don't have an account?{" "}
+                            Don&apos;t have an account?{" "}
                             <Link
                                 href="/sign-up"
                                 className="font-bold text-blue-600 transition hover:text-indigo-700 hover:underline"
@@ -329,6 +333,7 @@ export default function LoginPage() {
                     </div>
                 </section>
             </div>
-        </main>
+            </main>
+        </div>
     );
 }

@@ -1,3 +1,5 @@
+import { clearSession, getToken } from "./auth";
+
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -7,6 +9,12 @@ export class ApiError extends Error {
     this.name = "ApiError";
   }
 }
+
+/** Friendly, non-technical messages for transient upstream failures. */
+const FRIENDLY_STATUS_MESSAGES: Record<number, string> = {
+  503: "Service temporarily unavailable, please try again.",
+  504: "Upload timed out, please retry.",
+};
 
 interface ApiOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
@@ -31,7 +39,7 @@ export async function apiFetch<T>(
   }
 
   if (auth && typeof window !== "undefined") {
-    const token = window.localStorage.getItem("token");
+    const token = getToken();
 
     if (token) {
       requestHeaders.set("Authorization", `Bearer ${token}`);
@@ -52,9 +60,19 @@ export async function apiFetch<T>(
 
   const data = await response.json().catch(() => ({}));
 
+  // An expired or revoked token must not leave a stale "logged in" UI behind.
+  if (response.status === 401 && auth && typeof window !== "undefined") {
+    clearSession();
+    // Hard-navigate so in-memory auth state is dropped too; replace() keeps the
+    // stale, now-unauthenticated page out of the back history.
+    window.location.replace("/sign-in");
+  }
+
   if (!response.ok || data.success === false) {
     throw new ApiError(
-      data?.message || `Request failed with status ${response.status}`,
+      FRIENDLY_STATUS_MESSAGES[response.status] ||
+        data?.message ||
+        `Request failed with status ${response.status}`,
       response.status
     );
   }
