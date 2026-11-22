@@ -1,7 +1,9 @@
 
+
+
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
     Search,
@@ -18,12 +20,12 @@ import {
 } from "lucide-react";
 
 type Tutor = {
-    id: number;
+    id: string;
     name: string;
     subject: string;
     qualification: string;
     location: string;
-    experience: string;
+    experience: number | string;
     rating: number;
     reviews: number;
     hourlyRate: number;
@@ -32,92 +34,11 @@ type Tutor = {
     verified: boolean;
 };
 
-const tutors: Tutor[] = [
-    {
-        id: 1,
-        name: "Sarah Ahmed",
-        subject: "Mathematics",
-        qualification: "BSc in Mathematics",
-        location: "Sylhet",
-        experience: "5 Years",
-        rating: 4.9,
-        reviews: 120,
-        hourlyRate: 500,
-        mode: "Online & Offline",
-        image: "https://i.pravatar.cc/300?img=47",
-        verified: true,
-    },
-    {
-        id: 2,
-        name: "Rahim Hasan",
-        subject: "English",
-        qualification: "BA in English",
-        location: "Dhaka",
-        experience: "4 Years",
-        rating: 4.8,
-        reviews: 95,
-        hourlyRate: 400,
-        mode: "Online",
-        image: "https://i.pravatar.cc/300?img=12",
-        verified: true,
-    },
-    {
-        id: 3,
-        name: "Nusrat Jahan",
-        subject: "Physics",
-        qualification: "MSc in Physics",
-        location: "Chattogram",
-        experience: "6 Years",
-        rating: 5.0,
-        reviews: 86,
-        hourlyRate: 600,
-        mode: "Online & Offline",
-        image: "https://i.pravatar.cc/300?img=44",
-        verified: true,
-    },
-    {
-        id: 4,
-        name: "Tanvir Ahmed",
-        subject: "Chemistry",
-        qualification: "BSc in Chemistry",
-        location: "Sylhet",
-        experience: "3 Years",
-        rating: 4.7,
-        reviews: 65,
-        hourlyRate: 350,
-        mode: "Offline",
-        image: "https://i.pravatar.cc/300?img=13",
-        verified: false,
-    },
-    {
-        id: 5,
-        name: "Ayesha Rahman",
-        subject: "Biology",
-        qualification: "MSc in Biology",
-        location: "Dhaka",
-        experience: "7 Years",
-        rating: 4.9,
-        reviews: 150,
-        hourlyRate: 700,
-        mode: "Online",
-        image: "https://i.pravatar.cc/300?img=49",
-        verified: true,
-    },
-    {
-        id: 6,
-        name: "Sabbir Hossain",
-        subject: "ICT",
-        qualification: "BSc in CSE",
-        location: "Rajshahi",
-        experience: "4 Years",
-        rating: 4.8,
-        reviews: 72,
-        hourlyRate: 450,
-        mode: "Online & Offline",
-        image: "https://i.pravatar.cc/300?img=60",
-        verified: true,
-    },
-];
+type TutorResponse = {
+    success: boolean;
+    total: number;
+    tutors: Tutor[];
+};
 
 const subjects = [
     "All Subjects",
@@ -140,6 +61,10 @@ const locations = [
 const modes = ["All Modes", "Online", "Offline"];
 
 export default function TutorsPage() {
+    const [tutors, setTutors] = useState<Tutor[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
     const [search, setSearch] = useState("");
     const [subject, setSubject] = useState("All Subjects");
     const [location, setLocation] = useState("All Locations");
@@ -147,27 +72,75 @@ export default function TutorsPage() {
     const [sort, setSort] = useState("recommended");
     const [showFilters, setShowFilters] = useState(false);
 
+    // Fetch tutors from MongoDB API
+    useEffect(() => {
+        const fetchTutors = async () => {
+            try {
+                setLoading(true);
+                setError("");
+
+                const response = await fetch(
+                    "http://localhost:5000/api/tutors"
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to load tutors.");
+                }
+
+                const data: TutorResponse = await response.json();
+
+                if (!data.success) {
+                    throw new Error("Could not retrieve tutors.");
+                }
+
+                setTutors(data.tutors);
+            } catch (err) {
+                setError(
+                    err instanceof Error
+                        ? err.message
+                        : "Something went wrong."
+                );
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTutors();
+    }, []);
+
+    // Search, filter and sort
     const filteredTutors = useMemo(() => {
         let result = tutors.filter((tutor) => {
+            const searchText = search.toLowerCase();
+
             const searchMatch =
-                tutor.name.toLowerCase().includes(search.toLowerCase()) ||
-                tutor.subject.toLowerCase().includes(search.toLowerCase()) ||
-                tutor.qualification.toLowerCase().includes(search.toLowerCase());
+                tutor.name.toLowerCase().includes(searchText) ||
+                tutor.subject.toLowerCase().includes(searchText) ||
+                tutor.qualification.toLowerCase().includes(searchText);
 
             const subjectMatch =
                 subject === "All Subjects" || tutor.subject === subject;
 
             const locationMatch =
-                location === "All Locations" || tutor.location === location;
+                location === "All Locations" ||
+                tutor.location === location;
 
             const modeMatch =
-                mode === "All Modes" || tutor.mode.includes(mode);
+                mode === "All Modes" ||
+                tutor.mode.toLowerCase().includes(mode.toLowerCase());
 
-            return searchMatch && subjectMatch && locationMatch && modeMatch;
+            return (
+                searchMatch &&
+                subjectMatch &&
+                locationMatch &&
+                modeMatch
+            );
         });
 
         if (sort === "rating") {
-            result = [...result].sort((a, b) => b.rating - a.rating);
+            result = [...result].sort(
+                (a, b) => b.rating - a.rating
+            );
         } else if (sort === "price-low") {
             result = [...result].sort(
                 (a, b) => a.hourlyRate - b.hourlyRate
@@ -179,7 +152,7 @@ export default function TutorsPage() {
         }
 
         return result;
-    }, [search, subject, location, mode, sort]);
+    }, [tutors, search, subject, location, mode, sort]);
 
     const clearFilters = () => {
         setSearch("");
@@ -206,14 +179,15 @@ export default function TutorsPage() {
                         </h1>
 
                         <p className="mt-4 max-w-2xl text-base leading-7 text-slate-500 sm:text-lg">
-                            Connect with experienced and verified tutors. Find the
-                            right teacher to achieve your academic goals.
+                            Connect with experienced and verified tutors.
+                            Find the right teacher to achieve your academic goals.
                         </p>
                     </div>
 
                     <div className="mt-9 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-lg shadow-slate-200/40 sm:flex-row">
                         <div className="flex flex-1 items-center gap-3 px-3">
                             <Search className="shrink-0 text-slate-400" size={21} />
+
                             <input
                                 type="text"
                                 value={search}
@@ -221,6 +195,7 @@ export default function TutorsPage() {
                                 placeholder="Search tutor, subject or qualification..."
                                 className="h-12 w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
                             />
+
                             {search && (
                                 <button
                                     onClick={() => setSearch("")}
@@ -234,6 +209,7 @@ export default function TutorsPage() {
 
                         <div className="flex items-center gap-2 border-t border-slate-100 px-3 sm:border-l sm:border-t-0">
                             <MapPin size={19} className="text-emerald-600" />
+
                             <select
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
@@ -260,6 +236,7 @@ export default function TutorsPage() {
                                 <label className="mb-2 block text-sm font-semibold">
                                     Subject
                                 </label>
+
                                 <select
                                     value={subject}
                                     onChange={(e) => setSubject(e.target.value)}
@@ -275,6 +252,7 @@ export default function TutorsPage() {
                                 <label className="mb-2 block text-sm font-semibold">
                                     Teaching Mode
                                 </label>
+
                                 <select
                                     value={mode}
                                     onChange={(e) => setMode(e.target.value)}
@@ -294,7 +272,10 @@ export default function TutorsPage() {
             <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
                 <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                     <div>
-                        <h2 className="text-2xl font-bold">Available Tutors</h2>
+                        <h2 className="text-2xl font-bold">
+                            Available Tutors
+                        </h2>
+
                         <p className="mt-2 text-sm text-slate-500">
                             Showing {filteredTutors.length} tutors for your learning journey
                         </p>
@@ -304,6 +285,7 @@ export default function TutorsPage() {
                         <span className="whitespace-nowrap text-sm text-slate-500">
                             Sort by:
                         </span>
+
                         <select
                             value={sort}
                             onChange={(e) => setSort(e.target.value)}
@@ -322,22 +304,28 @@ export default function TutorsPage() {
                     location !== "All Locations" ||
                     mode !== "All Modes") && (
                         <div className="mb-6 flex flex-wrap items-center gap-2">
-                            <span className="text-sm text-slate-500">Active filters:</span>
+                            <span className="text-sm text-slate-500">
+                                Active filters:
+                            </span>
+
                             {subject !== "All Subjects" && (
                                 <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
                                     {subject}
                                 </span>
                             )}
+
                             {location !== "All Locations" && (
                                 <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
                                     {location}
                                 </span>
                             )}
+
                             {mode !== "All Modes" && (
                                 <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
                                     {mode}
                                 </span>
                             )}
+
                             <button
                                 onClick={clearFilters}
                                 className="text-xs font-semibold text-rose-600 hover:underline"
@@ -347,7 +335,38 @@ export default function TutorsPage() {
                         </div>
                     )}
 
-                {filteredTutors.length > 0 ? (
+                {/* Loading */}
+                {loading && (
+                    <div className="flex flex-col items-center justify-center py-24">
+                        <div className="h-10 w-10 animate-spin rounded-full border-4 border-emerald-100 border-t-emerald-600" />
+                        <p className="mt-4 text-sm font-medium text-slate-500">
+                            Loading tutors...
+                        </p>
+                    </div>
+                )}
+
+                {/* Error */}
+                {!loading && error && (
+                    <div className="rounded-2xl border border-rose-200 bg-rose-50 px-6 py-12 text-center">
+                        <h3 className="text-lg font-bold text-rose-700">
+                            Unable to load tutors
+                        </h3>
+
+                        <p className="mt-2 text-sm text-rose-600">
+                            {error}
+                        </p>
+
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="mt-5 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700"
+                        >
+                            Try Again
+                        </button>
+                    </div>
+                )}
+
+                {/* Tutor Cards */}
+                {!loading && !error && filteredTutors.length > 0 && (
                     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {filteredTutors.map((tutor) => (
                             <article
@@ -357,7 +376,7 @@ export default function TutorsPage() {
                                 <div className="p-6">
                                     <div className="flex items-start gap-4">
                                         <img
-                                            src={tutor.image}
+                                            src={tutor.image || "https://i.pravatar.cc/300?img=12"}
                                             alt={tutor.name}
                                             className="h-16 w-16 rounded-2xl object-cover"
                                         />
@@ -367,6 +386,7 @@ export default function TutorsPage() {
                                                 <h3 className="font-bold text-slate-900">
                                                     {tutor.name}
                                                 </h3>
+
                                                 {tutor.verified && (
                                                     <BadgeCheck
                                                         size={17}
@@ -384,9 +404,11 @@ export default function TutorsPage() {
                                                     size={14}
                                                     className="fill-amber-400 text-amber-400"
                                                 />
+
                                                 <span className="font-semibold text-slate-800">
                                                     {tutor.rating}
                                                 </span>
+
                                                 ({tutor.reviews} reviews)
                                             </div>
                                         </div>
@@ -416,7 +438,10 @@ export default function TutorsPage() {
 
                                     <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-5">
                                         <div>
-                                            <p className="text-xs text-slate-400">Starting from</p>
+                                            <p className="text-xs text-slate-400">
+                                                Starting from
+                                            </p>
+
                                             <p className="mt-1 text-xl font-bold text-slate-900">
                                                 ৳{tutor.hourlyRate}
                                                 <span className="text-xs font-normal text-slate-500">
@@ -437,13 +462,21 @@ export default function TutorsPage() {
                             </article>
                         ))}
                     </div>
-                ) : (
+                )}
+
+                {/* Empty State */}
+                {!loading && !error && filteredTutors.length === 0 && (
                     <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
                         <Users size={42} className="mx-auto text-slate-300" />
-                        <h3 className="mt-4 text-lg font-bold">No tutors found</h3>
+
+                        <h3 className="mt-4 text-lg font-bold">
+                            No tutors found
+                        </h3>
+
                         <p className="mt-2 text-sm text-slate-500">
                             Try changing your search or filters to find tutors.
                         </p>
+
                         <button
                             onClick={clearFilters}
                             className="mt-5 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700"
