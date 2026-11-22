@@ -5,6 +5,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Footer from "@/components/shared/Footer";
+import Navbar from "@/components/shared/Navbar";
+import { apiFetch } from "@/lib/api";
 import {
     Search,
     MapPin,
@@ -72,6 +75,23 @@ export default function TutorsPage() {
     const [sort, setSort] = useState("recommended");
     const [showFilters, setShowFilters] = useState(false);
 
+    // Honour filters coming from the home page search.
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const initialSearch = urlParams.get("search");
+        const initialLocation = urlParams.get("location");
+        const initialCategory = urlParams.get("category");
+
+        if (initialSearch) setSearch(initialSearch);
+        if (initialLocation && initialLocation !== "All Locations") {
+            setLocation(initialLocation);
+        }
+        if (initialCategory && initialCategory !== "All Subjects") {
+            setSubject(initialCategory);
+        }
+    }, []);
+
     // Fetch tutors from MongoDB API
     useEffect(() => {
         const fetchTutors = async () => {
@@ -79,19 +99,16 @@ export default function TutorsPage() {
                 setLoading(true);
                 setError("");
 
-                const response = await fetch(
-                    "http://localhost:5000/api/tutors"
+                const params = new URLSearchParams();
+
+                if (search.trim()) params.set("subject", search.trim());
+                if (subject !== "All Subjects") params.set("subject", subject);
+                if (location !== "All Locations") params.set("location", location);
+                if (mode !== "All Modes") params.set("mode", mode);
+
+                const data = await apiFetch<TutorResponse>(
+                    `/tutors?${params.toString()}`
                 );
-
-                if (!response.ok) {
-                    throw new Error("Failed to load tutors.");
-                }
-
-                const data: TutorResponse = await response.json();
-
-                if (!data.success) {
-                    throw new Error("Could not retrieve tutors.");
-                }
 
                 setTutors(data.tutors);
             } catch (err) {
@@ -106,7 +123,7 @@ export default function TutorsPage() {
         };
 
         fetchTutors();
-    }, []);
+    }, [search, subject, location, mode]);
 
     // Search, filter and sort
     const filteredTutors = useMemo(() => {
@@ -163,7 +180,9 @@ export default function TutorsPage() {
     };
 
     return (
-        <main className="min-h-screen bg-[#f8faf9] text-slate-900">
+        <div className="flex min-h-screen flex-col bg-[#f8faf9] text-slate-900">
+            <Navbar />
+            <main className="flex-1">
             {/* Hero */}
             <section className="border-b border-slate-200 bg-white">
                 <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
@@ -486,6 +505,8 @@ export default function TutorsPage() {
                     </div>
                 )}
             </section>
-        </main>
+            </main>
+            <Footer />
+        </div>
     );
 }

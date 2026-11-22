@@ -1,9 +1,13 @@
 
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { apiFetch } from "@/lib/api";
+import { dashboardPathFor, saveSession } from "@/lib/auth";
+import type { AuthUser } from "@/lib/types";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -14,6 +18,15 @@ export default function RegisterPage() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [role, setRole] = useState("student");
+
+    // "Become a Tutor" from the home page preselects the tutor role.
+    useEffect(() => {
+        const preset = new URLSearchParams(window.location.search).get("role");
+
+        if (preset === "tutor" || preset === "student") {
+            setRole(preset);
+        }
+    }, []);
 
     const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -49,65 +62,38 @@ export default function RegisterPage() {
         setLoading(true);
 
         try {
-            const response = await fetch(
-                "http://localhost:5000/api/auth/register",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        name,
-                        email,
-                        password,
-                        role,
-                    }),
-                }
-            );
+            await apiFetch("/auth/register", {
+                method: "POST",
+                body: { name, email, password, role },
+            });
 
-            const data = await response.json();
+            const loginData = await apiFetch<{
+                token: string;
+                user: AuthUser;
+            }>("/auth/login", {
+                method: "POST",
+                body: { email, password },
+            });
 
-            if (!response.ok || !data.success) {
-                throw new Error(data.message || "Registration failed.");
-            }
-
-
-            const loginResponse = await fetch(
-                "http://localhost:5000/api/auth/login",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ email, password }),
-                }
-            );
-
-            const loginData = await loginResponse.json();
-
-            if (
-                !loginResponse.ok ||
-                !loginData.success ||
-                !loginData.token ||
-                !loginData.user
-            ) {
+            if (!loginData.token || !loginData.user) {
                 setSuccess("Account created! Please sign in manually.");
                 form.reset();
                 setRole("student");
                 return;
             }
 
-            localStorage.setItem("token", loginData.token);
-            localStorage.setItem("user", JSON.stringify(loginData.user));
-
-            router.push("/dashboard");
+            saveSession(loginData.token, loginData.user);
+            toast.success("Account created. Welcome to MentorLagbe!");
+            router.push(dashboardPathFor(loginData.user.role));
 
         } catch (err) {
-            setError(
+            const message =
                 err instanceof Error
                     ? err.message
-                    : "Something went wrong. Please try again."
-            );
+                    : "Something went wrong. Please try again.";
+
+            setError(message);
+            toast.error(message);
         } finally {
             setLoading(false);
         }

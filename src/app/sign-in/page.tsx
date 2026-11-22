@@ -4,6 +4,10 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { apiFetch } from "@/lib/api";
+import { dashboardPathFor, saveSession } from "@/lib/auth";
+import type { AuthUser } from "@/lib/types";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -29,43 +33,30 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            const response = await fetch(
-                "http://localhost:5000/api/auth/login",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password,
-                    }),
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok || !data.success) {
-                throw new Error(data.message || "Login failed.");
-            }
+            const data = await apiFetch<{
+                token: string;
+                user: AuthUser;
+            }>("/auth/login", {
+                method: "POST",
+                body: { email, password },
+            });
 
             if (!data.token || !data.user) {
                 throw new Error("Invalid login response from server.");
             }
 
-            // Save JWT token and user information
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("user", JSON.stringify(data.user));
-
-            // Redirect according to user role
-            router.push("/dashboard");
+            saveSession(data.token, data.user);
+            toast.success(`Welcome back, ${data.user.name}!`);
+            router.push(dashboardPathFor(data.user.role));
 
         } catch (err) {
-            setError(
+            const message =
                 err instanceof Error
                     ? err.message
-                    : "Something went wrong. Please try again."
-            );
+                    : "Something went wrong. Please try again.";
+
+            setError(message);
+            toast.error(message);
         } finally {
             setLoading(false);
         }
