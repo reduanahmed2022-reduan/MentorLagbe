@@ -51,7 +51,7 @@ export default function StudentOverviewPage() {
               Student workspace
             </p>
             <h2 className="mt-2 text-2xl font-extrabold">
-              Welcome back, {user?.name.split(" ")[0]} 👋
+              Welcome back, {user?.name?.split(" ")[0] || "there"} 👋
             </h2>
             <p className="mt-2 max-w-xl text-sm text-indigo-100">
               Track your applications and discover new tuition batches matched

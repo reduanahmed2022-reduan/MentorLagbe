@@ -54,7 +54,7 @@ export default function HomePage() {
 
     const queryString = params.toString();
 
-    router.push(queryString ? `/tutors?${queryString}` : "/tutors");
+    router.push(queryString ? `/tuitions?${queryString}` : "/tuitions");
   };
 
   return (

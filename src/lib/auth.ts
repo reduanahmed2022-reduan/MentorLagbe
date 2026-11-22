@@ -7,18 +7,32 @@ export const AUTH_CHANGE_EVENT = "mentorlagbe:auth-change";
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
 
+  // `||` (not `??`) so an empty localStorage entry never masks a valid
+  // sessionStorage token.
   return (
-    window.localStorage.getItem(TOKEN_KEY) ??
-    window.sessionStorage.getItem(TOKEN_KEY)
+    window.localStorage.getItem(TOKEN_KEY) ||
+    window.sessionStorage.getItem(TOKEN_KEY) ||
+    null
   );
+}
+
+/** Which storage actually owns the active session. */
+function activeStorage(): Storage | null {
+  if (typeof window === "undefined") return null;
+
+  if (window.localStorage.getItem(TOKEN_KEY)) return window.localStorage;
+  if (window.sessionStorage.getItem(TOKEN_KEY)) return window.sessionStorage;
+
+  return window.localStorage;
 }
 
 export function getStoredUser(): AuthUser | null {
   if (typeof window === "undefined") return null;
 
-  const raw =
-    window.localStorage.getItem(USER_KEY) ??
-    window.sessionStorage.getItem(USER_KEY);
+  const storage = activeStorage();
+  if (!storage) return null;
+
+  const raw = storage.getItem(USER_KEY);
 
   if (!raw) return null;
 
@@ -27,8 +41,8 @@ export function getStoredUser(): AuthUser | null {
 
     return parsed?.id || parsed?.email ? parsed : null;
   } catch {
-    clearSession();
-
+    // Do not clear the token here: a malformed cached user must not log the
+    // user out of an otherwise valid session.
     return null;
   }
 }
@@ -50,7 +64,12 @@ export function saveSession(
 }
 
 export function updateStoredUser(user: AuthUser): void {
-  window.localStorage.setItem(USER_KEY, JSON.stringify(user));
+  if (typeof window === "undefined") return;
+
+  const storage = activeStorage();
+  if (!storage) return;
+
+  storage.setItem(USER_KEY, JSON.stringify(user));
   window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
 }
 

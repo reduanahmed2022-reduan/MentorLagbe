@@ -236,7 +236,7 @@ export default function TuitionsPage() {
                     </div>
 
                     {/* Search */}
-                    <div className="mt-9 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-lg shadow-slate-200/40 sm:flex-row">
+                    <div role="search" aria-label="Search tuitions" className="mt-9 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-lg shadow-slate-200/40 sm:flex-row">
                         <div className="flex flex-1 items-center gap-3 px-3">
                             <Search size={21} className="shrink-0 text-slate-400" />
 
@@ -267,6 +267,8 @@ export default function TuitionsPage() {
                         <button
                             type="button"
                             onClick={() => setShowFilters(!showFilters)}
+                            aria-expanded={showFilters}
+                            aria-controls="tuition-filters"
                             className="flex h-12 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 text-sm font-semibold text-white transition hover:bg-emerald-700"
                         >
                             <SlidersHorizontal size={18} />
@@ -276,7 +278,7 @@ export default function TuitionsPage() {
 
                     {/* Filters */}
                     {showFilters && (
-                        <div className="mt-4 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 sm:grid-cols-2 lg:grid-cols-3">
+                        <div id="tuition-filters" className="mt-4 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 sm:grid-cols-2 lg:grid-cols-3">
                             <div>
                                 <label htmlFor="tuition-subject" className="mb-2 block text-sm font-semibold">
                                     Subject
@@ -392,7 +394,7 @@ export default function TuitionsPage() {
                 <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                     <div>
                         <h2 className="text-2xl font-bold">Available Tuitions</h2>
-                        <p className="mt-2 text-sm text-slate-500">
+                        <p role="status" aria-live="polite" aria-atomic="true" className="mt-2 text-sm text-slate-500">
                             {loading
                                 ? "Finding tuition opportunities..."
                                 : `Showing ${sortedTuitions.length} approved tuition posts`}

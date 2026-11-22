@@ -50,7 +50,7 @@ export default function TutorOverviewPage() {
               Tutor workspace
             </p>
             <h2 className="mt-2 text-2xl font-extrabold">
-              Welcome back, {user?.name.split(" ")[0]} 👋
+              Welcome back, {user?.name?.split(" ")[0] || "there"} 👋
             </h2>
             <p className="mt-2 max-w-xl text-sm text-emerald-50">
               Manage your batches, review applicants and grow your teaching

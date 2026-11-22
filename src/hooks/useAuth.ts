@@ -12,6 +12,26 @@ import {
 import type { AuthUser } from "@/lib/types";
 
 /**
+ * One /auth/me request per token, shared by every mounted useAuth() instance.
+ * A dashboard can mount three or four of these hooks on a single reload.
+ */
+let sharedProfile: { token: string; promise: Promise<AuthUser> } | null = null;
+
+function loadProfile(token: string): Promise<AuthUser> {
+  if (!sharedProfile || sharedProfile.token !== token) {
+    const promise = apiFetch<{ user: AuthUser }>("/auth/me", { auth: true })
+      .then(({ user }) => user)
+      .finally(() => {
+        if (sharedProfile?.promise === promise) sharedProfile = null;
+      });
+
+    sharedProfile = { token, promise };
+  }
+
+  return sharedProfile.promise;
+}
+
+/**
  * Keeps the authenticated user in sync across tabs and after login/logout.
  * `ready` prevents private pages from flashing public content before the
  * localStorage session has been read.
@@ -20,7 +40,7 @@ export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
-  const profileChecked = useRef(false);
+  const profileCheckedFor = useRef<string | null>(null);
 
   useEffect(() => {
     const sync = () => {
@@ -40,21 +60,23 @@ export function useAuth() {
     };
   }, []);
 
-  // Refresh the role/plan once after the stored session is restored so an
-  // admin change is reflected without requiring a re-login. updateStoredUser
-  // fires AUTH_CHANGE_EVENT, which re-runs the effect; the ref stops a loop.
+  // Refresh the role/plan once per token after the stored session is restored
+  // so an admin change is reflected without requiring a re-login.
   useEffect(() => {
-    if (!ready || !user || !token || profileChecked.current) return;
+    if (!ready || !user || !token || profileCheckedFor.current === token) return;
 
-    profileChecked.current = true;
+    profileCheckedFor.current = token;
+    const checkedToken = token;
 
-    void apiFetch<{ user: AuthUser }>("/auth/me", { auth: true })
-      .then(({ user: freshUser }) => {
+    void loadProfile(checkedToken)
+      .then((freshUser) => {
+        // Ignore a late response from a session that has since changed.
+        if (getToken() !== checkedToken) return;
+
         const stored = getStoredUser();
 
         if (
           stored &&
-          getToken() &&
           (stored.role !== freshUser.role || stored.plan !== freshUser.plan)
         ) {
           updateStoredUser(freshUser);
@@ -65,8 +87,23 @@ export function useAuth() {
       });
   }, [ready, user, token]);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     clearSession();
+
+    // Best-effort BetterAuth sign-out (no cookie session exists for JWT-only
+    // logins, so failures are expected and must never block the UI logout).
+    try {
+      const { authClient } = await import("@/lib/better-auth");
+
+      await Promise.race([
+        authClient.signOut(),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("sign-out timeout")), 2000)
+        ),
+      ]);
+    } catch {
+      // The local JWT session is already cleared.
+    }
   }, []);
 
   return {

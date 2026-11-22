@@ -23,6 +23,35 @@ interface ApiOptions extends Omit<RequestInit, "body"> {
 }
 
 /**
+ * A private-route reload fires several authenticated requests in parallel.
+ * Re-validate once (single-flight) before clearing the session so a single
+ * transient 401 cannot log out an otherwise valid user.
+ */
+let profileRevalidation: Promise<boolean> | null = null;
+
+function revalidateSession(token: string): Promise<boolean> {
+  if (!profileRevalidation) {
+    profileRevalidation = (async () => {
+      try {
+        const response = await fetch(`${API_URL}/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store",
+        });
+
+        // Network failures and non-401 responses keep the session intact.
+        return response.status === 401;
+      } catch {
+        return false;
+      }
+    })().finally(() => {
+      profileRevalidation = null;
+    });
+  }
+
+  return profileRevalidation;
+}
+
+/**
  * Single place for every call to the Express API.
  * Keeps auth headers, JSON parsing and error messages consistent.
  */
@@ -38,34 +67,52 @@ export async function apiFetch<T>(
     requestHeaders.set("Content-Type", "application/json");
   }
 
-  if (auth && typeof window !== "undefined") {
-    const token = getToken();
+  const usedToken = auth && typeof window !== "undefined" ? getToken() : null;
 
-    if (token) {
-      requestHeaders.set("Authorization", `Bearer ${token}`);
-    }
+  if (usedToken) {
+    requestHeaders.set("Authorization", `Bearer ${usedToken}`);
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
-    ...init,
-    headers: requestHeaders,
-    body:
-      body === undefined
-        ? undefined
-        : isFormData
-          ? (body as FormData)
-          : JSON.stringify(body),
-    cache: "no-store",
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...init,
+      headers: requestHeaders,
+      body:
+        body === undefined
+          ? undefined
+          : isFormData
+            ? (body as FormData)
+            : JSON.stringify(body),
+      cache: "no-store",
+    });
+  } catch {
+    throw new ApiError(
+      "Network error, please check your connection and try again.",
+      0
+    );
+  }
 
   const data = await response.json().catch(() => ({}));
 
-  // An expired or revoked token must not leave a stale "logged in" UI behind.
-  if (response.status === 401 && auth && typeof window !== "undefined") {
-    clearSession();
-    // Hard-navigate so in-memory auth state is dropped too; replace() keeps the
-    // stale, now-unauthenticated page out of the back history.
-    window.location.replace("/sign-in");
+  // Only a confirmed auth failure for the token this request actually used
+  // may clear the session. Another tab logging in/out must not log us out.
+  if (
+    response.status === 401 &&
+    auth &&
+    usedToken &&
+    typeof window !== "undefined" &&
+    getToken() === usedToken
+  ) {
+    void revalidateSession(usedToken).then((invalid) => {
+      if (invalid && getToken() === usedToken) {
+        clearSession();
+        // Hard-navigate so in-memory auth state is dropped too; replace()
+        // keeps the stale page out of the back history.
+        window.location.replace("/sign-in");
+      }
+    });
   }
 
   if (!response.ok || data.success === false) {

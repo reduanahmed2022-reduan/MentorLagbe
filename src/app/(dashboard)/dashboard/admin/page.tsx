@@ -43,7 +43,7 @@ export default function AdminOverviewPage() {
               Admin control center
             </p>
             <h2 className="mt-2 text-2xl font-extrabold">
-              Platform overview, {user?.name.split(" ")[0]} 🛡️
+              Platform overview, {user?.name?.split(" ")[0] || "there"} 🛡️
             </h2>
             <p className="mt-2 max-w-xl text-sm text-slate-300">
               Monitor growth, moderate tuitions and keep payments flowing.

@@ -125,7 +125,7 @@ export default function TutorsPage() {
                     `/tutors?${params.toString()}`
                 );
 
-                setTutors(data.tutors);
+                setTutors(data.tutors ?? []);
             } catch (err) {
                 setError(
                     err instanceof Error

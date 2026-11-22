@@ -26,24 +26,36 @@ function SuccessContent() {
       body: { sessionId },
     })
       .then((data) => {
-        setStatus(data.success ? "done" : "failed");
-
-        if (data.success) {
-          const storedUser = getStoredUser();
-
-          if (storedUser && data.plan) {
-            updateStoredUser({ ...storedUser, plan: data.plan });
-          }
-
-          toast.success("Pro plan activated. Welcome aboard!");
+        if (!data.success) {
+          setStatus("failed");
+          toast.error(
+            "We couldn't confirm this payment. Please refresh or contact support if you were charged."
+          );
+          return;
         }
+
+        setStatus("done");
+
+        const storedUser = getStoredUser();
+
+        if (storedUser && data.plan) {
+          updateStoredUser({ ...storedUser, plan: data.plan });
+        }
+
+        toast.success("Pro plan activated. Welcome aboard!");
       })
       .catch((error: unknown) => {
-        setStatus(
+        const isPending =
           error instanceof Error &&
-            error.message === "Payment is not completed yet"
-            ? "pending"
-            : "failed"
+          error.message === "Payment is not completed yet";
+
+        setStatus(isPending ? "pending" : "failed");
+        toast.error(
+          isPending
+            ? "Your payment is still being processed. Please refresh in a moment."
+            : error instanceof Error && error.message
+              ? error.message
+              : "We couldn't verify this payment. Please try again or contact support."
         );
       });
   }, [sessionId]);

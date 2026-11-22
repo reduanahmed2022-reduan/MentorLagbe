@@ -2,6 +2,9 @@ import Link from "next/link";
 import { BRAND, PUBLIC_NAV } from "@/lib/constants";
 import Logo from "./Logo";
 
+// Fixed value keeps server and client markup identical (no hydration mismatch).
+const COPYRIGHT_YEAR = 2026;
+
 const socials = [
   { label: "X", href: "https://x.com" },
   { label: "LinkedIn", href: "https://linkedin.com" },
@@ -31,7 +34,7 @@ export default function Footer() {
 
         <div>
           <h3 className="text-sm font-bold uppercase tracking-widest text-white">
-            Explore
+            Quick Links
           </h3>
           <ul className="mt-5 space-y-3 text-sm">
             {PUBLIC_NAV.map((link) => (
@@ -78,7 +81,7 @@ export default function Footer() {
 
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-5 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-16">
-          <p suppressHydrationWarning>© {new Date().getFullYear()} {BRAND.name}. All rights reserved.</p>
+          <p>© {COPYRIGHT_YEAR} {BRAND.name}. All rights reserved.</p>
           <p>Built for learners, by mentors.</p>
         </div>
       </div>

@@ -248,6 +248,10 @@ export default function TuitionForm({
         </div>
       </div>
 
+      <p className="text-xs text-slate-500">
+        Free plan: up to 2 active posts at a time.
+      </p>
+
       <div className="flex flex-wrap gap-3 border-t border-slate-100 pt-5">
         <button
           type="submit"

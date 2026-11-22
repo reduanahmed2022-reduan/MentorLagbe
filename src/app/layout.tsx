@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 
@@ -16,8 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  // TODO: Replace with the real Vercel deployment origin before going live.
-  metadataBase: new URL("https://your-vercel-app.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "MentorLagbe | Find Your Perfect Tutor",
     template: "%s | MentorLagbe",
