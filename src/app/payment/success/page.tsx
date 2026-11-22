@@ -8,30 +8,44 @@ import { toast } from "sonner";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { apiFetch } from "@/lib/api";
+import { getStoredUser, updateStoredUser } from "@/lib/auth";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const [status, setStatus] = useState<"verifying" | "done" | "failed">(
-    "verifying"
-  );
+  const [status, setStatus] = useState<
+    "verifying" | "done" | "failed" | "pending"
+  >(sessionId ? "verifying" : "failed");
 
   useEffect(() => {
-    if (!sessionId) {
-      setStatus("failed");
-      return;
-    }
+    if (!sessionId) return;
 
-    apiFetch<{ success: boolean }>("/payments/verify", {
+    apiFetch<{ success: boolean; plan?: "free" | "pro" }>("/payments/verify", {
       method: "POST",
       auth: true,
       body: { sessionId },
     })
       .then((data) => {
         setStatus(data.success ? "done" : "failed");
-        if (data.success) toast.success("Pro plan activated. Welcome aboard!");
+
+        if (data.success) {
+          const storedUser = getStoredUser();
+
+          if (storedUser && data.plan) {
+            updateStoredUser({ ...storedUser, plan: data.plan });
+          }
+
+          toast.success("Pro plan activated. Welcome aboard!");
+        }
       })
-      .catch(() => setStatus("failed"));
+      .catch((error: unknown) => {
+        setStatus(
+          error instanceof Error &&
+            error.message === "Payment is not completed yet"
+            ? "pending"
+            : "failed"
+        );
+      });
   }, [sessionId]);
 
   return (
@@ -62,11 +76,20 @@ function SuccessContent() {
           <>
             <p className="text-5xl">⏳</p>
             <h1 className="mt-6 text-2xl font-extrabold text-slate-900">
-              We couldn&apos;t confirm this payment yet
+              {status === "pending"
+                ? "Payment still processing"
+                : "We couldn't confirm this payment yet"}
             </h1>
             <p className="mt-3 text-sm leading-7 text-slate-500">
-              If you completed the checkout, your plan will be activated by the
-              Stripe webhook shortly. Contact support if it doesn&apos;t update.
+              {status === "pending" ? (
+                "Your payment is still being processed. Please refresh in a moment."
+              ) : (
+                <>
+                  If you completed the checkout, your plan will be activated by
+                  the Stripe webhook shortly. Contact support if it doesn&apos;t
+                  update.
+                </>
+              )}
             </p>
           </>
         )}

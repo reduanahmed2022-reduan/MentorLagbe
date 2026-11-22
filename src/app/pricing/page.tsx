@@ -9,6 +9,7 @@ import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/api";
+import { dashboardPathFor } from "@/lib/auth";
 import { PRO_PRICES } from "@/lib/constants";
 
 const tiers = [
@@ -46,10 +47,31 @@ const tiers = [
 
 export default function PricingPage() {
   const router = useRouter();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, ready } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
 
-  const handleCheckout = async (role: "student" | "tutor") => {
+  const handleCheckout = async (
+    role: "student" | "tutor",
+    plan: "free" | "pro",
+  ) => {
+    if (!ready) return;
+
+    if (plan === "free") {
+      if (!isAuthenticated) {
+        toast.error("Please sign in to continue");
+        router.push("/sign-in");
+        return;
+      }
+
+      if (user?.role !== role) {
+        toast.error(`This plan is for ${role} accounts only`);
+        return;
+      }
+
+      router.push(dashboardPathFor(role));
+      return;
+    }
+
     if (!isAuthenticated) {
       toast.error("Please sign in before upgrading your plan");
       router.push("/sign-in");
@@ -70,7 +92,7 @@ export default function PricingPage() {
         auth: true,
       });
 
-      window.location.href = data.url;
+      window.location.assign(data.url);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not start checkout");
     } finally {
@@ -99,6 +121,7 @@ export default function PricingPage() {
         <div className="mt-14 grid gap-6 md:grid-cols-2">
           {tiers.map((tier) => {
             const isCurrent =
+              ready &&
               isAuthenticated &&
               user?.role === tier.role &&
               (user?.plan || "free") === tier.plan;
@@ -143,7 +166,12 @@ export default function PricingPage() {
                 <button
                   type="button"
                   disabled={isCurrent || loading !== null}
-                  onClick={() => handleCheckout(tier.role as "student" | "tutor")}
+                  onClick={() =>
+                    handleCheckout(
+                      tier.role as "student" | "tutor",
+                      tier.plan as "free" | "pro",
+                    )
+                  }
                   className={`mt-8 rounded-full px-6 py-3.5 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-60 ${
                     tier.popular
                       ? "bg-[#0f9f6e] text-white hover:bg-[#087a54]"
