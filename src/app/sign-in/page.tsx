@@ -1,13 +1,75 @@
 
-
-
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+    const router = useRouter();
+
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setError("");
+
+        const formData = new FormData(e.currentTarget);
+
+        const email = String(formData.get("email") || "").trim();
+        const password = String(formData.get("password") || "");
+
+        if (!email || !password) {
+            setError("Please enter your email and password.");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await fetch(
+                "http://localhost:5000/api/auth/login",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                    }),
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Login failed.");
+            }
+
+            if (!data.token || !data.user) {
+                throw new Error("Invalid login response from server.");
+            }
+
+            // Save JWT token and user information
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+
+            // Redirect according to user role
+            router.push("/dashboard");
+
+        } catch (err) {
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "Something went wrong. Please try again."
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#f5f7ff] px-4 py-8 sm:px-6 lg:px-8">
@@ -56,9 +118,15 @@ export default function LoginPage() {
 
                         <div className="mt-10 flex items-center gap-4">
                             <div className="flex -space-x-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-indigo-700 bg-amber-300 font-bold text-indigo-900">S</div>
-                                <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-indigo-700 bg-pink-300 font-bold text-indigo-900">A</div>
-                                <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-indigo-700 bg-cyan-300 font-bold text-indigo-900">R</div>
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-indigo-700 bg-amber-300 font-bold text-indigo-900">
+                                    S
+                                </div>
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-indigo-700 bg-pink-300 font-bold text-indigo-900">
+                                    A
+                                </div>
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-indigo-700 bg-cyan-300 font-bold text-indigo-900">
+                                    R
+                                </div>
                             </div>
 
                             <div>
@@ -111,7 +179,9 @@ export default function LoginPage() {
                         {/* Google Button */}
                         <button
                             type="button"
-                            className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-semibold text-slate-700 transition hover:border-blue-300 hover:bg-blue-50/50"
+                            disabled
+                            title="Google login is not configured yet"
+                            className="flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-semibold text-slate-400"
                         >
                             <svg viewBox="0 0 48 48" className="h-5 w-5">
                                 <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917Z" />
@@ -122,6 +192,10 @@ export default function LoginPage() {
                             Continue with Google
                         </button>
 
+                        <p className="mt-2 text-center text-xs text-slate-400">
+                            Google sign-in is not available yet.
+                        </p>
+
                         {/* Divider */}
                         <div className="my-7 flex items-center gap-4">
                             <div className="h-px flex-1 bg-slate-200" />
@@ -131,9 +205,10 @@ export default function LoginPage() {
                             <div className="h-px flex-1 bg-slate-200" />
                         </div>
 
-                        {/* Form */}
-                        <form className="space-y-5">
+                        {/* Login Form */}
+                        <form onSubmit={handleLogin} className="space-y-5">
 
+                            {/* Email */}
                             <div>
                                 <label htmlFor="email" className="mb-2 block text-sm font-semibold text-slate-700">
                                     Email Address
@@ -157,6 +232,7 @@ export default function LoginPage() {
                                 </div>
                             </div>
 
+                            {/* Password */}
                             <div>
                                 <div className="mb-2 flex items-center justify-between">
                                     <label htmlFor="password" className="text-sm font-semibold text-slate-700">
@@ -205,9 +281,11 @@ export default function LoginPage() {
                                 </div>
                             </div>
 
+                            {/* Remember Me */}
                             <div className="flex items-center gap-2">
                                 <input
                                     id="remember"
+                                    name="remember"
                                     type="checkbox"
                                     className="h-4 w-4 rounded border-slate-300 accent-blue-600"
                                 />
@@ -216,14 +294,29 @@ export default function LoginPage() {
                                 </label>
                             </div>
 
+                            {/* Error Message */}
+                            {error && (
+                                <div
+                                    role="alert"
+                                    className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600"
+                                >
+                                    {error}
+                                </div>
+                            )}
+
+                            {/* Submit Button */}
                             <button
                                 type="submit"
-                                className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl active:translate-y-0"
+                                disabled={loading}
+                                className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
                             >
-                                Sign In
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 transition group-hover:translate-x-1">
-                                    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
+                                {loading ? "Signing In..." : "Sign In"}
+
+                                {!loading && (
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 transition group-hover:translate-x-1">
+                                        <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                )}
                             </button>
                         </form>
 
@@ -248,4 +341,3 @@ export default function LoginPage() {
         </main>
     );
 }
-
