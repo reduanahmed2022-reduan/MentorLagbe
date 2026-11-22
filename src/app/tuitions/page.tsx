@@ -3,6 +3,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Footer from "@/components/shared/Footer";
+import Navbar from "@/components/shared/Navbar";
+import { apiFetch } from "@/lib/api";
 import {
     Search,
     MapPin,
@@ -37,10 +40,11 @@ type Tuition = {
 type TuitionResponse = {
     success: boolean;
     total: number;
+    page?: number;
+    limit?: number;
+    totalPages?: number;
     tuitions: Tuition[];
 };
-
-const API_URL = "http://localhost:5000/api/tuitions";
 
 const subjects = [
     "All Subjects",
@@ -83,6 +87,23 @@ export default function TuitionsPage() {
     const [maxFee, setMaxFee] = useState("");
     const [sort, setSort] = useState("newest");
     const [showFilters, setShowFilters] = useState(false);
+    const [page, setPage] = useState(1);
+    const [pagination, setPagination] = useState({ total: 0, totalPages: 1 });
+
+    // Read filters pushed by the home page once, on mount.
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const initialSearch = urlParams.get("search");
+        const initialLocation = urlParams.get("location");
+        const initialSubject = urlParams.get("subject");
+        const initialMode = urlParams.get("mode");
+
+        if (initialSearch) setSearch(initialSearch);
+        if (initialLocation) setLocation(initialLocation);
+        if (initialSubject) setSubject(initialSubject);
+        if (initialMode === "Online" || initialMode === "Offline") setMode(initialMode);
+    }, []);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -103,19 +124,19 @@ export default function TuitionsPage() {
                 if (location.trim()) params.set("location", location.trim());
                 if (minFee !== "") params.set("minFee", minFee);
                 if (maxFee !== "") params.set("maxFee", maxFee);
+                params.set("page", String(page));
+                params.set("limit", "9");
 
-                const response = await fetch(
-                    `${API_URL}?${params.toString()}`,
+                const data = await apiFetch<TuitionResponse>(
+                    `/tuitions?${params.toString()}`,
                     { signal: controller.signal }
                 );
 
-                const data: TuitionResponse = await response.json();
-
-                if (!response.ok || !data.success) {
-                    throw new Error("Failed to load tuition posts.");
-                }
-
                 setTuitions(data.tuitions || []);
+                setPagination({
+                    total: data.total,
+                    totalPages: data.totalPages || 1,
+                });
             } catch (err) {
                 if (err instanceof Error && err.name === "AbortError") return;
 
@@ -134,6 +155,10 @@ export default function TuitionsPage() {
         fetchTuitions();
 
         return () => controller.abort();
+    }, [search, subject, classLevel, mode, location, minFee, maxFee, page]);
+
+    useEffect(() => {
+        setPage(1);
     }, [search, subject, classLevel, mode, location, minFee, maxFee]);
 
     const sortedTuitions = useMemo(() => {
@@ -175,7 +200,9 @@ export default function TuitionsPage() {
         maxFee !== "";
 
     return (
-        <main className="min-h-screen bg-[#f8faf9] text-slate-900">
+        <div className="flex min-h-screen flex-col bg-[#f8faf9] text-slate-900">
+            <Navbar />
+            <main className="flex-1">
             {/* Hero */}
             <section className="border-b border-slate-200 bg-white">
                 <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
@@ -528,7 +555,37 @@ export default function TuitionsPage() {
                         )}
                     </div>
                 )}
+
+                {/* Server-side pagination */}
+                {!loading && pagination.total > 9 && (
+                    <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+                        <button
+                            type="button"
+                            disabled={page <= 1}
+                            onClick={() => setPage((value) => Math.max(1, value - 1))}
+                            className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition disabled:opacity-40 hover:border-emerald-500 hover:text-emerald-700"
+                        >
+                            Previous
+                        </button>
+                        <span className="text-sm font-semibold text-slate-600">
+                            Page {page} of {pagination.totalPages}
+                            <span className="ml-2 font-normal text-slate-400">
+                                ({pagination.total} results)
+                            </span>
+                        </span>
+                        <button
+                            type="button"
+                            disabled={page >= pagination.totalPages}
+                            onClick={() => setPage((value) => Math.min(pagination.totalPages, value + 1))}
+                            className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition disabled:opacity-40 hover:border-emerald-500 hover:text-emerald-700"
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
             </section>
-        </main>
+            </main>
+            <Footer />
+        </div>
     );
 }

@@ -4,6 +4,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import Footer from "@/components/shared/Footer";
+import Navbar from "@/components/shared/Navbar";
+import ApplyForm from "@/components/tuitions/ApplyForm";
+import { apiFetch } from "@/lib/api";
 import {
     ArrowLeft,
     BookOpen,
@@ -16,8 +20,6 @@ import {
     Loader2,
     AlertCircle,
 } from "lucide-react";
-
-const API_URL = "http://localhost:5000/api/tuitions";
 
 interface Tuition {
     _id: string;
@@ -51,12 +53,7 @@ export default function TuitionDetailsPage() {
                 setLoading(true);
                 setError("");
 
-                const response = await fetch(`${API_URL}/${id}`);
-                const data = await response.json();
-
-                if (!response.ok || !data.success) {
-                    throw new Error(data.message || "Unable to load tuition details.");
-                }
+                const data = await apiFetch<{ tuition: Tuition }>(`/tuitions/${id}`);
 
                 setTuition(data.tuition);
             } catch (err) {
@@ -75,6 +72,8 @@ export default function TuitionDetailsPage() {
 
     if (loading) {
         return (
+            <>
+            <Navbar />
             <main className="flex min-h-[70vh] items-center justify-center bg-slate-50 px-4">
                 <div className="text-center">
                     <Loader2 className="mx-auto h-10 w-10 animate-spin text-emerald-600" />
@@ -83,11 +82,15 @@ export default function TuitionDetailsPage() {
                     </p>
                 </div>
             </main>
+            <Footer />
+            </>
         );
     }
 
     if (error || !tuition) {
         return (
+            <>
+            <Navbar />
             <main className="flex min-h-[70vh] items-center justify-center bg-slate-50 px-4">
                 <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
                     <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
@@ -106,11 +109,15 @@ export default function TuitionDetailsPage() {
                     </Link>
                 </div>
             </main>
+            <Footer />
+            </>
         );
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 pb-16">
+        <>
+        <Navbar />
+        <main className="min-h-screen flex-1 bg-slate-50 pb-16">
             <section className="border-b border-slate-200 bg-white">
                 <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
                     <Link
@@ -263,20 +270,13 @@ export default function TuitionDetailsPage() {
                                 </div>
                             </div>
 
-                            <Link
-                                href="/sign-in"
-                                className="flex w-full items-center justify-center rounded-xl bg-emerald-600 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-emerald-700"
-                            >
-                                Apply for This Tuition
-                            </Link>
-
-                            <p className="mt-4 text-center text-xs leading-5 text-slate-400">
-                                Sign in with your student account to apply for this tuition.
-                            </p>
+                            <ApplyForm tuitionId={tuition._id} />
                         </div>
                     </aside>
                 </div>
             </div>
         </main>
+        <Footer />
+        </>
     );
 }
