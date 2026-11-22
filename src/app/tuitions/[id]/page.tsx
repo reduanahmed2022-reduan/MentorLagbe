@@ -226,7 +226,7 @@ export default function TuitionDetailsPage() {
                     </div>
 
                     <aside>
-                        <div className="sticky top-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <div className="sticky top-24 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                             <p className="text-sm font-medium text-slate-500">
                                 Monthly Tuition Fee
                             </p>

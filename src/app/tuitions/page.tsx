@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { apiFetch } from "@/lib/api";
@@ -11,7 +12,6 @@ import {
     MapPin,
     BookOpen,
     GraduationCap,
-    Clock,
     SlidersHorizontal,
     X,
     ArrowRight,
@@ -71,9 +71,12 @@ const classLevels = [
     "SSC",
     "HSC",
     "University",
+    "Adult",
 ];
 
 export default function TuitionsPage() {
+    const router = useRouter();
+
     const [tuitions, setTuitions] = useState<Tuition[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -90,19 +93,22 @@ export default function TuitionsPage() {
     const [page, setPage] = useState(1);
     const [pagination, setPagination] = useState({ total: 0, totalPages: 1 });
 
-    // Read filters pushed by the home page once, on mount.
+    // Read filters pushed by the home page once, on mount. Deferred so the
+    // server-rendered markup and first client render stay identical.
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
+        Promise.resolve().then(() => {
+            const urlParams = new URLSearchParams(window.location.search);
 
-        const initialSearch = urlParams.get("search");
-        const initialLocation = urlParams.get("location");
-        const initialSubject = urlParams.get("subject");
-        const initialMode = urlParams.get("mode");
+            const initialSearch = urlParams.get("search");
+            const initialLocation = urlParams.get("location");
+            const initialSubject = urlParams.get("subject");
+            const initialMode = urlParams.get("mode");
 
-        if (initialSearch) setSearch(initialSearch);
-        if (initialLocation) setLocation(initialLocation);
-        if (initialSubject) setSubject(initialSubject);
-        if (initialMode === "Online" || initialMode === "Offline") setMode(initialMode);
+            if (initialSearch) setSearch(initialSearch);
+            if (initialLocation) setLocation(initialLocation);
+            if (initialSubject) setSubject(initialSubject);
+            if (initialMode === "Online" || initialMode === "Offline") setMode(initialMode);
+        });
     }, []);
 
     useEffect(() => {
@@ -157,9 +163,14 @@ export default function TuitionsPage() {
         return () => controller.abort();
     }, [search, subject, classLevel, mode, location, minFee, maxFee, page]);
 
-    useEffect(() => {
+    // Reset to the first page when filters change. Adjusting state during
+    // render keeps the fetch effect from running once with a stale page.
+    const filterKey = [search, subject, classLevel, mode, location, minFee, maxFee].join("|");
+    const [appliedFilterKey, setAppliedFilterKey] = useState(filterKey);
+    if (filterKey !== appliedFilterKey) {
+        setAppliedFilterKey(filterKey);
         setPage(1);
-    }, [search, subject, classLevel, mode, location, minFee, maxFee]);
+    }
 
     const sortedTuitions = useMemo(() => {
         const result = [...tuitions];
@@ -188,6 +199,7 @@ export default function TuitionsPage() {
         setMinFee("");
         setMaxFee("");
         setSort("newest");
+        router.replace("/tuitions");
     };
 
     const hasFilters =
@@ -228,7 +240,11 @@ export default function TuitionsPage() {
                         <div className="flex flex-1 items-center gap-3 px-3">
                             <Search size={21} className="shrink-0 text-slate-400" />
 
+                            <label htmlFor="tuition-search" className="sr-only">
+                                Search tuitions
+                            </label>
                             <input
+                                id="tuition-search"
                                 type="search"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
@@ -262,10 +278,11 @@ export default function TuitionsPage() {
                     {showFilters && (
                         <div className="mt-4 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 sm:grid-cols-2 lg:grid-cols-3">
                             <div>
-                                <label className="mb-2 block text-sm font-semibold">
+                                <label htmlFor="tuition-subject" className="mb-2 block text-sm font-semibold">
                                     Subject
                                 </label>
                                 <select
+                                    id="tuition-subject"
                                     value={subject}
                                     onChange={(e) => setSubject(e.target.value)}
                                     className="h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-emerald-500"
@@ -279,10 +296,11 @@ export default function TuitionsPage() {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-semibold">
+                                <label htmlFor="tuition-class-level" className="mb-2 block text-sm font-semibold">
                                     Class Level
                                 </label>
                                 <select
+                                    id="tuition-class-level"
                                     value={classLevel}
                                     onChange={(e) => setClassLevel(e.target.value)}
                                     className="h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-emerald-500"
@@ -296,10 +314,11 @@ export default function TuitionsPage() {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-semibold">
+                                <label htmlFor="tuition-mode" className="mb-2 block text-sm font-semibold">
                                     Teaching Mode
                                 </label>
                                 <select
+                                    id="tuition-mode"
                                     value={mode}
                                     onChange={(e) => setMode(e.target.value)}
                                     className="h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-emerald-500"
@@ -311,10 +330,11 @@ export default function TuitionsPage() {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-semibold">
+                                <label htmlFor="tuition-location" className="mb-2 block text-sm font-semibold">
                                     Location
                                 </label>
                                 <input
+                                    id="tuition-location"
                                     type="text"
                                     value={location}
                                     onChange={(e) => setLocation(e.target.value)}
@@ -324,10 +344,11 @@ export default function TuitionsPage() {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-semibold">
+                                <label htmlFor="tuition-min-fee" className="mb-2 block text-sm font-semibold">
                                     Minimum Monthly Fee (৳)
                                 </label>
                                 <input
+                                    id="tuition-min-fee"
                                     type="number"
                                     min="0"
                                     value={minFee}
@@ -338,10 +359,11 @@ export default function TuitionsPage() {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-semibold">
+                                <label htmlFor="tuition-max-fee" className="mb-2 block text-sm font-semibold">
                                     Maximum Monthly Fee (৳)
                                 </label>
                                 <input
+                                    id="tuition-max-fee"
                                     type="number"
                                     min="0"
                                     value={maxFee}
@@ -423,7 +445,7 @@ export default function TuitionsPage() {
 
                 {/* Error */}
                 {!loading && error && (
-                    <div className="rounded-2xl border border-rose-200 bg-rose-50 px-6 py-12 text-center">
+                    <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 px-6 py-12 text-center">
                         <h3 className="text-lg font-bold text-rose-700">
                             Unable to load tuitions
                         </h3>
@@ -529,7 +551,7 @@ export default function TuitionsPage() {
 
                 {/* Empty State */}
                 {!loading && !error && sortedTuitions.length === 0 && (
-                    <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
+                    <div aria-live="polite" className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
                         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50">
                             <BookOpen size={32} className="text-emerald-600" />
                         </div>
