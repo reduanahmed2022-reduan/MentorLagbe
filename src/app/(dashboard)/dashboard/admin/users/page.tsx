@@ -129,7 +129,7 @@ export default function AdminUsersPage() {
           </table>
 
           {!filtered.length && (
-            <p className="p-10 text-center text-sm text-slate-500">No users match your search.</p>
+            <p aria-live="polite" className="p-10 text-center text-sm text-slate-500">No users match your search.</p>
           )}
         </div>
       )}

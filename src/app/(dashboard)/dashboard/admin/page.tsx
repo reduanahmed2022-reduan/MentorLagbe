@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import {
   BadgeDollarSign,
   BookOpenCheck,
+  CircleX,
   Clock3,
   GraduationCap,
   ShieldCheck,
@@ -64,6 +65,7 @@ export default function AdminOverviewPage() {
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Pending Tuitions" value={loading ? "…" : stats.pendingTuitions || 0} icon={Clock3} tone="amber" />
         <StatCard label="Approved Tuitions" value={loading ? "…" : stats.approvedTuitions || 0} icon={ShieldCheck} tone="emerald" />
+        <StatCard label="Rejected Tuitions" value={loading ? "…" : stats.rejectedTuitions || 0} icon={CircleX} tone="rose" />
         <StatCard label="Total Applications" value={loading ? "…" : stats.totalApplications || 0} icon={BookOpenCheck} />
       </div>
 

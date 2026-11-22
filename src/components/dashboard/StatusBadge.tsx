@@ -7,6 +7,11 @@ const styles: Record<string, string> = {
   closed: "bg-slate-100 text-slate-600 ring-slate-200",
   free: "bg-slate-100 text-slate-600 ring-slate-200",
   pro: "bg-indigo-50 text-indigo-700 ring-indigo-200",
+  student: "bg-sky-50 text-sky-700 ring-sky-200",
+  tutor: "bg-violet-50 text-violet-700 ring-violet-200",
+  admin: "bg-indigo-50 text-indigo-700 ring-indigo-200",
+  paid: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+  failed: "bg-rose-50 text-rose-700 ring-rose-200",
 };
 
 export default function StatusBadge({ status }: { status: string }) {
