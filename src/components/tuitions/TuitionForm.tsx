@@ -37,6 +37,16 @@ export default function TuitionForm({
   const handleImage = async (file?: File) => {
     if (!file) return;
 
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be 5MB or smaller");
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose an image file");
+      return;
+    }
+
     setUploading(true);
 
     try {
@@ -99,8 +109,9 @@ export default function TuitionForm({
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="sm:col-span-2">
-          <label className={labelClass}>Tuition title *</label>
+          <label htmlFor="tuition-title" className={labelClass}>Tuition title *</label>
           <input
+            id="tuition-title"
             required
             value={title}
             onChange={(event) => setTitle(event.target.value)}
@@ -110,8 +121,13 @@ export default function TuitionForm({
         </div>
 
         <div>
-          <label className={labelClass}>Subject *</label>
-          <select value={subject} onChange={(event) => setSubject(event.target.value)} className={inputClass}>
+          <label htmlFor="tuition-subject" className={labelClass}>Subject *</label>
+          <select
+            id="tuition-subject"
+            value={subject}
+            onChange={(event) => setSubject(event.target.value)}
+            className={inputClass}
+          >
             {SUBJECTS.map((item) => (
               <option key={item}>{item}</option>
             ))}
@@ -119,8 +135,13 @@ export default function TuitionForm({
         </div>
 
         <div>
-          <label className={labelClass}>Class level *</label>
-          <select value={classLevel} onChange={(event) => setClassLevel(event.target.value)} className={inputClass}>
+          <label htmlFor="tuition-class-level" className={labelClass}>Class level *</label>
+          <select
+            id="tuition-class-level"
+            value={classLevel}
+            onChange={(event) => setClassLevel(event.target.value)}
+            className={inputClass}
+          >
             {CLASS_LEVELS.map((item) => (
               <option key={item}>{item}</option>
             ))}
@@ -128,8 +149,9 @@ export default function TuitionForm({
         </div>
 
         <div>
-          <label className={labelClass}>Mode *</label>
+          <label htmlFor="tuition-mode" className={labelClass}>Mode *</label>
           <select
+            id="tuition-mode"
             value={mode}
             onChange={(event) => setMode(event.target.value as "Online" | "Offline")}
             className={inputClass}
@@ -141,8 +163,13 @@ export default function TuitionForm({
         </div>
 
         <div>
-          <label className={labelClass}>Location *</label>
-          <select value={location} onChange={(event) => setLocation(event.target.value)} className={inputClass}>
+          <label htmlFor="tuition-location" className={labelClass}>Location *</label>
+          <select
+            id="tuition-location"
+            value={location}
+            onChange={(event) => setLocation(event.target.value)}
+            className={inputClass}
+          >
             {LOCATIONS.map((item) => (
               <option key={item}>{item}</option>
             ))}
@@ -150,8 +177,9 @@ export default function TuitionForm({
         </div>
 
         <div>
-          <label className={labelClass}>Monthly fee (৳) *</label>
+          <label htmlFor="tuition-monthly-fee" className={labelClass}>Monthly fee (৳) *</label>
           <input
+            id="tuition-monthly-fee"
             required
             type="number"
             min={1}
@@ -163,8 +191,9 @@ export default function TuitionForm({
         </div>
 
         <div>
-          <label className={labelClass}>Days per week *</label>
+          <label htmlFor="tuition-days-per-week" className={labelClass}>Days per week *</label>
           <input
+            id="tuition-days-per-week"
             required
             type="number"
             min={1}
@@ -177,8 +206,9 @@ export default function TuitionForm({
       </div>
 
       <div>
-        <label className={labelClass}>Description *</label>
+        <label htmlFor="tuition-description" className={labelClass}>Description *</label>
         <textarea
+          id="tuition-description"
           required
           rows={5}
           value={description}
@@ -189,16 +219,24 @@ export default function TuitionForm({
       </div>
 
       <div>
-        <label className={labelClass}>Cover image (optional)</label>
+        <label htmlFor="tuition-cover-image" className={labelClass}>Cover image (optional)</label>
         <div className="flex flex-wrap items-center gap-4">
-          <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-slate-300 px-4 py-3 text-sm font-semibold text-slate-600 transition hover:border-indigo-500 hover:text-indigo-600">
+          <label
+            htmlFor="tuition-cover-image"
+            className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-slate-300 px-4 py-3 text-sm font-semibold text-slate-600 transition hover:border-indigo-500 hover:text-indigo-600"
+          >
             {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
             {uploading ? "Uploading…" : "Choose image"}
             <input
+              id="tuition-cover-image"
               type="file"
               accept="image/*"
-              className="hidden"
-              onChange={(event) => handleImage(event.target.files?.[0])}
+              className="sr-only"
+              onChange={(event) => {
+                const file = event.currentTarget.files?.[0];
+                event.currentTarget.value = "";
+                handleImage(file);
+              }}
             />
           </label>
           {bannerImage && (

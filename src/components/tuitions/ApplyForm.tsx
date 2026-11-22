@@ -102,10 +102,11 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
-        <label className="mb-1 block text-xs font-semibold text-slate-600">
+        <label htmlFor="apply-student-phone" className="mb-1 block text-xs font-semibold text-slate-600">
           Phone number
         </label>
         <input
+          id="apply-student-phone"
           value={studentPhone}
           onChange={(event) => setStudentPhone(event.target.value)}
           placeholder="+880 1XXX-XXXXXX"
@@ -113,10 +114,11 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-semibold text-slate-600">
+        <label htmlFor="apply-preferred-schedule" className="mb-1 block text-xs font-semibold text-slate-600">
           Preferred schedule <span className="text-rose-500">*</span>
         </label>
         <input
+          id="apply-preferred-schedule"
           value={preferredSchedule}
           onChange={(event) => setPreferredSchedule(event.target.value)}
           placeholder="e.g. Weekdays 6–8 PM"
@@ -125,10 +127,11 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-semibold text-slate-600">
+        <label htmlFor="apply-student-note" className="mb-1 block text-xs font-semibold text-slate-600">
           Learning note
         </label>
         <textarea
+          id="apply-student-note"
           value={studentNote}
           onChange={(event) => setStudentNote(event.target.value)}
           placeholder="Tell the tutor about your learning goals…"

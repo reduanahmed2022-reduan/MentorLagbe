@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ImagePlus, Loader2, Save, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import StatusBadge from "@/components/dashboard/StatusBadge";
@@ -22,7 +22,6 @@ const inputClass =
 const labelClass = "mb-1.5 block text-xs font-bold text-slate-600";
 
 export default function ProfilePage() {
-  const router = useRouter();
   const { user } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [name, setName] = useState("");
@@ -53,6 +52,16 @@ export default function ProfilePage() {
 
   const handleImage = async (file?: File) => {
     if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be 5MB or smaller");
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose an image file");
+      return;
+    }
 
     setUploading(true);
 
@@ -105,7 +114,7 @@ export default function ProfilePage() {
         method: "POST",
         auth: true,
       });
-      window.location.href = data.url;
+      window.location.assign(data.url);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not start checkout");
       setCheckingOut(false);
@@ -135,21 +144,33 @@ export default function ProfilePage() {
 
         <form onSubmit={handleSave} className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
           <div className="flex flex-wrap items-center gap-5">
-            <label className="relative flex h-20 w-20 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-indigo-100 text-2xl font-black text-indigo-700">
+            <label
+              htmlFor="profile-image"
+              className="relative flex h-20 w-20 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-indigo-100 text-2xl font-black text-indigo-700 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2"
+            >
               {profileImage ? (
                 <img src={profileImage} alt={name} className="h-full w-full object-cover" />
               ) : (
                 name.slice(0, 1).toUpperCase()
               )}
               <input
+                id="profile-image"
                 type="file"
                 accept="image/*"
-                className="hidden"
-                onChange={(event) => handleImage(event.target.files?.[0])}
+                aria-label="Change profile picture"
+                className="sr-only"
+                onChange={(event) => {
+                  const file = event.currentTarget.files?.[0];
+                  event.currentTarget.value = "";
+                  handleImage(file);
+                }}
               />
             </label>
             <div>
-              <span className="inline-flex items-center gap-2 rounded-xl border border-dashed border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600">
+              <span
+                aria-live="polite"
+                className="inline-flex items-center gap-2 rounded-xl border border-dashed border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600"
+              >
                 {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
                 {uploading ? "Uploading…" : "Change picture"}
               </span>
@@ -159,24 +180,25 @@ export default function ProfilePage() {
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>Full name</label>
-              <input required value={name} onChange={(event) => setName(event.target.value)} className={inputClass} />
+              <label htmlFor="full-name" className={labelClass}>Full name</label>
+              <input id="full-name" required value={name} onChange={(event) => setName(event.target.value)} className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Email (read-only)</label>
-              <input value={profile?.email || ""} readOnly className={`${inputClass} bg-slate-50 text-slate-500`} />
+              <label htmlFor="email" className={labelClass}>Email (read-only)</label>
+              <input id="email" value={profile?.email || ""} readOnly className={`${inputClass} bg-slate-50 text-slate-500`} />
             </div>
             <div>
-              <label className={labelClass}>Phone</label>
-              <input value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="+880 1XXX-XXXXXX" className={inputClass} />
+              <label htmlFor="phone" className={labelClass}>Phone</label>
+              <input id="phone" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="+880 1XXX-XXXXXX" className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Location</label>
-              <input value={location} onChange={(event) => setLocation(event.target.value)} placeholder="Dhaka, Bangladesh" className={inputClass} />
+              <label htmlFor="location" className={labelClass}>Location</label>
+              <input id="location" value={location} onChange={(event) => setLocation(event.target.value)} placeholder="Dhaka, Bangladesh" className={inputClass} />
             </div>
             <div className="sm:col-span-2">
-              <label className={labelClass}>Short bio</label>
+              <label htmlFor="bio" className={labelClass}>Short bio</label>
               <textarea
+                id="bio"
                 rows={4}
                 value={bio}
                 onChange={(event) => setBio(event.target.value)}
@@ -240,13 +262,12 @@ export default function ProfilePage() {
                 {checkingOut ? "Opening Stripe…" : "Upgrade with Stripe"}
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => router.push("/pricing")}
+            <Link
+              href="/pricing"
               className="mt-3 block text-xs font-bold text-indigo-600 hover:underline"
             >
               Compare plans →
-            </button>
+            </Link>
           </div>
         )}
       </aside>
