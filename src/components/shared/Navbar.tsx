@@ -28,7 +28,8 @@ export default function Navbar() {
   const router = useRouter();
 
   const isActive = (href: string) => {
-    if (href.includes("#") || href === "/") return href === "/" && pathname === "/";
+    if (href.includes("#")) return pathname === "/";
+    if (href === "/") return pathname === "/";
 
     return pathname.startsWith(href);
   };
@@ -164,7 +165,7 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div
           id="mobile-navigation"
-          className="mx-auto mt-2 max-w-7xl rounded-2xl border border-gray-100 bg-white p-5 shadow-xl lg:hidden"
+          className="mx-auto mt-2 max-h-[calc(100vh-100px)] max-w-7xl overflow-y-auto rounded-2xl border border-gray-100 bg-white p-5 shadow-xl lg:hidden"
         >
           <div className="flex flex-col gap-1">
             {PUBLIC_NAV.map((link) => (

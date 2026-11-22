@@ -65,7 +65,7 @@ export default function Footer() {
                 key={social.label}
                 href={social.href}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 aria-label={social.label}
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-slate-300 transition hover:border-emerald-400 hover:text-emerald-300"
               >
@@ -78,7 +78,7 @@ export default function Footer() {
 
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-5 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-16">
-          <p>© {new Date().getFullYear()} {BRAND.name}. All rights reserved.</p>
+          <p suppressHydrationWarning>© {new Date().getFullYear()} {BRAND.name}. All rights reserved.</p>
           <p>Built for learners, by mentors.</p>
         </div>
       </div>
