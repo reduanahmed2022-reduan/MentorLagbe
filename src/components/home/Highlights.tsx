@@ -1,8 +1,10 @@
+import Link from "next/link";
+
 const subjects = [
-  { name: "Mathematics", icon: "📐" },
-  { name: "Physics", icon: "⚛️" },
-  { name: "Programming", icon: "💻" },
-  { name: "IELTS", icon: "🌍" },
+  { name: "Mathematics", icon: "📐", subject: "Mathematics" },
+  { name: "Physics", icon: "⚛️", subject: "Physics" },
+  { name: "Programming", icon: "💻", subject: "ICT" },
+  { name: "IELTS", icon: "🌍", subject: "English" },
 ];
 
 const testimonials = [
@@ -39,13 +41,14 @@ export default function Highlights() {
           </h2>
           <div className="mt-8 grid grid-cols-2 gap-4">
             {subjects.map((subject) => (
-              <div
+              <Link
                 key={subject.name}
+                href={`/tutors?subject=${encodeURIComponent(subject.subject)}`}
                 className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1"
               >
-                <span className="text-2xl">{subject.icon}</span>
+                <span className="text-2xl" aria-hidden="true">{subject.icon}</span>
                 <p className="mt-3 text-sm font-bold text-slate-800">{subject.name}</p>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -78,7 +81,9 @@ export default function Highlights() {
                 key={item.name}
                 className="rounded-2xl border border-slate-200 bg-white p-6"
               >
-                <div className="mb-2 text-amber-400">★★★★★</div>
+                <div className="mb-2 text-amber-400" role="img" aria-label="5 out of 5 stars">
+                  <span aria-hidden="true">★★★★★</span>
+                </div>
                 <p className="text-sm leading-7 text-slate-600">“{item.quote}”</p>
                 <footer className="mt-4 text-xs font-bold text-slate-800">
                   {item.name} <span className="font-normal text-slate-400">· {item.role}</span>
