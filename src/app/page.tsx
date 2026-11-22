@@ -5,6 +5,11 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import FeaturedTuitions from "@/components/home/FeaturedTuitions";
+import Highlights from "@/components/home/Highlights";
+import PricingPreview from "@/components/home/PricingPreview";
+import Footer from "@/components/shared/Footer";
+import Navbar from "@/components/shared/Navbar";
 
 const categories = [
   { name: "Language", icon: "🌐", bg: "bg-amber-600" },
@@ -32,7 +37,6 @@ export default function HomePage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,190 +56,10 @@ export default function HomePage() {
     router.push(queryString ? `/tutors?${queryString}` : "/tutors");
   };
 
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-  };
-
-  const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Find Tutor", href: "/tutors" },
-    { name: "Become a Tutor", href: "/register?role=tutor" },
-  ];
-
   return (
     <div className="min-h-screen overflow-x-clip bg-[#f1f7f4] font-sans text-[#1e293b]">
 
-      {/* ================= NAVBAR ================= */}
-
-      <header className="sticky top-0 z-[100] w-full border-b border-gray-100 bg-[#f1f7f4]/90 px-4 py-3 backdrop-blur-xl sm:px-8 lg:px-16">
-
-        <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between rounded-2xl border border-white/70 bg-white/95 px-4 shadow-md shadow-gray-900/5 sm:px-6">
-
-          {/* Logo */}
-
-          <Link
-            href="/"
-            onClick={closeMobileMenu}
-            className="group flex shrink-0 items-center gap-2.5"
-          >
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-[#0f9f6e] text-white shadow-md transition group-hover:bg-[#087a54]">
-
-              <svg
-                className="absolute -top-1.5 h-5 w-5 fill-white text-[#0f9f6e]"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M12 3L1 9l11 6 9-4.917V15h2V9L12 3zM5 13.188V17c0 2.21 3.134 4 7 4s7-1.79 7-4v-3.812L12 16.5 5 13.188z" />
-              </svg>
-
-              <span className="mt-1 text-xl font-black tracking-tighter">
-                M
-              </span>
-            </div>
-
-            <span className="text-lg font-extrabold tracking-tight text-[#111827] sm:text-xl">
-              Mentor<span className="text-[#0f9f6e]">Lagbe</span>
-            </span>
-          </Link>
-
-          {/* Desktop Navigation */}
-
-          <nav className="hidden items-center gap-7 text-sm font-semibold text-gray-600 lg:flex">
-
-            <Link
-              href="/"
-              className="text-[#0f9f6e] transition hover:text-[#087a54]"
-            >
-              Home
-            </Link>
-
-            <Link
-              href="/tutors"
-              className="transition hover:text-[#0f9f6e]"
-            >
-              Find Tutor
-            </Link>
-
-            <Link
-              href="/register?role=tutor"
-              className="transition hover:text-[#0f9f6e]"
-            >
-              Become a Tutor
-            </Link>
-
-          </nav>
-
-          {/* Desktop Actions */}
-
-          <div className="hidden items-center gap-3 lg:flex">
-
-            <span className="rounded-full bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700">
-              English · BDT
-            </span>
-
-            <Link
-              href="/bookings"
-              className="rounded-full bg-[#0f9f6e] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#087a54]"
-            >
-              Book a Free Trial
-            </Link>
-
-            <Link
-              href="/login"
-              className="px-3 py-2 text-sm font-semibold text-[#111827] transition hover:text-[#0f9f6e]"
-            >
-              Login
-            </Link>
-
-          </div>
-
-          {/* Mobile Menu Button */}
-
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen((prev) => !prev)}
-            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-            aria-expanded={mobileMenuOpen}
-            aria-controls="mobile-navigation"
-            className="flex h-10 w-10 items-center justify-center rounded-xl text-gray-700 transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#0f9f6e] lg:hidden"
-          >
-            {mobileMenuOpen ? (
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            ) : (
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16m-7 6h7"
-                />
-              </svg>
-            )}
-          </button>
-
-        </div>
-
-        {/* Mobile Dropdown */}
-
-        {mobileMenuOpen && (
-          <nav
-            id="mobile-navigation"
-            className="mx-auto mt-2 flex max-w-7xl flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-xl lg:hidden"
-          >
-
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={closeMobileMenu}
-                className={`rounded-xl px-4 py-3 text-sm font-semibold transition ${link.name === "Home"
-                  ? "bg-emerald-50 text-[#0f9f6e]"
-                  : "text-gray-700 hover:bg-emerald-50 hover:text-[#0f9f6e]"
-                  }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-
-            <div className="my-2 border-t border-gray-100" />
-
-            <Link
-              href="/bookings"
-              onClick={closeMobileMenu}
-              className="rounded-full bg-[#0f9f6e] py-3 text-center text-sm font-semibold text-white transition hover:bg-[#087a54]"
-            >
-              Book a Free Trial
-            </Link>
-
-            <Link
-              href="/login"
-              onClick={closeMobileMenu}
-              className="rounded-full border border-gray-200 py-3 text-center text-sm font-semibold text-gray-700 transition hover:border-[#0f9f6e] hover:text-[#0f9f6e]"
-            >
-              Login
-            </Link>
-
-          </nav>
-        )}
-
-      </header>
+      <Navbar />
 
       {/* ================= HERO SECTION ================= */}
 
@@ -454,9 +278,11 @@ export default function HomePage() {
 
       </section>
 
+      <FeaturedTuitions />
+
       {/* ================= HOW IT WORKS ================= */}
 
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-8 sm:py-20 lg:px-16">
+      <section id="how-it-works" className="mx-auto max-w-7xl px-4 py-16 sm:px-8 sm:py-20 lg:px-16">
 
         <div className="rounded-3xl border border-gray-100 bg-white p-8 text-center shadow-sm sm:p-14">
 
@@ -571,6 +397,12 @@ export default function HomePage() {
         </div>
 
       </section>
+
+      <Highlights />
+
+      <PricingPreview />
+
+      <Footer />
 
     </div>
   );
