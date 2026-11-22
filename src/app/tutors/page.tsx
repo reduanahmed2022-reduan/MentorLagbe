@@ -75,21 +75,36 @@ export default function TutorsPage() {
     const [sort, setSort] = useState("recommended");
     const [showFilters, setShowFilters] = useState(false);
 
-    // Honour filters coming from the home page search.
+    // Honour filters coming from the home page search. Deferring keeps the
+    // SSR markup and first client render identical.
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
+        Promise.resolve().then(() => {
+            const urlParams = new URLSearchParams(window.location.search);
 
-        const initialSearch = urlParams.get("search");
-        const initialLocation = urlParams.get("location");
-        const initialCategory = urlParams.get("category");
+            const initialSearch = urlParams.get("search");
+            const initialLocation = urlParams.get("location");
+            const initialSubject =
+                urlParams.get("subject") || urlParams.get("category");
 
-        if (initialSearch) setSearch(initialSearch);
-        if (initialLocation && initialLocation !== "All Locations") {
-            setLocation(initialLocation);
-        }
-        if (initialCategory && initialCategory !== "All Subjects") {
-            setSubject(initialCategory);
-        }
+            // Home-page category labels differ from the real tutor subjects.
+            const subjectAliases: Record<string, string> = {
+                Language: "English",
+                Coding: "ICT",
+                Programming: "ICT",
+            };
+
+            const normalizedSubject = initialSubject
+                ? subjectAliases[initialSubject] || initialSubject
+                : "";
+
+            if (initialSearch) setSearch(initialSearch);
+            if (initialLocation && initialLocation !== "All Locations") {
+                setLocation(initialLocation);
+            }
+            if (normalizedSubject && subjects.includes(normalizedSubject)) {
+                setSubject(normalizedSubject);
+            }
+        });
     }, []);
 
     // Fetch tutors from MongoDB API
@@ -101,7 +116,7 @@ export default function TutorsPage() {
 
                 const params = new URLSearchParams();
 
-                if (search.trim()) params.set("subject", search.trim());
+                if (search.trim()) params.set("search", search.trim());
                 if (subject !== "All Subjects") params.set("subject", subject);
                 if (location !== "All Locations") params.set("location", location);
                 if (mode !== "All Modes") params.set("mode", mode);
@@ -208,10 +223,12 @@ export default function TutorsPage() {
                             <Search className="shrink-0 text-slate-400" size={21} />
 
                             <input
+                                id="tutor-search"
                                 type="text"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search tutor, subject or qualification..."
+                                aria-label="Search tutor, subject or qualification"
                                 className="h-12 w-full bg-transparent text-sm outline-none placeholder:text-slate-400"
                             />
 
@@ -230,8 +247,10 @@ export default function TutorsPage() {
                             <MapPin size={19} className="text-emerald-600" />
 
                             <select
+                                id="tutor-location"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
+                                aria-label="Location"
                                 className="h-12 w-full min-w-0 bg-transparent text-sm font-medium outline-none sm:w-40"
                             >
                                 {locations.map((item) => (
@@ -252,11 +271,12 @@ export default function TutorsPage() {
                     {showFilters && (
                         <div className="mt-4 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 sm:grid-cols-2">
                             <div>
-                                <label className="mb-2 block text-sm font-semibold">
+                                <label htmlFor="tutor-subject" className="mb-2 block text-sm font-semibold">
                                     Subject
                                 </label>
 
                                 <select
+                                    id="tutor-subject"
                                     value={subject}
                                     onChange={(e) => setSubject(e.target.value)}
                                     className="h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-emerald-500"
@@ -268,11 +288,12 @@ export default function TutorsPage() {
                             </div>
 
                             <div>
-                                <label className="mb-2 block text-sm font-semibold">
+                                <label htmlFor="tutor-mode" className="mb-2 block text-sm font-semibold">
                                     Teaching Mode
                                 </label>
 
                                 <select
+                                    id="tutor-mode"
                                     value={mode}
                                     onChange={(e) => setMode(e.target.value)}
                                     className="h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-emerald-500"
@@ -306,8 +327,10 @@ export default function TutorsPage() {
                         </span>
 
                         <select
+                            id="tutor-sort"
                             value={sort}
                             onChange={(e) => setSort(e.target.value)}
+                            aria-label="Sort by"
                             className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium outline-none focus:border-emerald-500"
                         >
                             <option value="recommended">Recommended</option>
@@ -366,7 +389,7 @@ export default function TutorsPage() {
 
                 {/* Error */}
                 {!loading && error && (
-                    <div className="rounded-2xl border border-rose-200 bg-rose-50 px-6 py-12 text-center">
+                    <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 px-6 py-12 text-center">
                         <h3 className="text-lg font-bold text-rose-700">
                             Unable to load tutors
                         </h3>
@@ -485,7 +508,7 @@ export default function TutorsPage() {
 
                 {/* Empty State */}
                 {!loading && !error && filteredTutors.length === 0 && (
-                    <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
+                    <div aria-live="polite" className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
                         <Users size={42} className="mx-auto text-slate-300" />
 
                         <h3 className="mt-4 text-lg font-bold">

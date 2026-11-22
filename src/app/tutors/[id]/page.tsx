@@ -14,7 +14,7 @@ import {
     Clock,
     GraduationCap,
     MapPin,
-    MessageCircle,
+    Search,
     Star,
 } from "lucide-react";
 
@@ -126,6 +126,10 @@ export default function TutorProfilePage() {
             ? `${tutor.experience} Years`
             : tutor.experience;
 
+    const portraitUrl =
+        tutor.image?.trim() ||
+        "https://randomuser.me/api/portraits/men/32.jpg";
+
     return (
         <>
         <Navbar />
@@ -144,7 +148,7 @@ export default function TutorProfilePage() {
                         <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
                             <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
                                 <img
-                                    src={tutor.image}
+                                    src={portraitUrl}
                                     alt={tutor.name}
                                     className="h-28 w-28 rounded-3xl object-cover"
                                 />
@@ -159,6 +163,8 @@ export default function TutorProfilePage() {
                                             <BadgeCheck
                                                 size={21}
                                                 className="text-emerald-600"
+                                                role="img"
+                                                aria-label="Verified tutor"
                                             />
                                         )}
                                     </div>
@@ -257,7 +263,7 @@ export default function TutorProfilePage() {
                     <aside>
                         <div className="sticky top-24 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                             <p className="text-sm text-slate-500">
-                                Tutor's hourly rate
+                                Tutor&apos;s hourly rate
                             </p>
 
                             <p className="mt-2 text-3xl font-bold text-slate-900">
@@ -298,13 +304,13 @@ export default function TutorProfilePage() {
                                 Find a Tuition Batch
                             </Link>
 
-                            <button
-                                type="button"
+                            <Link
+                                href={`/tuitions?search=${encodeURIComponent(tutor.subject)}`}
                                 className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-4 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-700"
                             >
-                                <MessageCircle size={18} />
-                                Contact Tutor
-                            </button>
+                                <Search size={18} />
+                                Find {tutor.subject} Tuitions
+                            </Link>
 
                             <p className="mt-4 text-center text-xs leading-5 text-slate-400">
                                 Browse approved batches and apply with your student account.
