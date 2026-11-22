@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Navbar from "@/components/shared/Navbar";
+import DashboardNavbar from "@/components/dashboard/DashboardNavbar";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 
 export const metadata: Metadata = {
@@ -14,7 +14,7 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <Navbar />
+      <DashboardNavbar />
       <DashboardShell>{children}</DashboardShell>
     </>
   );

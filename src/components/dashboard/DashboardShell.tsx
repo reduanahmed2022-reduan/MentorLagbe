@@ -206,23 +206,6 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-bold text-slate-900">{user.name}</p>
-              <p className="text-xs font-semibold capitalize text-indigo-600">{user.role}</p>
-            </div>
-            {user.image ? (
-              <img
-                src={user.image}
-                alt={user.name}
-                className="h-9 w-9 rounded-full object-cover"
-              />
-            ) : (
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700">
-                {user.name.slice(0, 1).toUpperCase()}
-              </span>
-            )}
-          </div>
         </header>
 
         <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">{children}</main>
