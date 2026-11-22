@@ -63,6 +63,7 @@ export interface TuitionApplication {
   studentNote?: string;
   status: ApplicationStatus;
   appliedAt: string;
+  reviewedAt?: string;
 }
 
 export interface Transaction {

@@ -23,8 +23,6 @@ export default function MyTuitionsPage() {
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const load = useCallback(() => {
-    setLoading(true);
-
     apiFetch<{ tuitions: Tuition[] }>("/tuitions/my-tuitions", { auth: true })
       .then((data) => setTuitions(data.tuitions))
       .catch((error) =>

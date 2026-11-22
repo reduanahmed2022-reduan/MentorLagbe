@@ -7,6 +7,12 @@ import StatusBadge from "@/components/dashboard/StatusBadge";
 import { apiFetch } from "@/lib/api";
 import type { TuitionApplication } from "@/lib/types";
 
+function reviewedAtSuffix(value?: string) {
+  if (!value) return "";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" : ` ${date.toLocaleDateString()}`;
+}
+
 export default function ApplicantsPage() {
   const [applicants, setApplicants] = useState<TuitionApplication[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,7 +105,7 @@ export default function ApplicantsPage() {
                   </div>
                 ) : (
                   <p className="text-xs font-semibold capitalize text-slate-500">
-                    Reviewed · {item.status}
+                    Reviewed{reviewedAtSuffix(item.reviewedAt)} · {item.status}
                   </p>
                 )}
               </div>

@@ -8,6 +8,12 @@ import StatusBadge from "@/components/dashboard/StatusBadge";
 import { apiFetch } from "@/lib/api";
 import type { TuitionApplication } from "@/lib/types";
 
+function reviewedAtSuffix(value?: string) {
+  if (!value) return "";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" : ` ${date.toLocaleDateString()}`;
+}
+
 export default function MyApplicationsPage() {
   const [applications, setApplications] = useState<TuitionApplication[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,6 +92,12 @@ export default function MyApplicationsPage() {
               {item.studentNote && (
                 <p className="mt-4 rounded-xl bg-slate-50 p-3 text-xs text-slate-600">
                   “{item.studentNote}”
+                </p>
+              )}
+
+              {item.reviewedAt && (
+                <p className="mt-4 text-xs font-semibold capitalize text-slate-500">
+                  Reviewed{reviewedAtSuffix(item.reviewedAt)} · {item.status}
                 </p>
               )}
 
