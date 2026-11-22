@@ -5,6 +5,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Navbar from "@/components/shared/Navbar";
 import { apiFetch } from "@/lib/api";
 import { dashboardPathFor, saveSession } from "@/lib/auth";
 import type { AuthUser } from "@/lib/types";
@@ -20,12 +21,15 @@ export default function RegisterPage() {
     const [role, setRole] = useState("student");
 
     // "Become a Tutor" from the home page preselects the tutor role.
+    // Deferred so the server-rendered markup and first client render match.
     useEffect(() => {
-        const preset = new URLSearchParams(window.location.search).get("role");
+        Promise.resolve().then(() => {
+            const preset = new URLSearchParams(window.location.search).get("role");
 
-        if (preset === "tutor" || preset === "student") {
-            setRole(preset);
-        }
+            if (preset === "tutor" || preset === "student") {
+                setRole(preset);
+            }
+        });
     }, []);
 
     const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
@@ -100,7 +104,9 @@ export default function RegisterPage() {
     };
 
     return (
-        <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="flex min-h-screen flex-col bg-slate-50">
+            <Navbar />
+            <main className="flex flex-1 items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
             <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl overflow-hidden rounded-3xl bg-white shadow-xl shadow-slate-200/60 lg:grid-cols-2">
 
                 {/* Left Branding Section */}
@@ -151,7 +157,7 @@ export default function RegisterPage() {
                         </div>
                     </div>
 
-                    <p className="relative z-10 text-sm text-blue-200">
+                    <p className="relative z-10 text-sm text-blue-200" suppressHydrationWarning>
                         © {new Date().getFullYear()} MentorLagbe. All rights reserved.
                     </p>
                 </section>
@@ -345,14 +351,14 @@ export default function RegisterPage() {
 
                             {/* Error Message */}
                             {error && (
-                                <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+                                <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
                                     {error}
                                 </div>
                             )}
 
                             {/* Success Message */}
                             {success && (
-                                <div className="rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+                                <div aria-live="polite" className="rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-700">
                                     {success}
                                     <Link
                                         href="/sign-in"
@@ -395,6 +401,7 @@ export default function RegisterPage() {
                     </div>
                 </section>
             </div>
-        </main>
+            </main>
+        </div>
     );
 }
