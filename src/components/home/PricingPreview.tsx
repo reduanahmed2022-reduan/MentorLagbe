@@ -5,7 +5,7 @@ import { PRO_PRICES } from "@/lib/constants";
 const plans = [
   {
     title: "Free Tutor",
-    price: "৳0",
+    price: "$0",
     role: "tutor",
     highlight: false,
     features: ["Post up to 2 tuitions", "Manage applications", "Basic profile"],

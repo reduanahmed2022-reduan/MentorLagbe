@@ -3,8 +3,8 @@ import Link from "next/link";
 const subjects = [
   { name: "Mathematics", icon: "📐", subject: "Mathematics" },
   { name: "Physics", icon: "⚛️", subject: "Physics" },
-  { name: "Programming", icon: "💻", subject: "ICT" },
-  { name: "IELTS", icon: "🌍", subject: "English" },
+  { name: "Programming", icon: "💻", subject: "Programming" },
+  { name: "IELTS", icon: "🌍", subject: "IELTS" },
 ];
 
 const testimonials = [
@@ -70,19 +70,27 @@ export default function Highlights() {
 
         <div>
           <span className="text-xs font-bold uppercase tracking-widest text-[#0f9f6e]">
-            TESTIMONIALS
+            LEARNER STORIES
           </span>
           <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-[#111827] sm:text-3xl">
-            Loved by learners
+            What learning with us can look like
           </h2>
+          <p className="mt-2 text-xs text-slate-400">
+            Illustrative examples — not verified customer feedback.
+          </p>
           <div className="mt-8 space-y-4">
             {testimonials.map((item) => (
               <blockquote
                 key={item.name}
                 className="rounded-2xl border border-slate-200 bg-white p-6"
               >
-                <div className="mb-2 text-amber-400" role="img" aria-label="5 out of 5 stars">
-                  <span aria-hidden="true">★★★★★</span>
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="text-amber-400" role="img" aria-label="5 out of 5 stars">
+                    ★★★★★
+                  </span>
+                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+                    Sample
+                  </span>
                 </div>
                 <p className="text-sm leading-7 text-slate-600">“{item.quote}”</p>
                 <footer className="mt-4 text-xs font-bold text-slate-800">

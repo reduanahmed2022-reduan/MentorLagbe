@@ -15,7 +15,7 @@ import { PRO_PRICES } from "@/lib/constants";
 const tiers = [
   {
     name: "Free Student",
-    price: "৳0",
+    price: "$0",
     plan: "free",
     role: "student",
     features: ["Browse all approved tuitions", "Apply to 5 tuitions", "Track application status"],
@@ -30,7 +30,7 @@ const tiers = [
   },
   {
     name: "Free Tutor",
-    price: "৳0",
+    price: "$0",
     plan: "free",
     role: "tutor",
     features: ["Post up to 2 tuitions", "Manage applicants", "Basic tutor profile"],

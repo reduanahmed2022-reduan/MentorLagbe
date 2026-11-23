@@ -47,6 +47,5 @@ export const BRAND = {
   name: "MentorLagbe",
   tagline: "Smart tuition & mentorship, made personal.",
   email: "hello@mentorlagbe.com",
-  phone: "+880 1711-000000",
   location: "Dhaka, Bangladesh",
 };

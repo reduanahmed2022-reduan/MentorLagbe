@@ -6,20 +6,6 @@ import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api";
 import type { Tutor } from "@/lib/types";
 
-/** Stable portraits so cards always show a photo, even when the seeded image is empty. */
-const FALLBACK_PHOTOS = [
-  "https://randomuser.me/api/portraits/men/32.jpg",
-  "https://randomuser.me/api/portraits/women/44.jpg",
-  "https://randomuser.me/api/portraits/men/75.jpg",
-  "https://randomuser.me/api/portraits/women/68.jpg",
-  "https://randomuser.me/api/portraits/men/22.jpg",
-  "https://randomuser.me/api/portraits/women/17.jpg",
-];
-
-function getPhoto(tutor: Tutor, index: number) {
-  return tutor.image?.trim() || FALLBACK_PHOTOS[index % FALLBACK_PHOTOS.length];
-}
-
 function getExperience(tutor: Tutor) {
   return typeof tutor.experience === "number"
     ? `${tutor.experience}+ years`
@@ -91,18 +77,22 @@ export default function FeaturedTutors() {
           </div>
         ) : tutors.length ? (
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {tutors.map((tutor, index) => (
+            {tutors.map((tutor) => (
               <article
                 key={tutor.id}
                 className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="flex items-center gap-4">
-                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-full border-4 border-emerald-50 bg-emerald-100">
-                    <img
-                      src={getPhoto(tutor, index)}
-                      alt={tutor.name}
-                      className="h-full w-full object-cover"
-                    />
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-emerald-50 bg-emerald-100 text-xl font-bold text-[#0f9f6e]">
+                    {tutor.image?.trim() ? (
+                      <img
+                        src={tutor.image}
+                        alt={tutor.name}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      tutor.name.charAt(0)
+                    )}
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">

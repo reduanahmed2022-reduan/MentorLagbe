@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import FeaturedTutors from "@/components/home/FeaturedTutors";
@@ -11,6 +11,8 @@ import Highlights from "@/components/home/Highlights";
 import PricingPreview from "@/components/home/PricingPreview";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
+import { apiFetch } from "@/lib/api";
+import type { Tutor } from "@/lib/types";
 
 // Only subjects that actually have tutor/tuition listing pages.
 const categories = [
@@ -39,6 +41,18 @@ export default function HomePage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
+  const [featuredTutor, setFeaturedTutor] = useState<Tutor | null>(null);
+
+  // Use a real tutor from the API in the hero card instead of a fabricated name.
+  useEffect(() => {
+    const controller = new AbortController();
+
+    apiFetch<{ tutors: Tutor[] }>("/tutors?limit=1", { signal: controller.signal })
+      .then((data) => setFeaturedTutor(data.tutors?.[0] ?? null))
+      .catch(() => setFeaturedTutor(null));
+
+    return () => controller.abort();
+  }, []);
 
   const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -86,8 +100,8 @@ export default function HomePage() {
             </h1>
 
             <p className="max-w-lg text-base leading-8 text-gray-600 sm:text-lg">
-              Music, coding and language platform that connects students with
-              experienced tutors. Learn new skills and achieve your goals.
+              Find verified tutors for Math, Science, Programming and IELTS —
+              online or at home, on a schedule that works for you.
             </p>
 
             {/* Search Form */}
@@ -175,36 +189,40 @@ export default function HomePage() {
 
               <div className="absolute h-64 w-64 rounded-full bg-emerald-200/60 blur-3xl sm:h-80 sm:w-80" />
 
-              {/* Floating Tutor Card */}
+              {/* Floating Tutor Card — uses a real tutor from the API */}
 
-              <div className="absolute right-0 top-2 z-20 flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-xl sm:right-2">
+              {featuredTutor && (
+                <div className="absolute right-0 top-2 z-20 flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-xl sm:right-2">
+                  {featuredTutor.image?.trim() ? (
+                    <img
+                      src={featuredTutor.image}
+                      alt={featuredTutor.name}
+                      className="h-10 w-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-[#0f9f6e]">
+                      {featuredTutor.name.charAt(0)}
+                    </span>
+                  )}
 
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop"
-                  alt="Tutor Sarah Jenkins"
-                  className="h-10 w-10 rounded-full object-cover"
-                />
-
-                <div>
-                  <h4 className="text-xs font-bold text-gray-800">
-                    Sarah Jenkins
-                  </h4>
-                  <p className="text-[10px] text-gray-500">
-                    English Expert
-                  </p>
+                  <div>
+                    <h4 className="text-xs font-bold text-gray-800">
+                      {featuredTutor.name}
+                    </h4>
+                    <p className="text-[10px] text-gray-500">
+                      {featuredTutor.subject} Tutor
+                    </p>
+                  </div>
                 </div>
-
-                <span className="text-sm text-amber-400">★</span>
-
-              </div>
+              )}
 
               {/* Main Tutor Image */}
 
               <div className="relative z-10 h-56 w-56 overflow-hidden rounded-full border-[8px] border-white bg-emerald-100 shadow-2xl sm:h-72 sm:w-72">
 
                 <img
-                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face"
-                  alt="Professional tutor"
+                  src="/hero-mentor.svg"
+                  alt="Mentor teaching an online lesson"
                   className="h-full w-full object-cover"
                 />
 

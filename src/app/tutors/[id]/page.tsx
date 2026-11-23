@@ -126,10 +126,6 @@ export default function TutorProfilePage() {
             ? `${tutor.experience} Years`
             : tutor.experience;
 
-    const portraitUrl =
-        tutor.image?.trim() ||
-        "https://randomuser.me/api/portraits/men/32.jpg";
-
     return (
         <>
         <Navbar />
@@ -147,11 +143,17 @@ export default function TutorProfilePage() {
                     <div className="space-y-8">
                         <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
                             <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-                                <img
-                                    src={portraitUrl}
-                                    alt={tutor.name}
-                                    className="h-28 w-28 rounded-3xl object-cover"
-                                />
+                                {tutor.image?.trim() ? (
+                                    <img
+                                        src={tutor.image}
+                                        alt={tutor.name}
+                                        className="h-28 w-28 rounded-3xl object-cover"
+                                    />
+                                ) : (
+                                    <div className="flex h-28 w-28 items-center justify-center rounded-3xl bg-emerald-100 text-3xl font-bold text-[#0f9f6e]">
+                                        {tutor.name.charAt(0)}
+                                    </div>
+                                )}
 
                                 <div className="flex-1">
                                     <div className="flex flex-wrap items-center gap-2">

@@ -11,7 +11,6 @@ export default function Logo({ light = false }: { light?: boolean }) {
         >
           <path d="M12 3L1 9l11 6 9-4.917V15h2V9L12 3zM5 13.188V17c0 2.21 3.134 4 7 4s7-1.79 7-4v-3.812L12 16.5 5 13.188z" />
         </svg>
-        <span className="mt-1 text-xl font-black tracking-tighter">M</span>
       </span>
       <span
         className={`text-lg font-extrabold tracking-tight sm:text-xl ${
