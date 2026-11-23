@@ -15,9 +15,10 @@ The Next.js frontend for **MentorLagbe**, a Bangladesh-based tuition and mentors
 
 ## Live URL
 
-`https://<your-vercel-app>.vercel.app`
+`https://mentorlagbe-client-weld.vercel.app`
 
-> Replace the placeholder above with your deployed Vercel URL.
+> Production deployment on Vercel (auto-deploys from the `main` branch).
+> API: `https://mentorlagbe-server-q3fr.onrender.com/api` (Render).
 
 ## Tech Stack
 
@@ -172,7 +173,7 @@ client/
 
 1. Deploy the API server first and note its base URL.
 2. In the Vercel project, set `NEXT_PUBLIC_API_URL` to the **deployed API URL including `/api`** (for example, `https://<your-api-host>/api`). This value is embedded in the client bundle at build time, so redeploy after changing it.
-3. On the server, set `CLIENT_URL` to this client's exact origin (for example, `https://<your-vercel-app>.vercel.app`) so CORS allows browser requests to the API. A mismatched origin will cause blocked requests.
+3. On the server, set `CLIENT_URL` to this client's exact origin (for example, `https://mentorlagbe-client-weld.vercel.app`) so CORS allows browser requests to the API. A mismatched origin will cause blocked requests.
 4. Run `npm run build` locally or let Vercel build the project; BetterAuth needs no separate client environment variables (its endpoint is derived from `NEXT_PUBLIC_API_URL` as `<NEXT_PUBLIC_API_URL>/better-auth`), so no other client variables are required.
 
 ## License
