@@ -222,7 +222,7 @@ export default function HomePage() {
 
                 <img
                   src="/hero-mentor.svg"
-                  alt="Mentor teaching an online lesson"
+                  alt="Young male mentor teaching an online lesson"
                   className="h-full w-full object-cover"
                 />
 
