@@ -47,15 +47,20 @@ export default function HomePage() {
   useEffect(() => {
     const controller = new AbortController();
 
-    apiFetch<{ tutors: Tutor[] }>("/tutors?limit=5", { signal: controller.signal })
+    apiFetch<{ tutors: Tutor[] }>("/tutors?limit=50", { signal: controller.signal })
       .then((data) => setHeroTutors(data.tutors ?? []))
       .catch(() => setHeroTutors([]));
 
     return () => controller.abort();
   }, []);
 
-  const floatingTutor = heroTutors[0] ?? null;
-  const circleTutor = heroTutors[1] ?? heroTutors[0] ?? null;
+  // Ahmed Rahman is the featured mentor in both the circle and the floating card.
+  const featuredTutor =
+    heroTutors.find(
+      (tutor) => tutor.name.trim().toLowerCase() === "ahmed rahman"
+    ) ?? heroTutors[0] ?? null;
+  const floatingTutor = featuredTutor;
+  const circleTutor = featuredTutor;
 
   const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
