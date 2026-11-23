@@ -12,13 +12,14 @@ import PricingPreview from "@/components/home/PricingPreview";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 
+// Only subjects that actually have tutor/tuition listing pages.
 const categories = [
-  { name: "Language", icon: "🌐", bg: "bg-amber-600", subject: "English" },
-  { name: "Coding", icon: "💻", bg: "bg-orange-500", subject: "ICT" },
-  { name: "Drum", icon: "🥁", bg: "bg-emerald-600" },
-  { name: "Horns", icon: "🎺", bg: "bg-blue-600" },
-  { name: "Piano", icon: "🎹", bg: "bg-indigo-600" },
-  { name: "Voice", icon: "🎤", bg: "bg-purple-600" },
+  { name: "Mathematics", icon: "🧮", bg: "bg-blue-600", subject: "Mathematics" },
+  { name: "Physics", icon: "⚛️", bg: "bg-indigo-600", subject: "Physics" },
+  { name: "Chemistry", icon: "🧪", bg: "bg-emerald-600", subject: "Chemistry" },
+  { name: "Biology", icon: "🧬", bg: "bg-green-600", subject: "Biology" },
+  { name: "English", icon: "🌐", bg: "bg-amber-600", subject: "English" },
+  { name: "ICT", icon: "💻", bg: "bg-orange-500", subject: "ICT" },
   { name: "Others", icon: "📚", bg: "bg-fuchsia-600" },
 ];
 
@@ -273,9 +274,9 @@ export default function HomePage() {
           </div>
 
           <p className="mt-10 text-xs font-semibold text-gray-500">
-            Discover tutors across{" "}
+            Discover verified tutors across{" "}
             <span className="font-bold text-[#0f9f6e]">
-              49+ Languages
+              all core subjects
             </span>
           </p>
 

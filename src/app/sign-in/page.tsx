@@ -5,7 +5,6 @@ import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import Navbar from "@/components/shared/Navbar";
 import GoogleButton from "@/components/auth/GoogleButton";
 import { apiFetch } from "@/lib/api";
 import { dashboardPathFor, saveSession } from "@/lib/auth";
@@ -66,18 +65,17 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen flex-col bg-[#f5f7ff]">
-            <Navbar />
-            <main className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-8 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-[#f5f7ff]">
+            <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
 
             {/* Background Decorations */}
             <div className="absolute -left-32 -top-32 h-80 w-80 rounded-full bg-blue-200/40 blur-3xl" />
             <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-indigo-200/40 blur-3xl" />
 
-            <div className="relative grid w-full max-w-6xl overflow-hidden rounded-[28px] bg-white shadow-[0_25px_80px_-25px_rgba(30,64,175,0.18)] lg:grid-cols-2">
+            <div className="relative grid w-full max-w-5xl overflow-hidden rounded-[28px] bg-white shadow-[0_25px_80px_-25px_rgba(30,64,175,0.18)] lg:grid-cols-2">
 
                 {/* Left Side - Branding */}
-                <section className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-blue-700 via-indigo-700 to-violet-800 p-10 text-white lg:flex xl:p-14">
+                <section className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-blue-700 via-indigo-700 to-violet-800 p-8 text-white lg:flex xl:p-10">
 
                     <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full border border-white/10" />
                     <div className="absolute -right-12 -top-12 h-52 w-52 rounded-full border border-white/10" />
@@ -94,25 +92,25 @@ export default function LoginPage() {
                         </Link>
                     </div>
 
-                    <div className="relative z-10 my-12">
-                        <span className="mb-6 inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-blue-100">
+                    <div className="relative z-10 my-8">
+                        <span className="mb-4 inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-blue-100">
                             Your Learning Journey Starts Here
                         </span>
 
-                        <h2 className="max-w-md text-4xl font-bold leading-tight xl:text-5xl">
+                        <h2 className="max-w-md text-3xl font-bold leading-tight xl:text-4xl">
                             Find the right mentor.
                             <span className="mt-2 block text-blue-200">
                                 Unlock your potential.
                             </span>
                         </h2>
 
-                        <p className="mt-6 max-w-md text-base leading-8 text-blue-100/90">
+                        <p className="mt-4 max-w-md text-sm leading-7 text-blue-100/90">
                             Connect with experienced tutors, discover new
                             opportunities, and make learning easier with
                             MentorLagbe.
                         </p>
 
-                        <div className="mt-10 flex items-center gap-4">
+                        <div className="mt-7 flex items-center gap-4">
                             <div className="flex -space-x-3">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-indigo-700 bg-amber-300 font-bold text-indigo-900">
                                     S
@@ -140,12 +138,12 @@ export default function LoginPage() {
                 </section>
 
                 {/* Right Side - Sign In Form */}
-                <section className="flex items-center justify-center px-6 py-10 sm:px-10 lg:px-12 xl:px-16">
+                <section className="flex items-center justify-center px-6 py-8 sm:px-8 lg:px-10">
 
                     <div className="w-full max-w-md">
 
                         {/* Mobile Logo */}
-                        <Link href="/" className="mb-9 flex items-center justify-center gap-2 lg:hidden">
+                        <Link href="/" className="mb-5 flex items-center justify-center gap-2 lg:hidden">
                             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-lg font-bold text-white">
                                 M
                             </div>
@@ -154,8 +152,8 @@ export default function LoginPage() {
                             </span>
                         </Link>
 
-                        <div className="mb-8">
-                            <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+                        <div className="mb-5">
+                            <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
                                 <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
                                     <path d="M15 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" strokeLinecap="round" />
                                     <circle cx="9" cy="7" r="4" />
@@ -163,11 +161,11 @@ export default function LoginPage() {
                                 </svg>
                             </div>
 
-                            <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                                 Welcome back!
                             </h1>
 
-                            <p className="mt-3 text-sm leading-6 text-slate-500 sm:text-base">
+                            <p className="mt-2 text-sm leading-6 text-slate-500">
                                 Sign in to continue your learning journey with MentorLagbe.
                             </p>
                         </div>
@@ -176,7 +174,7 @@ export default function LoginPage() {
                         <GoogleButton role="student" />
 
                         {/* Divider */}
-                        <div className="my-7 flex items-center gap-4">
+                        <div className="my-5 flex items-center gap-4">
                             <div className="h-px flex-1 bg-slate-200" />
                             <span className="text-xs font-medium uppercase tracking-wider text-slate-400">
                                 Or continue with email
@@ -185,11 +183,11 @@ export default function LoginPage() {
                         </div>
 
                         {/* Login Form */}
-                        <form onSubmit={handleLogin} className="space-y-5">
+                        <form onSubmit={handleLogin} className="space-y-3">
 
                             {/* Email */}
                             <div>
-                                <label htmlFor="email" className="mb-2 block text-sm font-semibold text-slate-700">
+                                <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-slate-700">
                                     Email Address
                                 </label>
 
@@ -207,7 +205,7 @@ export default function LoginPage() {
                                         autoComplete="email"
                                         aria-invalid={Boolean(error)}
                                         aria-describedby={error ? "form-error" : undefined}
-                                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3.5 pl-12 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3 pl-12 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
                                         required
                                     />
                                 </div>
@@ -239,7 +237,7 @@ export default function LoginPage() {
                                         autoComplete="current-password"
                                         aria-invalid={Boolean(error)}
                                         aria-describedby={error ? "form-error" : undefined}
-                                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3.5 pl-12 pr-12 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3 pl-12 pr-12 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
                                         required
                                     />
 
@@ -293,7 +291,7 @@ export default function LoginPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 {loading ? "Signing In..." : "Sign In"}
 
@@ -306,7 +304,7 @@ export default function LoginPage() {
                         </form>
 
                         {/* Register Link */}
-                        <p className="mt-8 text-center text-sm text-slate-500">
+                        <p className="mt-5 text-center text-sm text-slate-500">
                             Don&apos;t have an account?{" "}
                             <Link
                                 href="/sign-up"
@@ -316,7 +314,7 @@ export default function LoginPage() {
                             </Link>
                         </p>
 
-                        <p className="mt-8 text-center text-xs text-slate-400 lg:hidden">
+                        <p className="mt-5 text-center text-xs text-slate-400 lg:hidden">
                             © 2026 MentorLagbe. All rights reserved.
                         </p>
 

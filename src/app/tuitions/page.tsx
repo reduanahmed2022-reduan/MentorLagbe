@@ -144,7 +144,13 @@ export default function TuitionsPage() {
                     totalPages: data.totalPages || 1,
                 });
             } catch (err) {
-                if (err instanceof Error && err.name === "AbortError") return;
+                // StrictMode aborts the first request on mount. Chromium can
+                // surface that either as AbortError or as a plain
+                // "Failed to fetch" TypeError, so trust the signal itself.
+                if (
+                    controller.signal.aborted ||
+                    (err as { name?: string })?.name === "AbortError"
+                ) return;
 
                 setError(
                     err instanceof Error

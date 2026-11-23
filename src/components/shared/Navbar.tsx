@@ -62,10 +62,6 @@ export default function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <span className="rounded-full bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700">
-            English · BDT
-          </span>
-
           {!isAuthenticated ? (
             <>
               <Link

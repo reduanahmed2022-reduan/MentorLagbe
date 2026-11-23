@@ -5,7 +5,6 @@ import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import Navbar from "@/components/shared/Navbar";
 import GoogleButton from "@/components/auth/GoogleButton";
 import { apiFetch } from "@/lib/api";
 import { dashboardPathFor, saveSession } from "@/lib/auth";
@@ -105,13 +104,12 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="flex min-h-screen flex-col bg-slate-50">
-            <Navbar />
-            <main className="flex flex-1 items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
-            <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl overflow-hidden rounded-3xl bg-white shadow-xl shadow-slate-200/60 lg:grid-cols-2">
+        <div className="min-h-screen bg-[#f5f7ff]">
+            <main className="flex min-h-screen items-center justify-center px-4 py-6 sm:px-6 lg:px-8">
+            <div className="mx-auto grid w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-xl shadow-slate-200/60 lg:grid-cols-2">
 
                 {/* Left Branding Section */}
-                <section className="relative hidden overflow-hidden bg-gradient-to-br from-blue-700 via-indigo-700 to-violet-800 p-12 text-white lg:flex lg:flex-col lg:justify-between">
+                <section className="relative hidden overflow-hidden bg-gradient-to-br from-blue-700 via-indigo-700 to-violet-800 p-8 text-white lg:flex lg:flex-col lg:justify-between">
                     <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
                     <div className="absolute -bottom-28 -left-20 h-80 w-80 rounded-full bg-indigo-400/20 blur-3xl" />
 
@@ -127,20 +125,20 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="relative z-10 max-w-md">
-                        <span className="mb-5 inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium">
+                        <span className="mb-3 inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium">
                             Learn. Grow. Achieve.
                         </span>
 
-                        <h1 className="text-4xl font-extrabold leading-tight xl:text-5xl">
+                        <h1 className="text-3xl font-extrabold leading-tight xl:text-4xl">
                             Your Learning Journey Starts Here.
                         </h1>
 
-                        <p className="mt-6 text-base leading-8 text-blue-100">
+                        <p className="mt-4 text-sm leading-7 text-blue-100">
                             Connect with experienced tutors, discover the right learning
                             opportunities, and take the next step toward your goals.
                         </p>
 
-                        <div className="mt-10 space-y-5">
+                        <div className="mt-7 space-y-3">
                             {[
                                 "Find qualified and experienced tutors",
                                 "Book personalized learning sessions",
@@ -164,13 +162,13 @@ export default function RegisterPage() {
                 </section>
 
                 {/* Right Register Form */}
-                <section className="flex items-center justify-center px-5 py-10 sm:px-10 lg:px-12">
+                <section className="flex items-center justify-center px-6 py-8 sm:px-8 lg:px-10">
                     <div className="w-full max-w-md">
 
                         {/* Mobile Logo */}
                         <Link
                             href="/"
-                            className="mb-8 inline-flex items-center gap-2 lg:hidden"
+                            className="mb-5 inline-flex items-center gap-2 lg:hidden"
                         >
                             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-lg font-black text-white">
                                 M
@@ -180,27 +178,27 @@ export default function RegisterPage() {
                             </span>
                         </Link>
 
-                        <div className="mb-8">
-                            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-indigo-600">
+                        <div className="mb-5">
+                            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-indigo-600">
                                 Get Started Today
                             </p>
 
-                            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+                            <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
                                 Create Account
                             </h2>
 
-                            <p className="mt-3 text-sm leading-6 text-slate-500">
+                            <p className="mt-2 text-sm leading-6 text-slate-500">
                                 Join MentorLagbe and start your learning journey.
                             </p>
                         </div>
 
-                        <form onSubmit={handleRegister} className="space-y-4">
+                        <form onSubmit={handleRegister} className="space-y-3">
 
                             {/* Full Name */}
                             <div>
                                 <label
                                     htmlFor="name"
-                                    className="mb-2 block text-sm font-semibold text-slate-700"
+                                    className="mb-1.5 block text-sm font-semibold text-slate-700"
                                 >
                                     Full Name
                                 </label>
@@ -214,7 +212,7 @@ export default function RegisterPage() {
                                     aria-invalid={Boolean(error)}
                                     aria-describedby={error ? "form-error" : undefined}
                                     required
-                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
                                 />
                             </div>
 
@@ -222,7 +220,7 @@ export default function RegisterPage() {
                             <div>
                                 <label
                                     htmlFor="role"
-                                    className="mb-2 block text-sm font-semibold text-slate-700"
+                                    className="mb-1.5 block text-sm font-semibold text-slate-700"
                                 >
                                     I want to join as
                                 </label>
@@ -231,7 +229,7 @@ export default function RegisterPage() {
                                     id="role"
                                     value={role}
                                     onChange={(e) => setRole(e.target.value)}
-                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
                                 >
                                     <option value="student">Student</option>
                                     <option value="tutor">Tutor</option>
@@ -242,7 +240,7 @@ export default function RegisterPage() {
                             <div>
                                 <label
                                     htmlFor="email"
-                                    className="mb-2 block text-sm font-semibold text-slate-700"
+                                    className="mb-1.5 block text-sm font-semibold text-slate-700"
                                 >
                                     Email Address
                                 </label>
@@ -256,7 +254,7 @@ export default function RegisterPage() {
                                     aria-invalid={Boolean(error)}
                                     aria-describedby={error ? "form-error" : undefined}
                                     required
-                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
                                 />
                             </div>
 
@@ -264,7 +262,7 @@ export default function RegisterPage() {
                             <div>
                                 <label
                                     htmlFor="password"
-                                    className="mb-2 block text-sm font-semibold text-slate-700"
+                                    className="mb-1.5 block text-sm font-semibold text-slate-700"
                                 >
                                     Password
                                 </label>
@@ -280,7 +278,7 @@ export default function RegisterPage() {
                                         aria-describedby={error ? "form-error" : undefined}
                                         required
                                         minLength={8}
-                                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 pr-16 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 pr-16 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
                                     />
 
                                     <button
@@ -298,7 +296,7 @@ export default function RegisterPage() {
                             <div>
                                 <label
                                     htmlFor="confirmPassword"
-                                    className="mb-2 block text-sm font-semibold text-slate-700"
+                                    className="mb-1.5 block text-sm font-semibold text-slate-700"
                                 >
                                     Confirm Password
                                 </label>
@@ -313,7 +311,7 @@ export default function RegisterPage() {
                                         aria-invalid={Boolean(error)}
                                         aria-describedby={error ? "form-error" : undefined}
                                         required
-                                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 pr-16 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 pr-16 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10"
                                     />
 
                                     <button
@@ -384,7 +382,7 @@ export default function RegisterPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:from-blue-700 hover:to-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:from-blue-700 hover:to-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 {loading ? "Creating Account..." : "Create Account"}
                                 {!loading && (
@@ -396,8 +394,8 @@ export default function RegisterPage() {
                         </form>
 
                         {/* Google Sign Up */}
-                        <div className="mt-6">
-                            <div className="my-6 flex items-center gap-4">
+                        <div className="mt-5">
+                            <div className="my-4 flex items-center gap-4">
                                 <div className="h-px flex-1 bg-slate-200" />
                                 <span className="text-xs font-medium uppercase tracking-wider text-slate-400">
                                     Or sign up with
@@ -409,7 +407,7 @@ export default function RegisterPage() {
                         </div>
 
                         {/* Sign In Link */}
-                        <p className="mt-7 text-center text-sm text-slate-500">
+                        <p className="mt-5 text-center text-sm text-slate-500">
                             Already have an account?{" "}
                             <Link
                                 href="/sign-in"
@@ -419,7 +417,7 @@ export default function RegisterPage() {
                             </Link>
                         </p>
 
-                        <p className="mt-8 text-center text-xs text-slate-400">
+                        <p className="mt-5 text-center text-xs text-slate-400">
                             Secure registration powered by MentorLagbe.
                         </p>
                     </div>
