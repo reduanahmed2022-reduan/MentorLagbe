@@ -177,7 +177,7 @@ export default function TuitionForm({
         </div>
 
         <div>
-          <label htmlFor="tuition-monthly-fee" className={labelClass}>Monthly fee (৳) *</label>
+          <label htmlFor="tuition-monthly-fee" className={labelClass}>Monthly fee ($) *</label>
           <input
             id="tuition-monthly-fee"
             required

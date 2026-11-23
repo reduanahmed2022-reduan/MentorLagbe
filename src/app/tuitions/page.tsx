@@ -352,7 +352,7 @@ export default function TuitionsPage() {
 
                             <div>
                                 <label htmlFor="tuition-min-fee" className="mb-2 block text-sm font-semibold">
-                                    Minimum Monthly Fee (৳)
+                                    Minimum Monthly Fee ($)
                                 </label>
                                 <input
                                     id="tuition-min-fee"
@@ -367,7 +367,7 @@ export default function TuitionsPage() {
 
                             <div>
                                 <label htmlFor="tuition-max-fee" className="mb-2 block text-sm font-semibold">
-                                    Maximum Monthly Fee (৳)
+                                    Maximum Monthly Fee ($)
                                 </label>
                                 <input
                                     id="tuition-max-fee"
@@ -538,7 +538,7 @@ export default function TuitionsPage() {
                                                 Monthly Fee
                                             </p>
                                             <p className="mt-1 text-xl font-bold text-slate-900">
-                                                ৳{Number(tuition.monthlyFee).toLocaleString("en-BD")}
+                                                ${Number(tuition.monthlyFee).toLocaleString("en-US")}
                                             </p>
                                         </div>
 

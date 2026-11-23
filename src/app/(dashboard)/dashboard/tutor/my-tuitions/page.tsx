@@ -114,7 +114,7 @@ export default function MyTuitionsPage() {
               </div>
 
               <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-500">
-                <span><span className="font-semibold text-slate-700">Fee:</span> ৳{Number(tuition.monthlyFee).toLocaleString("en-BD")}/mo</span>
+                <span><span className="font-semibold text-slate-700">Fee:</span> ${Number(tuition.monthlyFee).toLocaleString("en-US")}/mo</span>
                 <span><span className="font-semibold text-slate-700">Days/week:</span> {tuition.daysPerWeek}</span>
                 <span><span className="font-semibold text-slate-700">Location:</span> {tuition.location}</span>
               </div>

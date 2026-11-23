@@ -132,7 +132,7 @@ export default function FeaturedTutors() {
                   <div>
                     <p className="text-xs text-slate-400">Starting from</p>
                     <p className="mt-1 text-xl font-bold text-slate-900">
-                      ৳{tutor.hourlyRate}
+                      ${tutor.hourlyRate}
                       <span className="text-xs font-normal text-slate-500">
                         /hour
                       </span>

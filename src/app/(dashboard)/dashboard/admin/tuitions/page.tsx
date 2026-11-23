@@ -102,7 +102,7 @@ export default function AdminTuitionsPage() {
 
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
                 <p className="text-xs text-slate-500">
-                  ৳{Number(tuition.monthlyFee).toLocaleString("en-BD")}/mo · {tuition.daysPerWeek} days/week
+                  ${Number(tuition.monthlyFee).toLocaleString("en-US")}/mo · {tuition.daysPerWeek} days/week
                 </p>
                 {tuition.approvalStatus === "pending" ? (
                   <div className="flex gap-2">

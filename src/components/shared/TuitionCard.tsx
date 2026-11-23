@@ -57,7 +57,7 @@ export default function TuitionCard({ tuition }: { tuition: Tuition }) {
         <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4">
           <span className="flex items-center gap-1 text-sm font-extrabold text-slate-900">
             <Wallet className="h-4 w-4 text-[#0f9f6e]" />
-            ৳{Number(tuition.monthlyFee).toLocaleString("en-BD")}
+            ${Number(tuition.monthlyFee).toLocaleString("en-US")}
             <span className="text-xs font-medium text-slate-400">/mo</span>
           </span>
           <Link

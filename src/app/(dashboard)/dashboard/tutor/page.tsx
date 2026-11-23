@@ -105,7 +105,7 @@ export default function TutorOverviewPage() {
                   <tr key={item._id} className="text-slate-600">
                     <td className="py-4 font-semibold text-slate-800">{item.title}</td>
                     <td className="py-4">{item.subject}</td>
-                    <td className="py-4">৳{Number(item.monthlyFee).toLocaleString("en-BD")}</td>
+                    <td className="py-4">${Number(item.monthlyFee).toLocaleString("en-US")}</td>
                     <td className="py-4">
                       <StatusBadge status={item.isActive ? "active" : item.approvalStatus || "pending"} />
                     </td>

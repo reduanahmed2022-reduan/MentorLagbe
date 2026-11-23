@@ -269,7 +269,7 @@ export default function TutorProfilePage() {
                             </p>
 
                             <p className="mt-2 text-3xl font-bold text-slate-900">
-                                ৳{tutor.hourlyRate}
+                                ${tutor.hourlyRate}
                                 <span className="text-sm font-normal text-slate-500">
                                     / hour
                                 </span>

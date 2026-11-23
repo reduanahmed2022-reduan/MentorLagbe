@@ -233,7 +233,7 @@ export default function TuitionDetailsPage() {
 
                             <div className="mt-2 flex items-baseline gap-1">
                                 <span className="text-3xl font-extrabold text-slate-900">
-                                    ৳{tuition.monthlyFee?.toLocaleString("en-BD")}
+                                    ${tuition.monthlyFee?.toLocaleString("en-US")}
                                 </span>
                                 <span className="text-sm text-slate-400">/ month</span>
                             </div>

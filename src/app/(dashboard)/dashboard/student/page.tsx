@@ -106,7 +106,7 @@ export default function StudentOverviewPage() {
                   <tr key={item._id} className="text-slate-600">
                     <td className="py-4 font-semibold text-slate-800">{item.tuitionTitle}</td>
                     <td className="py-4">{item.tutorEmail}</td>
-                    <td className="py-4">৳{Number(item.monthlyFee).toLocaleString("en-BD")}</td>
+                    <td className="py-4">${Number(item.monthlyFee).toLocaleString("en-US")}</td>
                     <td className="py-4"><StatusBadge status={item.status} /></td>
                   </tr>
                 ))}

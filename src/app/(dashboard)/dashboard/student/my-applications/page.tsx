@@ -83,7 +83,7 @@ export default function MyApplicationsPage() {
               </div>
 
               <div className="mt-5 grid gap-3 text-xs text-slate-500 sm:grid-cols-4">
-                <p><span className="font-semibold text-slate-700">Fee:</span> ৳{Number(item.monthlyFee).toLocaleString("en-BD")}</p>
+                <p><span className="font-semibold text-slate-700">Fee:</span> ${Number(item.monthlyFee).toLocaleString("en-US")}</p>
                 <p><span className="font-semibold text-slate-700">Applied:</span> {new Date(item.appliedAt).toLocaleDateString()}</p>
                 <p><span className="font-semibold text-slate-700">Schedule:</span> {item.preferredSchedule}</p>
                 <p><span className="font-semibold text-slate-700">Phone:</span> {item.studentPhone || "—"}</p>
