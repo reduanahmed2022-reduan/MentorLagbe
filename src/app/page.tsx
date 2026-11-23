@@ -41,18 +41,21 @@ export default function HomePage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
-  const [featuredTutor, setFeaturedTutor] = useState<Tutor | null>(null);
+  const [heroTutors, setHeroTutors] = useState<Tutor[]>([]);
 
-  // Use a real tutor from the API in the hero card instead of a fabricated name.
+  // Real tutors from the API power both the hero circle and the floating card.
   useEffect(() => {
     const controller = new AbortController();
 
-    apiFetch<{ tutors: Tutor[] }>("/tutors?limit=1", { signal: controller.signal })
-      .then((data) => setFeaturedTutor(data.tutors?.[0] ?? null))
-      .catch(() => setFeaturedTutor(null));
+    apiFetch<{ tutors: Tutor[] }>("/tutors?limit=5", { signal: controller.signal })
+      .then((data) => setHeroTutors(data.tutors ?? []))
+      .catch(() => setHeroTutors([]));
 
     return () => controller.abort();
   }, []);
+
+  const floatingTutor = heroTutors[0] ?? null;
+  const circleTutor = heroTutors[1] ?? heroTutors[0] ?? null;
 
   const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -85,7 +88,7 @@ export default function HomePage() {
 
           {/* Left Content */}
 
-          <div className="space-y-6 lg:col-span-7">
+          <div className="space-y-6 lg:col-span-7 lg:order-2">
 
             <span className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white px-4 py-2 text-xs font-bold text-[#0f9f6e] shadow-sm">
               ✦ YOUR LEARNING JOURNEY STARTS HERE
@@ -179,9 +182,9 @@ export default function HomePage() {
 
           </div>
 
-          {/* Right Hero Visual */}
+          {/* Hero Visual — placed to the left of the heading on large screens */}
 
-          <div className="flex justify-center lg:col-span-5">
+          <div className="flex justify-center lg:col-span-5 lg:order-1">
 
             <div className="relative flex h-[340px] w-full max-w-md items-center justify-center sm:h-[420px]">
 
@@ -191,26 +194,26 @@ export default function HomePage() {
 
               {/* Floating Tutor Card — uses a real tutor from the API */}
 
-              {featuredTutor && (
+              {floatingTutor && (
                 <div className="absolute right-0 top-2 z-20 flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-xl sm:right-2">
-                  {featuredTutor.image?.trim() ? (
+                  {floatingTutor.image?.trim() ? (
                     <img
-                      src={featuredTutor.image}
-                      alt={featuredTutor.name}
+                      src={floatingTutor.image}
+                      alt={floatingTutor.name}
                       className="h-10 w-10 rounded-full object-cover"
                     />
                   ) : (
                     <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-[#0f9f6e]">
-                      {featuredTutor.name.charAt(0)}
+                      {floatingTutor.name.charAt(0)}
                     </span>
                   )}
 
                   <div>
                     <h4 className="text-xs font-bold text-gray-800">
-                      {featuredTutor.name}
+                      {floatingTutor.name}
                     </h4>
                     <p className="text-[10px] text-gray-500">
-                      {featuredTutor.subject} Tutor
+                      {floatingTutor.subject} Tutor
                     </p>
                   </div>
                 </div>
@@ -221,8 +224,12 @@ export default function HomePage() {
               <div className="relative z-10 h-56 w-56 overflow-hidden rounded-full border-[8px] border-white bg-emerald-100 shadow-2xl sm:h-72 sm:w-72">
 
                 <img
-                  src="/hero-mentor.svg"
-                  alt="Young male mentor teaching an online lesson"
+                  src={circleTutor?.image?.trim() || "/hero-mentor.svg"}
+                  alt={
+                    circleTutor
+                      ? `${circleTutor.name}, ${circleTutor.subject} tutor`
+                      : "Young male mentor teaching an online lesson"
+                  }
                   className="h-full w-full object-cover"
                 />
 
