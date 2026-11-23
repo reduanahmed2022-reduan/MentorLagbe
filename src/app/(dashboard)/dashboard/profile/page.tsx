@@ -266,7 +266,7 @@ export default function ProfilePage() {
               href="/pricing"
               className="mt-3 block text-xs font-bold text-indigo-600 hover:underline"
             >
-              Compare plans →
+              Compare plans
             </Link>
           </div>
         )}

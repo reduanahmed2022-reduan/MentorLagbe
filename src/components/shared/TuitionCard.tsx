@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  ArrowRight,
   BookOpen,
   CalendarDays,
   GraduationCap,
@@ -63,9 +62,9 @@ export default function TuitionCard({ tuition }: { tuition: Tuition }) {
           </span>
           <Link
             href={`/tuitions/${tuition._id}`}
-            className="inline-flex items-center gap-1 text-xs font-bold text-[#0f9f6e] transition hover:gap-2"
+            className="inline-flex items-center text-xs font-bold text-[#0f9f6e] transition"
           >
-            View Details <ArrowRight className="h-3.5 w-3.5" />
+            View Details
           </Link>
         </div>
       </div>

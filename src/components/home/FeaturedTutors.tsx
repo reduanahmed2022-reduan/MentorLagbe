@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Clock, GraduationCap, MapPin } from "lucide-react";
+import { BadgeCheck, Clock, GraduationCap, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api";
 import type { Tutor } from "@/lib/types";
@@ -62,7 +62,7 @@ export default function FeaturedTutors() {
             href="/tutors"
             className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-[#0f9f6e] hover:text-[#0f9f6e]"
           >
-            Browse all tutors <ArrowRight className="h-4 w-4" />
+            Browse all tutors
           </Link>
         </div>
 
@@ -152,7 +152,7 @@ export default function FeaturedTutors() {
                     href={`/tutors/${tutor.id}`}
                     className="inline-flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-[#0f9f6e] hover:text-white"
                   >
-                    View profile <ArrowRight size={16} />
+                    View profile
                   </Link>
                 </div>
               </article>

@@ -16,7 +16,6 @@ import {
     GraduationCap,
     BookOpen,
     Clock,
-    ArrowRight,
     X,
     Users,
     BadgeCheck,
@@ -497,7 +496,6 @@ export default function TutorsPage() {
                                             className="inline-flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-600 hover:text-white"
                                         >
                                             View Profile
-                                            <ArrowRight size={16} />
                                         </Link>
                                     </div>
                                 </div>

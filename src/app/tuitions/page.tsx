@@ -14,7 +14,6 @@ import {
     GraduationCap,
     SlidersHorizontal,
     X,
-    ArrowRight,
     RefreshCw,
     CalendarDays,
 } from "lucide-react";
@@ -548,7 +547,6 @@ export default function TuitionsPage() {
                                             className="inline-flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-600 hover:text-white"
                                         >
                                             View Details
-                                            <ArrowRight size={16} />
                                         </Link>
                                     </div>
                                 </div>

@@ -154,7 +154,7 @@ export default function HomePage() {
                 type="submit"
                 className="w-full shrink-0 rounded-xl bg-[#0f9f6e] px-7 py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-[#087a54] sm:w-auto"
               >
-                Search →
+                Search
               </button>
 
             </form>

@@ -84,7 +84,7 @@ export default function StudentOverviewPage() {
             href="/dashboard/student/my-applications"
             className="text-sm font-bold text-indigo-600 hover:underline"
           >
-            View all →
+            View all
           </Link>
         </div>
 

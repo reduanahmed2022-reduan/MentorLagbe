@@ -45,7 +45,7 @@ export default function TermsPage() {
           </section>
         </div>
         <Link href="/" className="mt-12 inline-block text-sm font-bold text-[#0f9f6e]">
-          ← Back to home
+          Back to home
         </Link>
       </main>
       <Footer />

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import TuitionCard from "@/components/shared/TuitionCard";
 import { apiFetch } from "@/lib/api";
@@ -43,7 +42,7 @@ export default function FeaturedTuitions() {
             href="/tuitions"
             className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-[#0f9f6e] hover:text-[#0f9f6e]"
           >
-            Browse All <ArrowRight className="h-4 w-4" />
+            Browse All
           </Link>
         </div>
 

@@ -83,7 +83,7 @@ export default function TutorOverviewPage() {
             href="/dashboard/tutor/my-tuitions"
             className="text-sm font-bold text-indigo-600 hover:underline"
           >
-            Manage all →
+            Manage all
           </Link>
         </div>
 
