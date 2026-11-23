@@ -88,7 +88,7 @@ export default function HomePage() {
 
           {/* Left Content */}
 
-          <div className="space-y-6 lg:col-span-7 lg:order-2">
+          <div className="space-y-6 lg:col-span-7">
 
             <span className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white px-4 py-2 text-xs font-bold text-[#0f9f6e] shadow-sm">
               ✦ YOUR LEARNING JOURNEY STARTS HERE
@@ -184,7 +184,7 @@ export default function HomePage() {
 
           {/* Hero Visual — placed to the left of the heading on large screens */}
 
-          <div className="flex justify-center lg:col-span-5 lg:order-1">
+          <div className="flex justify-center lg:col-span-5">
 
             <div className="relative flex h-[340px] w-full max-w-md items-center justify-center sm:h-[420px]">
 
