@@ -12,6 +12,11 @@ const ERROR_MESSAGES: Record<string, string> = {
   session_missing: "The Google session expired. Please try again.",
   account_failed: "We could not prepare your account. Please try again.",
   unexpected: "Google sign-in failed unexpectedly. Please try again.",
+  access_denied:
+    "Google did not approve the sign-in. If this app is still in Testing mode, ask the admin to add your Google email as a test user.",
+  state_mismatch:
+    "The sign-in session expired before Google responded. Please try again.",
+  state_not_found: "The sign-in session was not found. Please try again.",
 };
 
 export default function GoogleCallbackPage() {
@@ -29,10 +34,16 @@ export default function GoogleCallbackPage() {
     queueMicrotask(() => {
       if (!active) return;
 
+      // BetterAuth appends provider errors to the query string, while our own
+      // redirect uses the fragment for the JWT. Read both so the real cause
+      // (e.g. access_denied for a missing test user) is not masked.
+      const query = new URLSearchParams(window.location.search);
       const params = new URLSearchParams(
         window.location.hash.replace(/^#/, "")
       );
-      const error = params.get("error");
+      const error = query.get("error") || params.get("error");
+      const description =
+        query.get("error_description") || params.get("error_description");
       const token = params.get("token");
       const rawUser = params.get("user");
 
@@ -44,7 +55,9 @@ export default function GoogleCallbackPage() {
         setStatus("error");
         setMessage(
           ERROR_MESSAGES[error || ""] ||
-            "The Google response was incomplete. Please try again."
+            (description
+              ? `Google sign-in failed: ${description}`
+              : "The Google response was incomplete. Please try again.")
         );
         return;
       }
