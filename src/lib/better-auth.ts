@@ -44,23 +44,22 @@ export async function getGoogleAuthStatus(): Promise<{
 }
 
 /**
- * Start the Google OAuth flow. The API-origin callback converts the BetterAuth
- * session into the legacy JWT, then redirects back with a URL fragment.
+ * Start the Google OAuth flow with a real browser navigation.
+ *
+ * A cross-site fetch to the API cannot store BetterAuth's SameSite=Lax state
+ * cookie, so Google's callback used to arrive without state and fail. The API
+ * sets the cookie on a first-party top-level response, then redirects to Google.
+ * Its callback converts the BetterAuth session into the legacy JWT and returns
+ * to the client with the token in a URL fragment.
  */
-export async function signInWithGoogle(role: GoogleSignInRole = "student") {
-  const callbackURL = `${apiOrigin()}/api/auth/google/callback?role=${encodeURIComponent(role)}`;
-  const clientOrigin =
-    typeof window === "undefined" ? "" : window.location.origin;
-  // Route provider errors into the callback's error UI, which reads the
-  // fragment. A plain /sign-in?error=... would be silently ignored there.
-  const errorCallbackURL = clientOrigin
-    ? `${clientOrigin}/auth/google/callback#error=unexpected`
-    : undefined;
+export async function signInWithGoogle(
+  role: GoogleSignInRole = "student"
+): Promise<{ data: unknown; error: { message?: string } | null }> {
+  if (typeof window !== "undefined") {
+    window.location.assign(
+      `${apiOrigin()}/api/auth/google/start?role=${encodeURIComponent(role)}`
+    );
+  }
 
-  return authClient.signIn.social({
-    provider: "google",
-    callbackURL,
-    newUserCallbackURL: callbackURL,
-    ...(errorCallbackURL ? { errorCallbackURL } : {}),
-  });
+  return { data: null, error: null };
 }
