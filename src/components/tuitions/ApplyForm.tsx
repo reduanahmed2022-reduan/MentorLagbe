@@ -6,6 +6,7 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/api";
+import { PREFERRED_SCHEDULE_OPTIONS } from "@/lib/constants";
 import type { TuitionApplication } from "@/lib/types";
 
 export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
@@ -14,11 +15,13 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
   const [preferredSchedule, setPreferredSchedule] = useState("");
   const [studentNote, setStudentNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [applied, setApplied] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [existingApplication, setExistingApplication] =
+    useState<TuitionApplication | null>(null);
   const [checking, setChecking] = useState(false);
 
-  // Restore the applied state after a reload so students never see a form they
-  // have already submitted. Duplicate submissions are still blocked server-side.
+  // Restore the application state after a reload. A rejected row is kept so the
+  // student can restore it to pending instead of being blocked by the unique index.
   useEffect(() => {
     if (!ready || !isAuthenticated || user?.role !== "student") return;
 
@@ -30,9 +33,15 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
       signal: controller.signal,
     })
       .then((data) => {
-        if (data.applications?.some((item) => item.tuitionId === tuitionId)) {
-          setApplied(true);
-        }
+        const existing = data.applications?.find(
+          (item) => item.tuitionId === tuitionId
+        );
+        if (!existing) return;
+
+        setExistingApplication(existing);
+        setStudentPhone(existing.studentPhone || "");
+        setPreferredSchedule(existing.preferredSchedule || "");
+        setStudentNote(existing.studentNote || "");
       })
       .catch(() => {
         // A transient failure should not hide the form; the server still guards
@@ -45,8 +54,45 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
     return () => controller.abort();
   }, [ready, isAuthenticated, user?.role, tuitionId]);
 
+  const rejectedApplication =
+    existingApplication?.status === "rejected" ? existingApplication : null;
+  const applied = Boolean(
+    existingApplication && existingApplication.status !== "rejected"
+  );
+
   const inputClass =
     "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500";
+
+  const handleRestore = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!rejectedApplication || restoring) return;
+
+    if (!preferredSchedule.trim()) {
+      toast.error("Please select your preferred schedule");
+      return;
+    }
+
+    setRestoring(true);
+
+    try {
+      const data = await apiFetch<{ application?: TuitionApplication }>(
+        `/applications/${rejectedApplication._id}/restore`,
+        {
+          method: "PATCH",
+          auth: true,
+          body: { studentPhone, preferredSchedule, studentNote },
+        }
+      );
+
+      setExistingApplication(data.application || { ...rejectedApplication, status: "pending" });
+      toast.success("Application restored to pending");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not restore application");
+    } finally {
+      setRestoring(false);
+    }
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -54,7 +100,7 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
     if (submitting || applied) return;
 
     if (!preferredSchedule.trim()) {
-      toast.error("Please tell us your preferred schedule");
+      toast.error("Please select your preferred schedule");
       return;
     }
 
@@ -67,12 +113,40 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
         body: { tuitionId, studentPhone, preferredSchedule, studentNote },
       });
 
-      setApplied(true);
+      setExistingApplication({
+        _id: "local",
+        tuitionId,
+        tuitionTitle: "",
+        subject: "",
+        monthlyFee: 0,
+        tutorEmail: "",
+        studentName: user?.name || "",
+        studentEmail: user?.email || "",
+        studentPhone,
+        preferredSchedule,
+        studentNote,
+        status: "pending",
+        appliedAt: new Date().toISOString(),
+      });
       toast.success("Application submitted successfully!");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Could not submit application";
       if (message.toLowerCase().includes("already applied")) {
-        setApplied(true);
+        setExistingApplication({
+          _id: "local",
+          tuitionId,
+          tuitionTitle: "",
+          subject: "",
+          monthlyFee: 0,
+          tutorEmail: "",
+          studentName: user?.name || "",
+          studentEmail: user?.email || "",
+          studentPhone,
+          preferredSchedule,
+          studentNote,
+          status: "pending",
+          appliedAt: new Date().toISOString(),
+        });
         toast.success("You have already applied to this tuition");
       } else {
         toast.error(message);
@@ -96,6 +170,79 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
         <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
         Checking your applications…
       </div>
+    );
+  }
+
+  if (rejectedApplication) {
+    return (
+      <form
+        onSubmit={handleRestore}
+        className="space-y-3 rounded-xl border border-rose-200 bg-rose-50 p-5"
+      >
+        <div className="text-center">
+          <p className="text-sm font-bold text-rose-800">Application was rejected</p>
+          <p className="mt-1 text-xs leading-5 text-rose-700">
+            Choose a new schedule and restore it to pending. The tutor will review it again.
+          </p>
+        </div>
+        <div>
+          <label htmlFor="restore-student-phone" className="mb-1 block text-xs font-semibold text-slate-600">
+            Phone number
+          </label>
+          <input
+            id="restore-student-phone"
+            value={studentPhone}
+            onChange={(event) => setStudentPhone(event.target.value)}
+            placeholder="+880 1XXX-XXXXXX"
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label htmlFor="restore-preferred-schedule" className="mb-1 block text-xs font-semibold text-slate-600">
+            Preferred schedule <span className="text-rose-500">*</span>
+          </label>
+          <select
+            id="restore-preferred-schedule"
+            value={preferredSchedule}
+            onChange={(event) => setPreferredSchedule(event.target.value)}
+            className={inputClass}
+            required
+          >
+            <option value="">Select a preferred schedule</option>
+            {PREFERRED_SCHEDULE_OPTIONS.map((slot) => (
+              <option key={slot} value={slot}>
+                {slot}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="restore-student-note" className="mb-1 block text-xs font-semibold text-slate-600">
+            Learning note
+          </label>
+          <textarea
+            id="restore-student-note"
+            value={studentNote}
+            onChange={(event) => setStudentNote(event.target.value)}
+            rows={3}
+            className={inputClass}
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={restoring}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-emerald-700 disabled:opacity-60"
+        >
+          {restoring && <Loader2 className="h-4 w-4 animate-spin" />}
+          {restoring ? "Restoring…" : "Restore to pending"}
+        </button>
+        <Link
+          href="/dashboard/student/my-applications"
+          className="block text-center text-xs font-bold text-emerald-700 underline"
+        >
+          Track my applications
+        </Link>
+      </form>
     );
   }
 
@@ -164,14 +311,20 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
         <label htmlFor="apply-preferred-schedule" className="mb-1 block text-xs font-semibold text-slate-600">
           Preferred schedule <span className="text-rose-500">*</span>
         </label>
-        <input
+        <select
           id="apply-preferred-schedule"
           value={preferredSchedule}
           onChange={(event) => setPreferredSchedule(event.target.value)}
-          placeholder="e.g. Weekdays 6–8 PM"
           className={inputClass}
           required
-        />
+        >
+          <option value="">Select a preferred schedule</option>
+          {PREFERRED_SCHEDULE_OPTIONS.map((slot) => (
+            <option key={slot} value={slot}>
+              {slot}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label htmlFor="apply-student-note" className="mb-1 block text-xs font-semibold text-slate-600">

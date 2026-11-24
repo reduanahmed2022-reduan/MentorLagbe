@@ -64,6 +64,21 @@ export interface TuitionApplication {
   status: ApplicationStatus;
   appliedAt: string;
   reviewedAt?: string;
+  restoredAt?: string;
+}
+
+export interface Bookmark {
+  _id: string;
+  tuitionId: string;
+  tuitionTitle: string;
+  subject: string;
+  classLevel?: string;
+  monthlyFee: number;
+  tutorEmail: string;
+  studentName: string;
+  studentEmail: string;
+  bookmarkedAt: string;
+  tuition: Tuition;
 }
 
 export interface Transaction {

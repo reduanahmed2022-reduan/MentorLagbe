@@ -7,27 +7,37 @@ import {
   Monitor,
   Wallet,
 } from "lucide-react";
+import BookmarkButton from "@/components/tuitions/BookmarkButton";
 import type { Tuition } from "@/lib/types";
 
 export default function TuitionCard({ tuition }: { tuition: Tuition }) {
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-900/5">
-      <Link href={`/tuitions/${tuition._id}`} className="relative block h-44 overflow-hidden">
-        {tuition.bannerImage ? (
-          <img
-            src={tuition.bannerImage}
-            alt={tuition.title}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100 text-4xl">
-            📘
-          </div>
-        )}
+      <div className="relative h-44 overflow-hidden">
+        <Link
+          href={`/tuitions/${tuition._id}`}
+          aria-label={`View ${tuition.title}`}
+          className="block h-full w-full"
+        >
+          {tuition.bannerImage ? (
+            <img
+              src={tuition.bannerImage}
+              alt={tuition.title}
+              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100 text-4xl">
+              📘
+            </div>
+          )}
+        </Link>
         <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-slate-700 shadow-sm">
           {tuition.subject}
         </span>
-      </Link>
+        <div className="absolute right-4 top-4">
+          <BookmarkButton tuitionId={tuition._id} />
+        </div>
+      </div>
 
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-center justify-between gap-2">

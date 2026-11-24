@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Loader2, X } from "lucide-react";
+import { Check, Loader2, RotateCcw, X } from "lucide-react";
 import { toast } from "sonner";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import { apiFetch } from "@/lib/api";
@@ -52,8 +52,37 @@ export default function ApplicantsPage() {
         )
       );
       toast.success(`Application ${status}`);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not update application");
+    } catch (errorValue) {
+      toast.error(errorValue instanceof Error ? errorValue.message : "Could not update application");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const handleRestore = async (id: string) => {
+    setBusyId(id);
+
+    try {
+      const data = await apiFetch<{ application?: TuitionApplication }>(
+        `/applications/${id}/restore`,
+        { method: "PATCH", auth: true }
+      );
+      setApplicants((items) =>
+        items.map((item) =>
+          item._id === id
+            ? {
+                ...item,
+                ...(data.application || {}),
+                status: "pending",
+                reviewedAt: undefined,
+                restoredAt: new Date().toISOString(),
+              }
+            : item
+        )
+      );
+      toast.success("Application restored to pending");
+    } catch (errorValue) {
+      toast.error(errorValue instanceof Error ? errorValue.message : "Could not restore application");
     } finally {
       setBusyId(null);
     }
@@ -83,7 +112,7 @@ export default function ApplicantsPage() {
           {applicants.map((item) => (
             <article key={item._id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
+                <div className="min-w-0">
                   <h3 className="font-bold text-slate-900">{item.studentName}</h3>
                   <p className="mt-1 text-xs text-slate-500">
                     {item.studentEmail} · {item.studentPhone || "No phone"}
@@ -93,7 +122,12 @@ export default function ApplicantsPage() {
               </div>
 
               <div className="mt-4 rounded-xl bg-slate-50 p-4 text-xs text-slate-600">
-                <p className="font-bold text-slate-800">{item.tuitionTitle}</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Applied for
+                </p>
+                <p className="mt-1 font-bold text-slate-800">
+                  {item.tuitionTitle?.trim() || "Untitled tuition"}
+                </p>
                 <p className="mt-1">Preferred schedule: {item.preferredSchedule}</p>
                 {item.studentNote && <p className="mt-1 italic">“{item.studentNote}”</p>}
               </div>
@@ -103,7 +137,7 @@ export default function ApplicantsPage() {
                   Applied {formatDate(item.appliedAt)}
                 </p>
                 {item.status === "pending" ? (
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
                       disabled={busyId === item._id}
@@ -122,9 +156,26 @@ export default function ApplicantsPage() {
                     </button>
                   </div>
                 ) : (
-                  <p className="text-xs font-semibold capitalize text-slate-500">
-                    Reviewed{reviewedAtSuffix(item.reviewedAt)} · {item.status}
-                  </p>
+                  <div className="flex flex-wrap items-center justify-end gap-3">
+                    <p className="text-xs font-semibold capitalize text-slate-500">
+                      Reviewed{reviewedAtSuffix(item.reviewedAt)} · {item.status}
+                    </p>
+                    {item.status === "rejected" && (
+                      <button
+                        type="button"
+                        disabled={busyId === item._id}
+                        onClick={() => handleRestore(item._id)}
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-200 px-4 py-2 text-xs font-bold text-emerald-700 transition hover:bg-emerald-50 disabled:opacity-50"
+                      >
+                        {busyId === item._id ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <RotateCcw className="h-3.5 w-3.5" />
+                        )}
+                        Restore to pending
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </article>

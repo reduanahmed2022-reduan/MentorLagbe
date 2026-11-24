@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Loader2, ShieldCheck, X } from "lucide-react";
+import { Check, Loader2, RotateCcw, ShieldCheck, X } from "lucide-react";
 import { toast } from "sonner";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import { apiFetch } from "@/lib/api";
@@ -43,6 +43,29 @@ export default function AdminTuitionsPage() {
       toast.success(approvalStatus === "approved" ? "Tuition approved" : "Tuition rejected");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not review tuition");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const handleRestore = async (tuition: Tuition) => {
+    setBusyId(tuition._id);
+
+    try {
+      await apiFetch(`/tuitions/${tuition._id}/restore`, {
+        method: "PATCH",
+        auth: true,
+      });
+      setTuitions((items) =>
+        items.map((item) =>
+          item._id === tuition._id
+            ? { ...item, approvalStatus: "pending", isActive: false }
+            : item
+        )
+      );
+      toast.success("Tuition restored to pending");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not restore tuition");
     } finally {
       setBusyId(null);
     }
@@ -136,9 +159,26 @@ export default function AdminTuitionsPage() {
                     </button>
                   </div>
                 ) : (
-                  <p className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
-                    <ShieldCheck className="h-3.5 w-3.5" /> Reviewed
-                  </p>
+                  <div className="flex flex-wrap items-center justify-end gap-3">
+                    <p className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
+                      <ShieldCheck className="h-3.5 w-3.5" /> Reviewed
+                    </p>
+                    {tuition.approvalStatus === "rejected" && (
+                      <button
+                        type="button"
+                        disabled={busyId === tuition._id}
+                        onClick={() => handleRestore(tuition)}
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-200 px-4 py-2 text-xs font-bold text-emerald-700 transition hover:bg-emerald-50 disabled:opacity-50"
+                      >
+                        {busyId === tuition._id ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <RotateCcw className="h-3.5 w-3.5" />
+                        )}
+                        Restore to pending
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </article>

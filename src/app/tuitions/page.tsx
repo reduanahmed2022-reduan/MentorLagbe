@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
+import BookmarkButton from "@/components/tuitions/BookmarkButton";
 import { apiFetch } from "@/lib/api";
 import {
     Search,
@@ -487,20 +488,25 @@ export default function TuitionsPage() {
                                 key={tuition._id}
                                 className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5"
                             >
-                                {tuition.bannerImage ? (
-                                    <img
-                                        src={tuition.bannerImage}
-                                        alt={tuition.title}
-                                        className="h-44 w-full object-cover"
-                                    />
-                                ) : (
-                                    <div className="flex h-44 items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100">
-                                        <GraduationCap
-                                            size={58}
-                                            className="text-emerald-600"
+                                <div className="relative">
+                                    {tuition.bannerImage ? (
+                                        <img
+                                            src={tuition.bannerImage}
+                                            alt={tuition.title}
+                                            className="h-44 w-full object-cover"
                                         />
+                                    ) : (
+                                        <div className="flex h-44 items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100">
+                                            <GraduationCap
+                                                size={58}
+                                                className="text-emerald-600"
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="absolute right-4 top-4">
+                                        <BookmarkButton tuitionId={tuition._id} />
                                     </div>
-                                )}
+                                </div>
 
                                 <div className="p-6">
                                     <div className="mb-4 flex flex-wrap items-center gap-2">

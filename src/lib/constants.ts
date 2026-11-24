@@ -30,6 +30,16 @@ export const LOCATIONS = [
 
 export const MODES = ["Online", "Offline"] as const;
 
+export const PREFERRED_SCHEDULE_OPTIONS = [
+  "Weekdays 6–8 PM",
+  "Weekdays 8–10 PM",
+  "Weekends 10 AM–12 PM",
+  "Weekends 4–6 PM",
+  "Weekends 7–9 PM",
+  "Morning (before 9 AM)",
+  "Flexible",
+] as const;
+
 export const PRO_PRICES = {
   tutor: 15,
   student: 10,

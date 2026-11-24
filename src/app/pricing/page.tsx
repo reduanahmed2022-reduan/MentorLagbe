@@ -18,7 +18,7 @@ const tiers = [
     price: "$0",
     plan: "free",
     role: "student",
-    features: ["Browse all approved tuitions", "Apply to any tuition", "Track application status"],
+    features: ["Browse all approved tuitions", "Apply to up to 2 tuitions", "Bookmark up to 5 tuitions", "Track application status"],
   },
   {
     name: "Pro Student",

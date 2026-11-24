@@ -7,6 +7,7 @@ import {
   Loader2,
   Pencil,
   PlusCircle,
+  RotateCcw,
   Trash2,
   X,
 } from "lucide-react";
@@ -51,6 +52,29 @@ export default function MyTuitionsPage() {
       toast.success(data.isActive ? "Tuition is now active" : "Tuition closed");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not update status");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const handleRestore = async (tuition: Tuition) => {
+    setBusyId(tuition._id);
+
+    try {
+      await apiFetch(`/tuitions/${tuition._id}/restore`, {
+        method: "PATCH",
+        auth: true,
+      });
+      setTuitions((items) =>
+        items.map((item) =>
+          item._id === tuition._id
+            ? { ...item, approvalStatus: "pending", isActive: false }
+            : item
+        )
+      );
+      toast.success("Tuition restored to pending");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not restore tuition");
     } finally {
       setBusyId(null);
     }
@@ -108,8 +132,24 @@ export default function MyTuitionsPage() {
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <StatusBadge status={tuition.approvalStatus || "pending"} />
-                  <StatusBadge status={tuition.isActive ? "active" : "closed"} />
+                  <StatusBadge
+                    status={tuition.approvalStatus || "pending"}
+                    label={`Approval: ${tuition.approvalStatus || "pending"}`}
+                  />
+                  <StatusBadge
+                    status={
+                      tuition.approvalStatus === "approved"
+                        ? tuition.isActive
+                          ? "active"
+                          : "closed"
+                        : "closed"
+                    }
+                    label={
+                      tuition.approvalStatus === "approved"
+                        ? `Listing: ${tuition.isActive ? "Active" : "Closed"}`
+                        : "Listing: Not public"
+                    }
+                  />
                 </div>
               </div>
 
@@ -127,19 +167,31 @@ export default function MyTuitionsPage() {
                 >
                   <Pencil className="h-3.5 w-3.5" /> Edit
                 </button>
-                <button
-                  type="button"
-                  disabled={busyId === tuition._id || tuition.approvalStatus !== "approved"}
-                  title={
-                    tuition.approvalStatus === "approved"
-                      ? undefined
-                      : "Only approved batches can be opened or closed"
-                  }
-                  onClick={() => handleToggle(tuition)}
-                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {busyId === tuition._id ? "Updating…" : tuition.isActive ? "Close batch" : "Reopen batch"}
-                </button>
+                {tuition.approvalStatus === "approved" && (
+                  <button
+                    type="button"
+                    disabled={busyId === tuition._id}
+                    onClick={() => handleToggle(tuition)}
+                    className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {busyId === tuition._id ? "Updating…" : tuition.isActive ? "Close batch" : "Reopen batch"}
+                  </button>
+                )}
+                {tuition.approvalStatus === "rejected" && (
+                  <button
+                    type="button"
+                    disabled={busyId === tuition._id}
+                    onClick={() => handleRestore(tuition)}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-200 px-4 py-2 text-xs font-bold text-emerald-700 transition hover:bg-emerald-50 disabled:opacity-50"
+                  >
+                    {busyId === tuition._id ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <RotateCcw className="h-3.5 w-3.5" />
+                    )}
+                    Restore for review
+                  </button>
+                )}
                 {tuition.approvalStatus === "approved" && tuition.isActive && (
                   <Link
                     href={`/tuitions/${tuition._id}`}

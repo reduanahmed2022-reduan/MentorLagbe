@@ -5,8 +5,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
+  Bookmark,
   BookMarked,
   CalendarCheck2,
+  GraduationCap,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -27,6 +29,7 @@ const linksByRole: Record<string, NavLink[]> = {
   student: [
     { href: "/dashboard/student", label: "Overview", icon: LayoutDashboard },
     { href: "/dashboard/student/my-applications", label: "My Applications", icon: BookMarked },
+    { href: "/dashboard/student/bookmarks", label: "My Bookmarks", icon: Bookmark },
   ],
   tutor: [
     { href: "/dashboard/tutor", label: "Overview", icon: LayoutDashboard },
@@ -51,6 +54,7 @@ const profileLink: NavLink = {
 const titles: Record<string, string> = {
   "/dashboard/student": "Student Overview",
   "/dashboard/student/my-applications": "My Applications",
+  "/dashboard/student/bookmarks": "My Bookmarks",
   "/dashboard/tutor": "Tutor Overview",
   "/dashboard/tutor/post-tuition": "Post a Tuition",
   "/dashboard/tutor/my-tuitions": "My Tuitions",
@@ -107,8 +111,8 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const sidebarContent = (compact: boolean) => (
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center gap-3 border-b border-white/10 px-5">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-sm font-black text-white">
-          M
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-white">
+          <GraduationCap className="h-5 w-5" aria-hidden="true" />
         </span>
         {!compact && (
           <span className="truncate text-lg font-extrabold text-white">

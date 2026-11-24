@@ -8,6 +8,7 @@ import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import ShareButtons from "@/components/shared/ShareButtons";
 import ApplyForm from "@/components/tuitions/ApplyForm";
+import BookmarkButton from "@/components/tuitions/BookmarkButton";
 import { apiFetch } from "@/lib/api";
 import {
     ArrowLeft,
@@ -276,6 +277,9 @@ export default function TuitionDetailsPage() {
                                 </div>
                             </div>
 
+                            <div className="mb-3">
+                                <BookmarkButton tuitionId={tuition._id} variant="full" />
+                            </div>
                             <ApplyForm tuitionId={tuition._id} />
                         </div>
                     </aside>
