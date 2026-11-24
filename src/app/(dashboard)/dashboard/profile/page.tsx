@@ -58,7 +58,9 @@ export default function ProfilePage() {
       return;
     }
 
-    if (!file.type.startsWith("image/")) {
+    // The server sniffs real file signatures; only block obviously non-image
+    // MIME types so valid files with an empty type are not rejected here.
+    if (file.type && !file.type.startsWith("image/")) {
       toast.error("Please choose an image file");
       return;
     }
@@ -156,7 +158,7 @@ export default function ProfilePage() {
               <input
                 id="profile-image"
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/gif,image/webp"
                 aria-label="Change profile picture"
                 className="sr-only"
                 onChange={(event) => {

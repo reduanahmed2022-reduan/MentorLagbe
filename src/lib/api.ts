@@ -118,8 +118,8 @@ export async function apiFetch<T>(
 
   if (!response.ok || data.success === false) {
     throw new ApiError(
-      FRIENDLY_STATUS_MESSAGES[response.status] ||
-        data?.message ||
+      data?.message ||
+        FRIENDLY_STATUS_MESSAGES[response.status] ||
         `Request failed with status ${response.status}`,
       response.status
     );

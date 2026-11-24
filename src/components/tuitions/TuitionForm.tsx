@@ -42,7 +42,9 @@ export default function TuitionForm({
       return;
     }
 
-    if (!file.type.startsWith("image/")) {
+    // The server sniffs real file signatures; only block obviously non-image
+    // MIME types so valid files with an empty type are not rejected here.
+    if (file.type && !file.type.startsWith("image/")) {
       toast.error("Please choose an image file");
       return;
     }
@@ -230,7 +232,7 @@ export default function TuitionForm({
             <input
               id="tuition-cover-image"
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/gif,image/webp"
               className="sr-only"
               onChange={(event) => {
                 const file = event.currentTarget.files?.[0];
