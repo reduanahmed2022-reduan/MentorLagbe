@@ -72,13 +72,13 @@ export default function AdminTuitionsPage() {
             {pendingCount} pending · {tuitions.length} total tuitions
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {(["all", "pending", "approved", "rejected"] as Filter[]).map((item) => (
             <button
               key={item}
               type="button"
               onClick={() => setFilter(item)}
-              className={`rounded-full px-4 py-2 text-xs font-bold capitalize transition ${
+              className={`rounded-full px-3 py-2 text-xs font-bold capitalize transition min-[390px]:px-4 ${
                 filter === item
                   ? "bg-indigo-600 text-white"
                   : "border border-slate-200 bg-white text-slate-600 hover:border-indigo-400"
