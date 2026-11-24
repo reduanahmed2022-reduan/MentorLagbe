@@ -105,6 +105,7 @@ export default function TuitionsPage() {
             const initialClassLevel = urlParams.get("classLevel");
             const initialMinFee = urlParams.get("minFee");
             const initialMaxFee = urlParams.get("maxFee");
+            const initialSort = urlParams.get("sort");
 
             if (initialSearch) setSearch(initialSearch);
             if (initialLocation) setLocation(initialLocation);
@@ -113,6 +114,9 @@ export default function TuitionsPage() {
             if (initialClassLevel) setClassLevel(initialClassLevel);
             if (initialMinFee) setMinFee(initialMinFee);
             if (initialMaxFee) setMaxFee(initialMaxFee);
+            if (["newest", "fee-low", "fee-high"].includes(initialSort || "")) {
+                setSort(initialSort as "newest" | "fee-low" | "fee-high");
+            }
         });
     }, []);
 
