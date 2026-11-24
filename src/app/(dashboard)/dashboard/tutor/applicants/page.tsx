@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Check, Loader2, RotateCcw, X } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Check, Loader2, RefreshCw, RotateCcw, X } from "lucide-react";
 import { toast } from "sonner";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import { apiFetch } from "@/lib/api";
@@ -24,16 +24,32 @@ export default function ApplicantsPage() {
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
 
-  useEffect(() => {
-    apiFetch<{ applicants: TuitionApplication[] }>("/applications/tutor-applicants", { auth: true })
-      .then((data) => setApplicants(Array.isArray(data.applicants) ? data.applicants : []))
-      .catch((errorValue) => {
-        const message = errorValue instanceof Error ? errorValue.message : "Could not load applicants";
-        setError(message);
-        toast.error(message);
-      })
-      .finally(() => setLoading(false));
+  const loadApplicants = useCallback(async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const data = await apiFetch<{ applicants: TuitionApplication[] }>(
+        "/applications/tutor-applicants",
+        { auth: true }
+      );
+      setApplicants(Array.isArray(data.applicants) ? data.applicants : []);
+    } catch (errorValue) {
+      const message = errorValue instanceof Error ? errorValue.message : "Could not load applicants";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  // Re-fetch when the tutor returns to this tab so a fresh student application
+  // appears without a manual page reload.
+  useEffect(() => {
+    Promise.resolve().then(() => void loadApplicants());
+    const onFocus = () => void loadApplicants();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [loadApplicants]);
 
   const handleReview = async (id: string, status: "accepted" | "rejected") => {
     setBusyId(id);
@@ -90,11 +106,21 @@ export default function ApplicantsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-extrabold text-slate-900">Applicants</h2>
-        <p className="mt-1 text-sm text-slate-500">
-          Review students who applied to your tuition batches.
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-extrabold text-slate-900">Applicants</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Review students who applied to your tuition batches.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => void loadApplicants()}
+          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+          Refresh
+        </button>
       </div>
 
       {error && (
@@ -189,7 +215,7 @@ export default function ApplicantsPage() {
           <p className="mt-2 text-sm text-slate-500">
             {error
               ? "Please reload the page or try again shortly."
-              : "Once students apply to your tuitions, they will appear here."}
+              : "Once students apply to your tuitions, they will appear here. If you just applied, press Refresh — and make sure you are signed in as the tutor who owns that tuition."}
           </p>
         </div>
       )}
