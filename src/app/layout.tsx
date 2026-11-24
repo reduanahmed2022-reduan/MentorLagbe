@@ -28,9 +28,18 @@ export const metadata: Metadata = {
     siteName: "MentorLagbe",
     type: "website",
     locale: "en_US",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "MentorLagbe - Find your perfect learning partner",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
+    images: ["/og-image.png"],
   },
 };
 

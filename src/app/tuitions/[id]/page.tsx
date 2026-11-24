@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
+import ShareButtons from "@/components/shared/ShareButtons";
 import ApplyForm from "@/components/tuitions/ApplyForm";
 import { apiFetch } from "@/lib/api";
 import {
@@ -167,6 +168,11 @@ export default function TuitionDetailsPage() {
                                     <MapPin size={17} className="text-emerald-600" />
                                     {tuition.location}
                                 </p>
+
+                                <ShareButtons
+                                    title={tuition.title}
+                                    path={`/tuitions/${tuition._id}`}
+                                />
 
                                 <div className="my-7 grid grid-cols-2 gap-4 border-y border-slate-100 py-6 sm:grid-cols-3">
                                     <div>

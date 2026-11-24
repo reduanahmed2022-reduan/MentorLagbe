@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
+import ShareButtons from "@/components/shared/ShareButtons";
 import { apiFetch } from "@/lib/api";
 import {
     ArrowLeft,
@@ -174,6 +175,13 @@ export default function TutorProfilePage() {
                                     <p className="mt-2 font-medium text-emerald-700">
                                         {tutor.subject} Tutor
                                     </p>
+
+                                    <div className="mt-3">
+                                        <ShareButtons
+                                            title={`${tutor.name} - ${tutor.subject} Tutor`}
+                                            path={`/tutors/${tutor.id}`}
+                                        />
+                                    </div>
 
                                     <div className="mt-4 flex flex-wrap gap-x-5 gap-y-3 text-sm text-slate-500">
                                         <span className="flex items-center gap-1.5">

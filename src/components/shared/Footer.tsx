@@ -62,6 +62,14 @@ export default function Footer() {
           <ul className="mt-5 space-y-3 text-sm text-slate-400">
             <li>{BRAND.email}</li>
             <li>{BRAND.location}</li>
+            <li>
+              <a
+                href="mailto:reduanahmed@gmail.com"
+                className="transition hover:text-emerald-300"
+              >
+                reduanahmed@gmail.com
+              </a>
+            </li>
           </ul>
           <div className="mt-5 flex items-center gap-3">
             {SOCIAL_LINKS.map(({ label, href, icon }) => (
