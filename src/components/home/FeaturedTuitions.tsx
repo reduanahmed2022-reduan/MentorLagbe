@@ -13,6 +13,10 @@ type FeaturedTuitionsProps = {
   description?: string;
   emptyMessage?: string;
   className?: string;
+  /** IDs rendered by another section, so the same card is never shown twice. */
+  excludeIds?: string[];
+  /** Lets the parent remember which cards this section actually rendered. */
+  onTuitionsChange?: (tuitions: Tuition[]) => void;
 };
 
 export default function FeaturedTuitions({
@@ -22,22 +26,49 @@ export default function FeaturedTuitions({
   description = "Handpicked monthly batches between $500 & $800 — verified and ready to join.",
   emptyMessage = "No approved tuitions yet. Check back soon — new batches are added every week.",
   className = "bg-white py-16 sm:py-20",
+  excludeIds = [],
+  onTuitionsChange,
 }: FeaturedTuitionsProps) {
   const [tuitions, setTuitions] = useState<Tuition[]>([]);
   const [loading, setLoading] = useState(true);
+  const excludeKey = excludeIds.join(",");
 
   useEffect(() => {
     const controller = new AbortController();
+    const excluded = new Set(excludeKey ? excludeKey.split(",") : []);
 
-    apiFetch<{ tuitions: Tuition[] }>(query, {
+    // Keep the canonical query string as the section marker, but ask for a
+    // wider page when cards must be skipped so six fresh batches remain.
+    const requestQuery = excluded.size
+      ? /([?&])limit=\d+/.test(query)
+        ? query.replace(/([?&])limit=\d+/, "$1limit=50")
+        : `${query}${query.includes("?") ? "&" : "?"}limit=50`
+      : query;
+
+    setLoading(true);
+
+    apiFetch<{ tuitions: Tuition[] }>(requestQuery, {
       signal: controller.signal,
     })
-      .then((data) => setTuitions(data.tuitions.slice(0, 6)))
-      .catch(() => setTuitions([]))
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (controller.signal.aborted) return;
+
+        const visible = data.tuitions
+          .filter((tuition) => !excluded.has(tuition._id))
+          .slice(0, 6);
+
+        setTuitions(visible);
+        onTuitionsChange?.(visible);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setTuitions([]);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
 
     return () => controller.abort();
-  }, [query]);
+  }, [query, excludeKey, onTuitionsChange]);
 
   return (
     <section className={className}>

@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import FeaturedTutors from "@/components/home/FeaturedTutors";
@@ -12,16 +12,27 @@ import PricingPreview from "@/components/home/PricingPreview";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { apiFetch } from "@/lib/api";
-import type { Tutor } from "@/lib/types";
+import type { Tutor, Tuition } from "@/lib/types";
 
-// Only subjects that actually have tutor/tuition listing pages.
-const categories = [
+type Category = {
+  name: string;
+  icon: string;
+  bg: string;
+  subject?: string;
+  href?: string;
+};
+
+// New subjects point straight at the tuition filters so every category has
+// real listings, while the older ones keep linking to verified tutor profiles.
+const categories: Category[] = [
   { name: "Mathematics", icon: "🧮", bg: "bg-blue-600", subject: "Mathematics" },
   { name: "Physics", icon: "⚛️", bg: "bg-indigo-600", subject: "Physics" },
   { name: "Chemistry", icon: "🧪", bg: "bg-emerald-600", subject: "Chemistry" },
   { name: "Biology", icon: "🧬", bg: "bg-green-600", subject: "Biology" },
   { name: "English", icon: "🌐", bg: "bg-amber-600", subject: "English" },
-  { name: "ICT", icon: "💻", bg: "bg-orange-500", subject: "ICT" },
+  { name: "Music", icon: "🎵", bg: "bg-pink-600", subject: "Music", href: "/tuitions?subject=Music" },
+  { name: "Coding", icon: "💻", bg: "bg-orange-500", subject: "Coding", href: "/tuitions?subject=Coding" },
+  { name: "Language", icon: "🗣️", bg: "bg-rose-600", subject: "Language", href: "/tuitions?subject=Language" },
   { name: "Others", icon: "📚", bg: "bg-fuchsia-600" },
 ];
 
@@ -43,6 +54,11 @@ export default function HomePage() {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [heroTutors, setHeroTutors] = useState<Tutor[]>([]);
   const [heroTutorsLoading, setHeroTutorsLoading] = useState(true);
+  const [featuredTuitionIds, setFeaturedTuitionIds] = useState<string[]>([]);
+
+  const rememberFeaturedTuitions = useCallback((items: Tuition[]) => {
+    setFeaturedTuitionIds(items.map((item) => item._id));
+  }, []);
 
   // Real tutors from the API power both the hero circle and the floating card.
   useEffect(() => {
@@ -324,15 +340,16 @@ export default function HomePage() {
             EXPLORE YOUR LEARNING CATEGORIES
           </p>
 
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4 lg:grid-cols-7">
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
 
             {categories.map((cat) => (
               <Link
                 key={cat.name}
                 href={
-                  "subject" in cat && cat.subject
+                  cat.href ??
+                  (cat.subject
                     ? `/tutors?subject=${encodeURIComponent(cat.subject)}`
-                    : "/tutors"
+                    : "/tutors")
                 }
                 className="group flex cursor-pointer flex-col items-center gap-3"
               >
@@ -363,10 +380,11 @@ export default function HomePage() {
 
       </section>
 
-      <FeaturedTuitions />
+      <FeaturedTuitions onTuitionsChange={rememberFeaturedTuitions} />
 
       <FeaturedTuitions
         query="/tuitions?limit=6"
+        excludeIds={featuredTuitionIds}
         eyebrow="LATEST APPROVED & ACTIVE"
         heading="The 6 newest approved batches"
         description="Straight from the API: the newest batches that passed admin review and are open for applications."

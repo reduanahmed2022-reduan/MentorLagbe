@@ -53,7 +53,9 @@ const subjects = [
     "Physics",
     "Chemistry",
     "Biology",
-    "ICT",
+    "Coding",
+    "Music",
+    "Language",
 ];
 
 const classLevels = [
@@ -108,9 +110,21 @@ export default function TuitionsPage() {
             const initialMaxFee = urlParams.get("maxFee");
             const initialSort = urlParams.get("sort");
 
+            // Keep one canonical label per platform; old links still resolve.
+            const subjectAliases: Record<string, string> = {
+                ICT: "Coding",
+                Programming: "Coding",
+                IELTS: "English",
+            };
+            const normalizedSubject = initialSubject
+                ? subjectAliases[initialSubject] || initialSubject
+                : "";
+
             if (initialSearch) setSearch(initialSearch);
             if (initialLocation) setLocation(initialLocation);
-            if (initialSubject) setSubject(initialSubject);
+            if (normalizedSubject && subjects.includes(normalizedSubject)) {
+                setSubject(normalizedSubject);
+            }
             if (initialMode === "Online" || initialMode === "Offline") setMode(initialMode);
             if (initialClassLevel) setClassLevel(initialClassLevel);
             if (initialMinFee) setMinFee(initialMinFee);

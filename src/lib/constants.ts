@@ -4,7 +4,9 @@ export const SUBJECTS = [
   "Chemistry",
   "Biology",
   "English",
-  "Programming",
+  "Coding",
+  "Music",
+  "Language",
   "IELTS",
 ];
 
