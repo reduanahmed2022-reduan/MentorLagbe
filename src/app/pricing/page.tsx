@@ -18,14 +18,14 @@ const tiers = [
     price: "$0",
     plan: "free",
     role: "student",
-    features: ["Browse all approved tuitions", "Apply to 5 tuitions", "Track application status"],
+    features: ["Browse all approved tuitions", "Apply to any tuition", "Track application status"],
   },
   {
     name: "Pro Student",
     price: `$${PRO_PRICES.student}`,
     plan: "pro",
     role: "student",
-    features: ["Unlimited tuition bookmarks", "Priority booking", "All tuition details", "Pro badge on profile"],
+    features: ["All tuition details", "Pro badge on profile", "One-time Pro upgrade", "Track application status"],
     popular: true,
   },
   {
@@ -40,7 +40,7 @@ const tiers = [
     price: `$${PRO_PRICES.tutor}`,
     plan: "pro",
     role: "tutor",
-    features: ["Unlimited tuition posts", "Verified Pro badge", "Priority listing", "Full applicant management"],
+    features: ["Unlimited tuition posts", "Pro badge on profile", "Edit & close your listings", "Full applicant management"],
     popular: true,
   },
 ];
@@ -114,7 +114,7 @@ export default function PricingPage() {
           </h1>
           <p className="mt-4 text-sm leading-7 text-slate-500">
             Choose the plan that fits your goals. Payments are securely processed
-            by Stripe and your Pro access activates instantly.
+            by Stripe; Pro access activates once the payment is confirmed.
           </p>
         </div>
 
@@ -183,7 +183,7 @@ export default function PricingPage() {
                     : loading === tier.role
                       ? "Opening Stripe…"
                       : tier.plan === "pro"
-                        ? `Subscribe with Stripe · ${tier.price}`
+                        ? `Upgrade with Stripe · ${tier.price}`
                         : "Continue for free"}
                 </button>
               </article>

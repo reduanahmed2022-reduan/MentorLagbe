@@ -18,8 +18,8 @@ const SOCIAL_LINKS = [
     ),
   },
   {
-    label: "X (Twitter)",
-    href: "https://twitter.com/",
+    label: "X",
+    href: "https://x.com/",
     icon: (
       <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
         <path d="M18.9 2H22l-6.77 7.74L23.2 22h-6.25l-4.9-6.4L6.5 22H3.4l7.24-8.28L2.8 2h6.4l4.43 5.86L18.9 2Zm-1.1 18h1.73L7.36 3.9H5.5L17.8 20Z" />
@@ -60,16 +60,23 @@ export default function Footer() {
             Contact
           </h3>
           <ul className="mt-5 space-y-3 text-sm text-slate-400">
-            <li>{BRAND.email}</li>
-            <li>{BRAND.location}</li>
             <li>
               <a
-                href="mailto:reduanahmed@gmail.com"
+                href={`mailto:${BRAND.email}`}
                 className="transition hover:text-emerald-300"
               >
-                reduanahmed@gmail.com
+                {BRAND.email}
               </a>
             </li>
+            <li>
+              <a
+                href={`tel:${BRAND.phone.replace(/[^+\d]/g, "")}`}
+                className="transition hover:text-emerald-300"
+              >
+                {BRAND.phone}
+              </a>
+            </li>
+            <li>{BRAND.location}</li>
           </ul>
           <div className="mt-5 flex items-center gap-3">
             {SOCIAL_LINKS.map(({ label, href, icon }) => (

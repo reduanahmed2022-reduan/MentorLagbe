@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   BadgeDollarSign,
   BookOpenCheck,
@@ -26,11 +27,16 @@ export default function AdminOverviewPage() {
   const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     apiFetch<{ stats: DashboardStats }>("/admin/stats", { auth: true })
       .then((data) => setStats(data.stats))
-      .catch(() => setStats({}))
+      .catch((err) => {
+        const message = err instanceof Error ? err.message : "Could not load admin statistics";
+        setError(message);
+        toast.error(message);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -55,6 +61,12 @@ export default function AdminOverviewPage() {
         </div>
       </section>
 
+      {error && (
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          {error}
+        </p>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Total Users" value={loading ? "…" : stats.totalUsers || 0} icon={UsersRound} />
         <StatCard label="Students" value={loading ? "…" : stats.totalStudents || 0} icon={GraduationCap} tone="emerald" />
@@ -62,7 +74,7 @@ export default function AdminOverviewPage() {
         <StatCard label="Revenue" value={loading ? "…" : `$${Number(stats.totalRevenue || 0).toFixed(2)}`} icon={BadgeDollarSign} tone="rose" />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Pending Tuitions" value={loading ? "…" : stats.pendingTuitions || 0} icon={Clock3} tone="amber" />
         <StatCard label="Approved Tuitions" value={loading ? "…" : stats.approvedTuitions || 0} icon={ShieldCheck} tone="emerald" />
         <StatCard label="Rejected Tuitions" value={loading ? "…" : stats.rejectedTuitions || 0} icon={CircleX} tone="rose" />

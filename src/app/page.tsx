@@ -365,6 +365,15 @@ export default function HomePage() {
 
       <FeaturedTuitions />
 
+      <FeaturedTuitions
+        query="/tuitions?limit=6"
+        eyebrow="LATEST APPROVED & ACTIVE"
+        heading="The 6 newest approved batches"
+        description="Straight from the API: the newest batches that passed admin review and are open for applications."
+        emptyMessage="No approved batches yet. Please check back soon."
+        className="bg-[#f8faf9] py-16 sm:py-20"
+      />
+
       <FeaturedTutors />
 
       {/* ================= HOW IT WORKS ================= */}

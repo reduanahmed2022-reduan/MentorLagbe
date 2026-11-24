@@ -3,7 +3,7 @@ import DashboardNavbar from "@/components/dashboard/DashboardNavbar";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 
 export const metadata: Metadata = {
-  title: "Dashboard | MentorLagbe",
+  title: { absolute: "Dashboard | MentorLagbe" },
   robots: { index: false, follow: false },
 };
 

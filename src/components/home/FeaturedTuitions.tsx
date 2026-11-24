@@ -6,14 +6,30 @@ import TuitionCard from "@/components/shared/TuitionCard";
 import { apiFetch } from "@/lib/api";
 import type { Tuition } from "@/lib/types";
 
-export default function FeaturedTuitions() {
+type FeaturedTuitionsProps = {
+  query?: string;
+  eyebrow?: string;
+  heading?: string;
+  description?: string;
+  emptyMessage?: string;
+  className?: string;
+};
+
+export default function FeaturedTuitions({
+  query = "/tuitions?limit=6&minFee=500&maxFee=800",
+  eyebrow = "FEATURED TUITIONS",
+  heading = "Latest approved batches for you",
+  description = "Handpicked monthly batches between $500 & $800 — verified and ready to join.",
+  emptyMessage = "No approved tuitions yet. Check back soon — new batches are added every week.",
+  className = "bg-white py-16 sm:py-20",
+}: FeaturedTuitionsProps) {
   const [tuitions, setTuitions] = useState<Tuition[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    apiFetch<{ tuitions: Tuition[] }>("/tuitions?limit=6&minFee=500&maxFee=800", {
+    apiFetch<{ tuitions: Tuition[] }>(query, {
       signal: controller.signal,
     })
       .then((data) => setTuitions(data.tuitions.slice(0, 6)))
@@ -21,22 +37,20 @@ export default function FeaturedTuitions() {
       .finally(() => setLoading(false));
 
     return () => controller.abort();
-  }, []);
+  }, [query]);
 
   return (
-    <section className="bg-white py-16 sm:py-20">
+    <section className={className}>
       <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-16">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[#0f9f6e]">
-              FEATURED TUITIONS
+              {eyebrow}
             </span>
             <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-[#111827] sm:text-3xl">
-              Latest approved batches for you
+              {heading}
             </h2>
-            <p className="mt-2 text-sm text-slate-500">
-              Handpicked monthly batches between $500 &amp; $800 — verified and ready to join.
-            </p>
+            <p className="mt-2 text-sm text-slate-500">{description}</p>
           </div>
           <Link
             href="/tuitions"
@@ -66,7 +80,7 @@ export default function FeaturedTuitions() {
             aria-live="polite"
             className="mt-10 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-10 text-center text-sm text-slate-500"
           >
-            No approved tuitions yet. Check back soon — new batches are added every week.
+            {emptyMessage}
           </div>
         )}
       </div>

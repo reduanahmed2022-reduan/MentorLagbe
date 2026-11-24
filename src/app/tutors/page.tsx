@@ -88,6 +88,7 @@ export default function TutorsPage() {
             // Home-page category labels differ from the real tutor subjects.
             const subjectAliases: Record<string, string> = {
                 Language: "English",
+                IELTS: "English",
                 Coding: "ICT",
                 Programming: "ICT",
             };
@@ -416,11 +417,19 @@ export default function TutorsPage() {
                             >
                                 <div className="p-6">
                                     <div className="flex items-start gap-4">
-                                        <img
-                                            src={tutor.image || "https://i.pravatar.cc/300?img=12"}
-                                            alt={tutor.name}
-                                            className="h-16 w-16 rounded-2xl object-cover"
-                                        />
+                                        <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-emerald-100 text-lg font-bold text-[#0f9f6e]">
+                                            {tutor.name.charAt(0)}
+                                            {tutor.image?.trim() && (
+                                                <img
+                                                    src={tutor.image}
+                                                    alt={tutor.name}
+                                                    onError={(event) => {
+                                                        event.currentTarget.style.display = "none";
+                                                    }}
+                                                    className="absolute inset-0 h-full w-full object-cover"
+                                                />
+                                            )}
+                                        </div>
 
                                         <div className="min-w-0 flex-1">
                                             <div className="flex flex-wrap items-center gap-2">

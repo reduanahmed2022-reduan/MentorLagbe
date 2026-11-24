@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   BookOpenCheck,
   CheckCircle2,
@@ -20,21 +21,33 @@ export default function TutorOverviewPage() {
   const [tuitions, setTuitions] = useState<Tuition[]>([]);
   const [applicants, setApplicants] = useState<TuitionApplication[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    Promise.all([
-      apiFetch<{ tuitions: Tuition[] }>("/tuitions/my-tuitions", { auth: true }),
-      apiFetch<{ applicants: TuitionApplication[] }>("/applications/tutor-applicants", { auth: true }),
-    ])
-      .then(([tuitionData, applicantData]) => {
-        setTuitions(tuitionData.tuitions);
-        setApplicants(applicantData.applicants);
-      })
-      .catch(() => {
-        setTuitions([]);
-        setApplicants([]);
-      })
-      .finally(() => setLoading(false));
+    const loadTuitions = apiFetch<{ tuitions: Tuition[] }>(
+      "/tuitions/my-tuitions",
+      { auth: true }
+    )
+      .then((data) => setTuitions(data.tuitions))
+      .catch((err) => {
+        const message = err instanceof Error ? err.message : "Could not load your tuitions";
+        setError(message);
+        toast.error(message);
+      });
+
+    // Keep each dataset independent so one failed endpoint does not wipe the other.
+    const loadApplicants = apiFetch<{ applicants: TuitionApplication[] }>(
+      "/applications/tutor-applicants",
+      { auth: true }
+    )
+      .then((data) => setApplicants(data.applicants))
+      .catch((err) => {
+        const message = err instanceof Error ? err.message : "Could not load your applicants";
+        setError(message);
+        toast.error(message);
+      });
+
+    Promise.all([loadTuitions, loadApplicants]).finally(() => setLoading(false));
   }, []);
 
   const activeCount = tuitions.filter((item) => item.isActive && item.approvalStatus === "approved").length;
@@ -65,6 +78,12 @@ export default function TutorOverviewPage() {
           </Link>
         </div>
       </section>
+
+      {error && (
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          {error}
+        </p>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="My Tuitions" value={tuitions.length} icon={BookOpenCheck} />
@@ -107,7 +126,13 @@ export default function TutorOverviewPage() {
                     <td className="py-4">{item.subject}</td>
                     <td className="py-4">${Number(item.monthlyFee).toLocaleString("en-US")}</td>
                     <td className="py-4">
-                      <StatusBadge status={item.isActive ? "active" : item.approvalStatus || "pending"} />
+                      <StatusBadge
+                        status={
+                          item.approvalStatus === "approved" && !item.isActive
+                            ? "closed"
+                            : item.approvalStatus || "pending"
+                        }
+                      />
                     </td>
                   </tr>
                 ))}

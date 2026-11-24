@@ -15,14 +15,14 @@ const plans = [
     price: `$${PRO_PRICES.tutor}`,
     role: "tutor",
     highlight: true,
-    features: ["Unlimited tuition posts", "Verified Pro badge", "Priority listing"],
+    features: ["Unlimited tuition posts", "Pro badge on profile", "Full applicant management"],
   },
   {
     title: "Pro Student",
     price: `$${PRO_PRICES.student}`,
     role: "student",
     highlight: true,
-    features: ["Unlimited bookmarks", "Priority booking", "All tuition details"],
+    features: ["All tuition details", "Pro badge on profile", "One-time Pro upgrade"],
   },
 ];
 

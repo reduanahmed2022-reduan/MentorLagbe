@@ -66,6 +66,9 @@ export default function Highlights() {
               <p className="mt-1 text-xs text-slate-300">Subjects</p>
             </div>
           </div>
+          <p className="mt-2 text-center text-[11px] text-slate-400">
+            Illustrative platform reach — not live counters.
+          </p>
         </div>
 
         <div>

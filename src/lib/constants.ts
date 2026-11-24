@@ -46,6 +46,7 @@ export const PUBLIC_NAV = [
 export const BRAND = {
   name: "MentorLagbe",
   tagline: "Smart tuition & mentorship, made personal.",
-  email: "hello@mentorlagbe.com",
+  email: "reduanahmed@gmail.com",
+  phone: "+880 1711-000000",
   location: "Dhaka, Bangladesh",
 };

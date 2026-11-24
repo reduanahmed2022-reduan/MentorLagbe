@@ -10,13 +10,16 @@ import type { Transaction } from "@/lib/types";
 export default function AdminTransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     apiFetch<{ transactions: Transaction[] }>("/admin/transactions", { auth: true })
       .then((data) => setTransactions(data.transactions))
-      .catch((error) =>
-        toast.error(error instanceof Error ? error.message : "Could not load transactions")
-      )
+      .catch((errorValue) => {
+        const message = errorValue instanceof Error ? errorValue.message : "Could not load transactions";
+        setError(message);
+        toast.error(message);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -39,6 +42,12 @@ export default function AdminTransactionsPage() {
           </div>
         </div>
       </div>
+
+      {error && (
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          {error}
+        </p>
+      )}
 
       {loading ? (
         <div className="flex h-64 items-center justify-center rounded-2xl border border-slate-200 bg-white">
@@ -78,9 +87,13 @@ export default function AdminTransactionsPage() {
         </div>
       ) : (
         <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-12 text-center">
-          <p className="text-lg font-bold text-slate-800">No transactions yet</p>
+          <p className="text-lg font-bold text-slate-800">
+            {error ? "Transactions unavailable" : "No transactions yet"}
+          </p>
           <p className="mt-2 text-sm text-slate-500">
-            Pro purchases will appear here once payments are completed.
+            {error
+              ? "Please reload the page or try again shortly."
+              : "Pro purchases will appear here once payments are completed."}
           </p>
         </div>
       )}

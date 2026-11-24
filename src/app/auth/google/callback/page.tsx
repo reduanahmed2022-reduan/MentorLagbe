@@ -52,13 +52,14 @@ export default function GoogleCallbackPage() {
       window.history.replaceState(null, "", window.location.pathname);
 
       if (error || !token || !rawUser) {
-        setStatus("error");
-        setMessage(
+        const failureMessage =
           ERROR_MESSAGES[error || ""] ||
-            (description
-              ? `Google sign-in failed: ${description}`
-              : "The Google response was incomplete. Please try again.")
-        );
+          (description
+            ? `Google sign-in failed: ${description}`
+            : "The Google response was incomplete. Please try again.");
+        setStatus("error");
+        setMessage(failureMessage);
+        toast.error(failureMessage);
         return;
       }
 
@@ -70,13 +71,16 @@ export default function GoogleCallbackPage() {
         }
 
         saveSession(token, user);
+        const welcome = `Welcome, ${user.name || user.email || "there"}!`;
         setStatus("success");
-        setMessage(`Welcome, ${user.name}!`);
-        toast.success(`Welcome, ${user.name}!`);
+        setMessage(welcome);
+        toast.success(welcome);
         router.replace(dashboardPathFor(user.role));
       } catch {
+        const failureMessage = "We could not complete Google sign-in. Please try again.";
         setStatus("error");
-        setMessage("We could not complete Google sign-in. Please try again.");
+        setMessage(failureMessage);
+        toast.error(failureMessage);
       }
     });
 

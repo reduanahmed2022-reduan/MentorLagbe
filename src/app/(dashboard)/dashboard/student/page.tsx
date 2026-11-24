@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   BookMarked,
   CheckCircle2,
@@ -22,18 +23,23 @@ export default function StudentOverviewPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      apiFetch<{ applications: TuitionApplication[] }>("/applications/my-applications", {
-        auth: true,
-      }),
-      apiFetch<{ user: AuthUser }>("/auth/me", { auth: true }),
-    ])
-      .then(([apps, profile]) => {
-        setApplications(apps.applications);
-        setPlan(profile.user.plan || "free");
-      })
-      .catch(() => setApplications([]))
-      .finally(() => setLoading(false));
+    const loadApplications = apiFetch<{ applications: TuitionApplication[] }>(
+      "/applications/my-applications",
+      { auth: true }
+    )
+      .then((data) => setApplications(data.applications))
+      .catch((error) => {
+        toast.error(
+          error instanceof Error ? error.message : "Could not load your applications"
+        );
+      });
+
+    // A profile failure must not erase successfully loaded applications.
+    const loadProfile = apiFetch<{ user: AuthUser }>("/auth/me", { auth: true })
+      .then((data) => setPlan(data.user.plan || "free"))
+      .catch(() => toast.error("Could not refresh your plan details"));
+
+    Promise.all([loadApplications, loadProfile]).finally(() => setLoading(false));
   }, []);
 
   const stats: DashboardStats = {

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SITE_URL } from "@/lib/site";
 
@@ -23,7 +24,7 @@ const SHARE_TARGETS = [
       </svg>
     ),
     href: (url: string, text: string) =>
-      `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+      `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
   },
   {
     label: "Facebook",
@@ -44,10 +45,10 @@ export default function ShareButtons({
   title: string;
   path: string;
 }) {
-  // Use the browser's real origin so shares always point at the URL the user
-  // is actually viewing (SITE_URL is only the build-time fallback).
-  const origin =
-    typeof window === "undefined" ? SITE_URL : window.location.origin;
+  // Start from the canonical URL on both server and first client render, then
+  // switch to the browser's real origin after mount (no hydration mismatch).
+  const [origin, setOrigin] = useState(SITE_URL);
+  useEffect(() => setOrigin(window.location.origin), []);
   const url = `${origin}${path}`;
   const text = `${title} | MentorLagbe`;
 
@@ -82,7 +83,7 @@ export default function ShareButtons({
           rel="noopener noreferrer"
           aria-label={`Share on ${label}`}
           title={`Share on ${label}`}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition hover:border-emerald-500 hover:text-emerald-600"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition hover:border-emerald-500 hover:text-emerald-600"
         >
           {icon}
         </a>

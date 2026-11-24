@@ -129,13 +129,18 @@ export default function MyTuitionsPage() {
                 </button>
                 <button
                   type="button"
-                  disabled={busyId === tuition._id}
+                  disabled={busyId === tuition._id || tuition.approvalStatus !== "approved"}
+                  title={
+                    tuition.approvalStatus === "approved"
+                      ? undefined
+                      : "Only approved batches can be opened or closed"
+                  }
                   onClick={() => handleToggle(tuition)}
-                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600 disabled:opacity-50"
+                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {busyId === tuition._id ? "Updating…" : tuition.isActive ? "Close batch" : "Reopen batch"}
                 </button>
-                {tuition.approvalStatus === "approved" && (
+                {tuition.approvalStatus === "approved" && tuition.isActive && (
                   <Link
                     href={`/tuitions/${tuition._id}`}
                     className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600"

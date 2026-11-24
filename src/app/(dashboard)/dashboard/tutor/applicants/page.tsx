@@ -7,23 +7,31 @@ import StatusBadge from "@/components/dashboard/StatusBadge";
 import { apiFetch } from "@/lib/api";
 import type { TuitionApplication } from "@/lib/types";
 
-function reviewedAtSuffix(value?: string) {
-  if (!value) return "";
+function formatDate(value?: string) {
+  if (!value) return "—";
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "" : ` ${date.toLocaleDateString()}`;
+  return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString();
+}
+
+function reviewedAtSuffix(value?: string) {
+  const formatted = formatDate(value);
+  return formatted === "—" ? "" : ` ${formatted}`;
 }
 
 export default function ApplicantsPage() {
   const [applicants, setApplicants] = useState<TuitionApplication[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
 
   useEffect(() => {
     apiFetch<{ applicants: TuitionApplication[] }>("/applications/tutor-applicants", { auth: true })
-      .then((data) => setApplicants(data.applicants))
-      .catch((error) =>
-        toast.error(error instanceof Error ? error.message : "Could not load applicants")
-      )
+      .then((data) => setApplicants(Array.isArray(data.applicants) ? data.applicants : []))
+      .catch((errorValue) => {
+        const message = errorValue instanceof Error ? errorValue.message : "Could not load applicants";
+        setError(message);
+        toast.error(message);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -37,7 +45,11 @@ export default function ApplicantsPage() {
         body: { status },
       });
       setApplicants((items) =>
-        items.map((item) => (item._id === id ? { ...item, status } : item))
+        items.map((item) =>
+          item._id === id
+            ? { ...item, status, reviewedAt: new Date().toISOString() }
+            : item
+        )
       );
       toast.success(`Application ${status}`);
     } catch (error) {
@@ -55,6 +67,12 @@ export default function ApplicantsPage() {
           Review students who applied to your tuition batches.
         </p>
       </div>
+
+      {error && (
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          {error}
+        </p>
+      )}
 
       {loading ? (
         <div className="flex h-64 items-center justify-center rounded-2xl border border-slate-200 bg-white">
@@ -82,7 +100,7 @@ export default function ApplicantsPage() {
 
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                 <p className="text-xs text-slate-400">
-                  Applied {new Date(item.appliedAt).toLocaleDateString()}
+                  Applied {formatDate(item.appliedAt)}
                 </p>
                 {item.status === "pending" ? (
                   <div className="flex gap-2">
@@ -114,9 +132,13 @@ export default function ApplicantsPage() {
         </div>
       ) : (
         <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-12 text-center">
-          <p className="text-lg font-bold text-slate-800">No applicants yet</p>
+          <p className="text-lg font-bold text-slate-800">
+            {error ? "Applicants unavailable" : "No applicants yet"}
+          </p>
           <p className="mt-2 text-sm text-slate-500">
-            Once students apply to your tuitions, they will appear here.
+            {error
+              ? "Please reload the page or try again shortly."
+              : "Once students apply to your tuitions, they will appear here."}
           </p>
         </div>
       )}

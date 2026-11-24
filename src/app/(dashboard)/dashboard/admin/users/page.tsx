@@ -16,15 +16,18 @@ type AdminUser = Omit<AuthUser, "id"> & {
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
 
   useEffect(() => {
     apiFetch<{ users: AdminUser[] }>("/admin/users", { auth: true })
       .then((data) => setUsers(data.users))
-      .catch((error) =>
-        toast.error(error instanceof Error ? error.message : "Could not load users")
-      )
+      .catch((errorValue) => {
+        const message = errorValue instanceof Error ? errorValue.message : "Could not load users";
+        setError(message);
+        toast.error(message);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -58,7 +61,7 @@ export default function AdminUsersPage() {
         <div>
           <h2 className="text-xl font-extrabold text-slate-900">User Management</h2>
           <p className="mt-1 text-sm text-slate-500">
-            {users.length} registered accounts. Change roles with one click.
+            {error ? "Account list unavailable." : `${users.length} registered accounts. Change roles with one click.`}
           </p>
         </div>
         <div className="relative">
@@ -67,10 +70,17 @@ export default function AdminUsersPage() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search users…"
-            className="w-64 rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm outline-none focus:border-indigo-500"
+            aria-label="Search users"
+            className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm outline-none focus:border-indigo-500 sm:w-64"
           />
         </div>
       </div>
+
+      {error && (
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          {error}
+        </p>
+      )}
 
       {loading ? (
         <div className="flex h-64 items-center justify-center rounded-2xl border border-slate-200 bg-white">
@@ -129,7 +139,9 @@ export default function AdminUsersPage() {
           </table>
 
           {!filtered.length && (
-            <p aria-live="polite" className="p-10 text-center text-sm text-slate-500">No users match your search.</p>
+            <p aria-live="polite" className="p-10 text-center text-sm text-slate-500">
+              {error ? "User list is unavailable right now." : "No users match your search."}
+            </p>
           )}
         </div>
       )}

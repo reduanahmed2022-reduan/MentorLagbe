@@ -77,15 +77,13 @@
 | `next` | `16.4.6` | App Router framework |
 | `react` / `react-dom` | `19.3.0` | UI runtime |
 | `better-auth` | `^1.7.27` | BetterAuth client |
-| `tailwindcss` | `4.3.3` | Utility CSS |
-| `@tailwindcss/turbopack` | `4.3.3` | Tailwind build integration |
 | `lucide-react` | `^1.75.0` | Icons |
 | `sonner` | `^2.0.8` | Toast notifications |
 | `styled-components` | `^6.6.0` | Component styling |
 
 ### Dev dependencies
 
-`@types/node`, `@types/react`, `@types/react-dom`, `@types/styled-components`, `eslint`, `eslint-config-next`, `typescript`.
+`@types/node`, `@types/react`, `@types/react-dom`, `@types/styled-components`, `@tailwindcss/turbopack`, `eslint`, `eslint-config-next`, `tailwindcss`, `typescript`.
 
 ---
 
@@ -96,7 +94,8 @@
 npm install
 
 # 2. Create the environment file (this is the ONLY client env var)
-copy .env.local.example .env.local
+#    Windows: copy .env.local.example .env.local
+#    macOS/Linux: cp .env.local.example .env.local
 #    NEXT_PUBLIC_API_URL=http://localhost:5000/api
 
 # 3. Start the app

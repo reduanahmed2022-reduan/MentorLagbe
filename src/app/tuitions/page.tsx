@@ -102,11 +102,17 @@ export default function TuitionsPage() {
             const initialLocation = urlParams.get("location");
             const initialSubject = urlParams.get("subject");
             const initialMode = urlParams.get("mode");
+            const initialClassLevel = urlParams.get("classLevel");
+            const initialMinFee = urlParams.get("minFee");
+            const initialMaxFee = urlParams.get("maxFee");
 
             if (initialSearch) setSearch(initialSearch);
             if (initialLocation) setLocation(initialLocation);
             if (initialSubject) setSubject(initialSubject);
             if (initialMode === "Online" || initialMode === "Offline") setMode(initialMode);
+            if (initialClassLevel) setClassLevel(initialClassLevel);
+            if (initialMinFee) setMinFee(initialMinFee);
+            if (initialMaxFee) setMaxFee(initialMaxFee);
         });
     }, []);
 
@@ -129,6 +135,7 @@ export default function TuitionsPage() {
                 if (location.trim()) params.set("location", location.trim());
                 if (minFee !== "") params.set("minFee", minFee);
                 if (maxFee !== "") params.set("maxFee", maxFee);
+                params.set("sort", sort);
                 params.set("page", String(page));
                 params.set("limit", "9");
 
@@ -166,11 +173,11 @@ export default function TuitionsPage() {
         fetchTuitions();
 
         return () => controller.abort();
-    }, [search, subject, classLevel, mode, location, minFee, maxFee, page]);
+    }, [search, subject, classLevel, mode, location, minFee, maxFee, sort, page]);
 
     // Reset to the first page when filters change. Adjusting state during
     // render keeps the fetch effect from running once with a stale page.
-    const filterKey = [search, subject, classLevel, mode, location, minFee, maxFee].join("|");
+    const filterKey = [search, subject, classLevel, mode, location, minFee, maxFee, sort].join("|");
     const [appliedFilterKey, setAppliedFilterKey] = useState(filterKey);
     if (filterKey !== appliedFilterKey) {
         setAppliedFilterKey(filterKey);

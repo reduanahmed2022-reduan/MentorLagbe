@@ -96,19 +96,21 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     );
   }
 
-  const handleSignOut = () => {
-    logout();
+  const handleSignOut = async () => {
+    await logout();
     toast.success("You have been signed out");
-    router.push("/sign-in");
+    router.replace("/sign-in");
   };
 
-  const sidebarContent = (
+  // The mobile drawer must always show labels, even when the desktop sidebar
+  // is collapsed on a wide screen and then resized down.
+  const sidebarContent = (compact: boolean) => (
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center gap-3 border-b border-white/10 px-5">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-sm font-black text-white">
           M
         </span>
-        {!collapsed && (
+        {!compact && (
           <span className="truncate text-lg font-extrabold text-white">
             Mentor<span className="text-emerald-400">Lagbe</span>
           </span>
@@ -124,15 +126,15 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               key={href}
               href={href}
               onClick={() => setMobileOpen(false)}
-              title={collapsed ? label : undefined}
+              title={compact ? label : undefined}
               className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition ${
                 active
                   ? "bg-indigo-600 text-white"
                   : "text-slate-300 hover:bg-white/10 hover:text-white"
-              } ${collapsed ? "justify-center" : ""}`}
+              } ${compact ? "justify-center" : ""}`}
             >
               <Icon className="h-5 w-5 shrink-0" />
-              {!collapsed && <span className="truncate">{label}</span>}
+              {!compact && <span className="truncate">{label}</span>}
             </Link>
           );
         })}
@@ -143,11 +145,11 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           type="button"
           onClick={handleSignOut}
           className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-rose-300 transition hover:bg-rose-500/10 ${
-            collapsed ? "justify-center" : ""
+            compact ? "justify-center" : ""
           }`}
         >
           <LogOut className="h-5 w-5 shrink-0" />
-          {!collapsed && "Sign Out"}
+          {!compact && "Sign Out"}
         </button>
       </div>
     </div>
@@ -161,7 +163,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           collapsed ? "w-20" : "w-64"
         }`}
       >
-        {sidebarContent}
+        {sidebarContent(collapsed)}
       </aside>
 
       {/* Mobile sidebar */}
@@ -174,7 +176,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             onClick={() => setMobileOpen(false)}
           />
           <aside className="absolute inset-y-0 left-0 w-64 bg-[#111827]">
-            {sidebarContent}
+            {sidebarContent(false)}
           </aside>
         </div>
       )}

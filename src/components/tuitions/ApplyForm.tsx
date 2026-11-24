@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/api";
+import type { TuitionApplication } from "@/lib/types";
 
 export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
   const { user, ready, isAuthenticated } = useAuth();
@@ -14,12 +15,43 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
   const [studentNote, setStudentNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [applied, setApplied] = useState(false);
+  const [checking, setChecking] = useState(false);
+
+  // Restore the applied state after a reload so students never see a form they
+  // have already submitted. Duplicate submissions are still blocked server-side.
+  useEffect(() => {
+    if (!ready || !isAuthenticated || user?.role !== "student") return;
+
+    const controller = new AbortController();
+    setChecking(true);
+
+    apiFetch<{ applications: TuitionApplication[] }>("/applications/my-applications", {
+      auth: true,
+      signal: controller.signal,
+    })
+      .then((data) => {
+        if (data.applications?.some((item) => item.tuitionId === tuitionId)) {
+          setApplied(true);
+        }
+      })
+      .catch(() => {
+        // A transient failure should not hide the form; the server still guards
+        // against duplicates with a 409 response.
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setChecking(false);
+      });
+
+    return () => controller.abort();
+  }, [ready, isAuthenticated, user?.role, tuitionId]);
 
   const inputClass =
     "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-emerald-500";
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (submitting || applied) return;
 
     if (!preferredSchedule.trim()) {
       toast.error("Please tell us your preferred schedule");
@@ -38,7 +70,13 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
       setApplied(true);
       toast.success("Application submitted successfully!");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not submit application");
+      const message = error instanceof Error ? error.message : "Could not submit application";
+      if (message.toLowerCase().includes("already applied")) {
+        setApplied(true);
+        toast.success("You have already applied to this tuition");
+      } else {
+        toast.error(message);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -48,6 +86,15 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
     return (
       <div className="flex h-16 items-center justify-center">
         <Loader2 className="h-5 w-5 animate-spin text-emerald-600" />
+      </div>
+    );
+  }
+
+  if (checking) {
+    return (
+      <div className="flex h-16 items-center justify-center gap-2 text-xs text-slate-500">
+        <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
+        Checking your applications…
       </div>
     );
   }
