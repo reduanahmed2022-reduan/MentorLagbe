@@ -1,6 +1,9 @@
 
 @import "tailwindcss";
 
+/* Class-based dark mode: the ThemeProvider toggles `.dark` on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #f5f9fa;
   --foreground: #102a43;
@@ -55,4 +58,167 @@ body {
   .container-main {
     width: min(100% - 28px, 1200px);
   }
+}
+
+/* --------------------------------------------------------------------------
+   Dark theme
+   The pages use many light utility classes. Mapping those utilities inside
+   `.dark` keeps every landing and dashboard screen readable without rewriting
+   each component, while intentionally dark blocks stay untouched.
+   -------------------------------------------------------------------------- */
+.dark {
+  --background: #0b1220;
+  --foreground: #e2e8f0;
+  --primary: #34d399;
+  --primary-light: #2dd4bf;
+  --surface: #111c2e;
+  --muted: #94a3b8;
+  --border: #233047;
+  color-scheme: dark;
+}
+
+.dark body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.dark header,
+.dark nav,
+.dark section,
+.dark article,
+.dark aside,
+.dark footer,
+.dark input,
+.dark select,
+.dark textarea {
+  transition: background-color 250ms ease, border-color 250ms ease, color 250ms ease;
+}
+
+.dark .bg-white,
+.dark .bg-white\/95 {
+  background-color: #111c2e;
+}
+
+.dark .bg-slate-50,
+.dark .bg-slate-50\/50,
+.dark .bg-slate-50\/60,
+.dark .bg-gray-50,
+.dark .bg-\[\#f8faf9\],
+.dark .bg-\[\#f9fafb\] {
+  background-color: #0d1626;
+}
+
+.dark .bg-\[\#f1f7f4\],
+.dark .bg-\[\#f1f7f4\]\/90 {
+  background-color: #0b1220;
+}
+
+.dark .bg-slate-100,
+.dark .bg-slate-200 {
+  background-color: #1b2940;
+}
+
+.dark .bg-indigo-50,
+.dark .bg-indigo-50\/90,
+.dark .bg-blue-50,
+.dark .bg-amber-50 {
+  background-color: rgba(99, 102, 241, 0.12);
+}
+
+.dark .bg-emerald-50,
+.dark .bg-emerald-50\/50,
+.dark .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.13);
+}
+
+.dark .bg-rose-50 {
+  background-color: rgba(244, 63, 94, 0.12);
+}
+
+.dark .from-emerald-50.to-teal-100 {
+  background-image: none;
+  background-color: #10283a;
+}
+
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-300,
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-emerald-100,
+.dark .border-emerald-200,
+.dark .border-indigo-100,
+.dark .border-indigo-200,
+.dark .border-rose-200,
+.dark .border-white\/70 {
+  border-color: #26344b;
+}
+
+.dark .divide-slate-50 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #26344b;
+}
+
+.dark .text-slate-900,
+.dark .text-\[\#111827\] {
+  color: #f1f5f9;
+}
+
+.dark .text-slate-800,
+.dark .text-gray-800 {
+  color: #e2e8f0;
+}
+
+.dark .text-slate-700,
+.dark .text-gray-700 {
+  color: #cbd5e1;
+}
+
+.dark .text-slate-600,
+.dark .text-slate-500,
+.dark .text-gray-600,
+.dark .text-gray-500 {
+  color: #94a3b8;
+}
+
+.dark .text-slate-400,
+.dark .text-slate-300 {
+  color: #7c8da6;
+}
+
+.dark .text-\[\#0f9f6e\],
+.dark .text-emerald-700,
+.dark .text-emerald-600 {
+  color: #34d399;
+}
+
+.dark .text-indigo-700,
+.dark .text-indigo-600 {
+  color: #818cf8;
+}
+
+.dark .text-rose-700,
+.dark .text-rose-600 {
+  color: #fb7185;
+}
+
+.dark .text-blue-700,
+.dark .text-blue-600 {
+  color: #60a5fa;
+}
+
+.dark .text-amber-700,
+.dark .text-amber-600 {
+  color: #fbbf24;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b;
+}
+
+.dark select option {
+  background-color: #111c2e;
+  color: #e2e8f0;
 }

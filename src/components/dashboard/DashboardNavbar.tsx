@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Home } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import Logo from "@/components/shared/Logo";
+import ThemeToggle from "@/components/shared/ThemeToggle";
 
 function initials(name?: string) {
   if (!name) return "U";
@@ -25,6 +26,8 @@ export default function DashboardNavbar() {
         <Logo />
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle />
+
           <Link
             href="/"
             aria-label="Home"

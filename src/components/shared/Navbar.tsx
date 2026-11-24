@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { dashboardPathFor } from "@/lib/auth";
 import { PUBLIC_NAV } from "@/lib/constants";
 import Logo from "./Logo";
+import ThemeToggle from "./ThemeToggle";
 
 function initials(name?: string) {
   if (!name) return "U";
@@ -62,6 +63,8 @@ export default function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 lg:flex">
+          <ThemeToggle />
+
           {!isAuthenticated ? (
             <>
               <Link
@@ -139,23 +142,27 @@ export default function Navbar() {
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={() => setMobileMenuOpen((open) => !open)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-slate-700 transition hover:border-[#0f9f6e] focus:outline-none focus:ring-2 focus:ring-[#0f9f6e] lg:hidden"
-          aria-label="Toggle navigation"
-          aria-expanded={mobileMenuOpen}
-        >
-          {mobileMenuOpen ? (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
-              <path d="m6 6 12 12M18 6 6 18" strokeLinecap="round" />
-            </svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
-              <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
-            </svg>
-          )}
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggle className="rounded-xl" />
+
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-slate-700 transition hover:border-[#0f9f6e] focus:outline-none focus:ring-2 focus:ring-[#0f9f6e]"
+            aria-label="Toggle navigation"
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? (
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+                <path d="m6 6 12 12M18 6 6 18" strokeLinecap="round" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+                <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
+              </svg>
+            )}
+          </button>
+        </div>
       </nav>
 
       {mobileMenuOpen && (

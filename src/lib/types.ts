@@ -67,6 +67,18 @@ export interface TuitionApplication {
   restoredAt?: string;
 }
 
+export interface Review {
+  _id: string;
+  tuitionId: string;
+  tuitionTitle?: string;
+  studentId?: string;
+  studentName: string;
+  studentEmail?: string;
+  rating: number;
+  feedback?: string;
+  createdAt: string;
+}
+
 export interface Bookmark {
   _id: string;
   tuitionId: string;

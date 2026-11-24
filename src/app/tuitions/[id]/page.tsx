@@ -9,6 +9,7 @@ import Navbar from "@/components/shared/Navbar";
 import ShareButtons from "@/components/shared/ShareButtons";
 import ApplyForm from "@/components/tuitions/ApplyForm";
 import BookmarkButton from "@/components/tuitions/BookmarkButton";
+import TuitionReviews from "@/components/tuitions/TuitionReviews";
 import { apiFetch } from "@/lib/api";
 import {
     ArrowLeft,
@@ -230,6 +231,8 @@ export default function TuitionDetailsPage() {
                                 </div>
                             </div>
                         </section>
+
+                        <TuitionReviews tuitionId={tuition._id} />
                     </div>
 
                     <aside>
