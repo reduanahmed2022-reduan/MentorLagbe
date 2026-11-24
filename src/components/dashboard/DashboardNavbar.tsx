@@ -20,17 +20,18 @@ export default function DashboardNavbar() {
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-[100] w-full border-b border-indigo-100 bg-indigo-50/90 px-4 py-3 backdrop-blur-xl sm:px-8 lg:px-16">
-      <nav className="mx-auto flex h-[68px] max-w-7xl items-center justify-between rounded-2xl border border-white/70 bg-white/95 px-4 shadow-md shadow-indigo-900/5 sm:px-6">
+    <header className="sticky top-0 z-[100] w-full border-b border-indigo-100 bg-indigo-50/90 px-3 py-3 backdrop-blur-xl sm:px-8 lg:px-16">
+      <nav className="mx-auto flex h-[68px] max-w-7xl items-center justify-between rounded-2xl border border-white/70 bg-white/95 px-3 shadow-md shadow-indigo-900/5 sm:px-6">
         <Logo />
 
         <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/"
-            className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-indigo-500 hover:text-indigo-600"
+            aria-label="Home"
+            className="flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-indigo-500 hover:text-indigo-600 min-[390px]:gap-2 min-[390px]:px-4"
           >
             <Home className="h-4 w-4" />
-            Home
+            <span className="hidden min-[390px]:inline">Home</span>
           </Link>
 
           <Link
