@@ -22,7 +22,7 @@ const plans = [
     price: `$${PRO_PRICES.student}`,
     role: "student",
     highlight: true,
-    features: ["All tuition details", "Pro badge on profile", "One-time Pro upgrade"],
+    features: ["All tuition details", "Pro badge on profile", "Monthly Pro subscription"],
   },
 ];
 
@@ -61,7 +61,7 @@ export default function PricingPreview() {
               </div>
               <p className="mt-4 text-3xl font-extrabold text-[#0f9f6e]">
                 {plan.price}
-                <span className="text-sm font-medium text-slate-400"> / plan</span>
+                <span className="text-sm font-medium text-slate-400"> / month</span>
               </p>
               <ul className="mt-6 flex-1 space-y-3">
                 {plan.features.map((feature) => (

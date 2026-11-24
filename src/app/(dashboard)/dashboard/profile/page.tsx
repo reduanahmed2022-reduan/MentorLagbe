@@ -251,7 +251,7 @@ export default function ProfilePage() {
             <p className="mt-2 text-xs leading-6 text-slate-500">
               {plan === "pro"
                 ? "Your Pro plan is active. Enjoy unlimited posts, priority listing and more."
-                : "Get unlimited tuition posts (tutors) or priority bookings (students) with a one-time payment."}
+                : "Get unlimited tuition posts (tutors) or priority bookings (students) with a monthly Pro subscription."}
             </p>
             {plan === "free" && (
               <button

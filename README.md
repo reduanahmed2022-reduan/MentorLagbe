@@ -45,7 +45,7 @@
 | BetterAuth (+ MongoDB adapter) in stack | ✅ | `src/lib/better-auth.ts`, server `config/betterAuth.js` |
 | Google sign-up / sign-in | ✅ | `GET /api/auth/google/start` → `/auth/google/callback` |
 | JWT bearer auth for REST routes | ✅ | `src/lib/api.ts`, `src/lib/auth.ts` |
-| Stripe Checkout (Student $10 / Tutor $15) | ✅ | `/pricing`, `/payment/success` |
+| Stripe monthly subscriptions (Student $10/mo / Tutor $15/mo) | ✅ | `/pricing`, `/payment/success` |
 | ImgBB image upload | ✅ | tutor tuition form → server `/api/upload/image` |
 | Student / Tutor / Admin dashboards | ✅ | `src/app/(dashboard)/dashboard/` |
 | Live deployment | ✅ | Vercel (client) + Render (API) |
@@ -62,7 +62,7 @@
 - **Tutor tools** — post, edit and close tuitions; upload banners through the ImgBB-backed API.
 - **Admin tools** — manage users and roles, approve/reject tuitions, inspect payment transactions and stats.
 - **Authentication** — email/password with JWT, plus Google OAuth bridged into the same session contract.
-- **Pro plans** — Stripe one-time upgrades ($10 student / $15 tutor) with success and cancel pages.
+- **Pro plans** — recurring monthly Stripe subscriptions ($10/mo student, $15/mo tutor) with success and cancel pages.
 - **Sharing & SEO** — LinkedIn / X / Facebook share buttons + copy-link on detail pages, generated OG image, sitemap and robots.
 - **Polished states** — sonner toasts, loading screens, error boundary, custom 404, responsive mobile layout.
 

@@ -93,7 +93,7 @@ export default function AdminTransactionsPage() {
           <p className="mt-2 text-sm text-slate-500">
             {error
               ? "Please reload the page or try again shortly."
-              : "Pro purchases will appear here once payments are completed."}
+              : "Pro subscription payments will appear here once payments are completed."}
           </p>
         </div>
       )}

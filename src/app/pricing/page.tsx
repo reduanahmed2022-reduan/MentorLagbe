@@ -25,7 +25,7 @@ const tiers = [
     price: `$${PRO_PRICES.student}`,
     plan: "pro",
     role: "student",
-    features: ["All tuition details", "Pro badge on profile", "One-time Pro upgrade", "Track application status"],
+    features: ["All tuition details", "Pro badge on profile", "Monthly Pro subscription", "Track application status"],
     popular: true,
   },
   {
@@ -113,8 +113,8 @@ export default function PricingPage() {
             Invest in your <span className="text-[#0f9f6e]">next level</span>
           </h1>
           <p className="mt-4 text-sm leading-7 text-slate-500">
-            Choose the plan that fits your goals. Payments are securely processed
-            by Stripe; Pro access activates once the payment is confirmed.
+            Choose the plan that fits your goals. Pro plans are recurring monthly
+            subscriptions billed securely by Stripe and renew automatically.
           </p>
         </div>
 
@@ -148,7 +148,7 @@ export default function PricingPage() {
                 <p className="mt-5 text-4xl font-extrabold text-[#0f9f6e]">
                   {tier.price}
                   {tier.plan === "pro" && (
-                    <span className="text-sm font-medium text-slate-400"> / one-time</span>
+                    <span className="text-sm font-medium text-slate-400"> / month</span>
                   )}
                 </p>
 

@@ -32,8 +32,8 @@ export default function TermsPage() {
             <h2 className="text-lg font-bold text-slate-900">2. Tuitions &amp; payments</h2>
             <p className="mt-2">
               Tuition listings are moderated by admins before they appear in
-              search. Pro plans are one-time purchases processed securely by
-              Stripe and activate immediately after confirmation.
+              search. Pro plans are recurring monthly subscriptions billed
+              securely by Stripe and renew automatically until canceled.
             </p>
           </section>
           <section>
