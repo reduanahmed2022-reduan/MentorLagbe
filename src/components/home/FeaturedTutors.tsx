@@ -80,7 +80,7 @@ export default function FeaturedTutors() {
             {tutors.map((tutor) => (
               <article
                 key={tutor.id}
-                className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                className="flex h-full flex-col rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="flex items-center gap-4">
                   <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-emerald-50 bg-emerald-100 text-xl font-bold text-[#0f9f6e]">
@@ -113,7 +113,7 @@ export default function FeaturedTutors() {
                   </div>
                 </div>
 
-                <div className="mt-6 space-y-3 border-t border-slate-100 pt-5">
+                <div className="mt-6 flex-1 space-y-3 border-t border-slate-100 pt-5">
                   <div className="flex items-center gap-3 text-sm text-slate-600">
                     <GraduationCap size={17} className="shrink-0 text-slate-400" />
                     <span>{tutor.qualification}</span>
