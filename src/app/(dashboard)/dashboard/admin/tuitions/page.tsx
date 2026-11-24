@@ -40,12 +40,24 @@ export default function AdminTuitionsPage() {
             : item
         )
       );
-      toast.success(`Tuition ${approvalStatus}`);
+      toast.success(approvalStatus === "approved" ? "Tuition approved" : "Tuition rejected");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not review tuition");
     } finally {
       setBusyId(null);
     }
+  };
+
+  // Reject is destructive, so ask for confirmation in a toast first.
+  const confirmReject = (tuition: Tuition) => {
+    toast("Reject this tuition?", {
+      description: tuition.title,
+      action: {
+        label: "Confirm reject",
+        onClick: () => handleReview(tuition, "rejected"),
+      },
+      cancel: "Cancel",
+    });
   };
 
   const shown = filter === "all" ? tuitions : tuitions.filter((item) => item.approvalStatus === filter);
@@ -117,7 +129,7 @@ export default function AdminTuitionsPage() {
                     <button
                       type="button"
                       disabled={busyId === tuition._id}
-                      onClick={() => handleReview(tuition, "rejected")}
+                      onClick={() => confirmReject(tuition)}
                       className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 px-4 py-2 text-xs font-bold text-rose-600 transition hover:bg-rose-50 disabled:opacity-50"
                     >
                       <X className="h-3.5 w-3.5" /> Reject
