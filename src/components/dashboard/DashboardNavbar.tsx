@@ -56,6 +56,9 @@ export default function DashboardNavbar() {
             <span className="hidden max-w-24 truncate text-sm font-semibold text-slate-800 sm:block">
               {user?.name}
             </span>
+            <span className="hidden rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold capitalize text-[#0f9f6e] sm:inline">
+              {user?.role}
+            </span>
           </Link>
         </div>
       </nav>
