@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import FeaturedTutors from "@/components/home/FeaturedTutors";
@@ -42,14 +42,23 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [heroTutors, setHeroTutors] = useState<Tutor[]>([]);
+  const [heroTutorsLoading, setHeroTutorsLoading] = useState(true);
 
   // Real tutors from the API power both the hero circle and the floating card.
   useEffect(() => {
     const controller = new AbortController();
+    setHeroTutorsLoading(true);
 
     apiFetch<{ tutors: Tutor[] }>("/tutors?limit=50", { signal: controller.signal })
-      .then((data) => setHeroTutors(data.tutors ?? []))
-      .catch(() => setHeroTutors([]));
+      .then((data) => {
+        if (!controller.signal.aborted) setHeroTutors(data.tutors ?? []);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setHeroTutors([]);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setHeroTutorsLoading(false);
+      });
 
     return () => controller.abort();
   }, []);
@@ -61,6 +70,22 @@ export default function HomePage() {
     ) ?? heroTutors[0] ?? null;
   const floatingTutor = featuredTutor;
   const circleTutor = featuredTutor;
+  const circleImageSrc = circleTutor?.image?.trim() || "";
+  const [circleImageState, setCircleImageState] = useState<
+    "loading" | "loaded" | "error"
+  >("loading");
+  const circleImageRef = useRef<HTMLImageElement | null>(null);
+
+  // A new tutor photo must never paint the previous image while it loads.
+  useEffect(() => {
+    setCircleImageState("loading");
+
+    // A cached image can finish before React attaches onLoad, so inspect it here too.
+    const img = circleImageRef.current;
+    if (img?.complete) {
+      setCircleImageState(img.naturalWidth > 0 ? "loaded" : "error");
+    }
+  }, [circleImageSrc]);
 
   const handleSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -228,15 +253,39 @@ export default function HomePage() {
 
               <div className="relative z-10 h-56 w-56 overflow-hidden rounded-full border-[8px] border-white bg-emerald-100 shadow-2xl sm:h-72 sm:w-72">
 
-                <img
-                  src={circleTutor?.image?.trim() || "/hero-mentor.svg"}
-                  alt={
-                    circleTutor
-                      ? `${circleTutor.name}, ${circleTutor.subject} tutor`
-                      : "Young male mentor teaching an online lesson"
-                  }
-                  className="h-full w-full object-cover"
-                />
+                {/* Neutral skeleton while the real tutor/photo is loading.
+                    The old placeholder illustration is never shown here. */}
+                {(heroTutorsLoading ||
+                  (circleImageSrc && circleImageState === "loading")) && (
+                  <div
+                    className="absolute inset-0 flex animate-pulse items-center justify-center bg-gradient-to-br from-emerald-100 to-emerald-200"
+                    role="status"
+                    aria-label="Loading featured tutor"
+                  >
+                    <span className="text-5xl font-black text-[#0f9f6e]/30">M</span>
+                  </div>
+                )}
+
+                {!heroTutorsLoading && circleImageSrc && circleImageState !== "error" && (
+                  <img
+                    key={circleImageSrc}
+                    ref={circleImageRef}
+                    src={circleImageSrc}
+                    alt={`${circleTutor?.name ?? "Featured tutor"}, ${circleTutor?.subject ?? "tutor"}`.trim()}
+                    onLoad={() => setCircleImageState("loaded")}
+                    onError={() => setCircleImageState("error")}
+                    className={`relative h-full w-full object-cover transition-opacity duration-300 ${
+                      circleImageState === "loaded" ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                )}
+
+                {!heroTutorsLoading &&
+                  (!circleImageSrc || circleImageState === "error") && (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-100 to-emerald-200 text-5xl font-black text-[#0f9f6e]">
+                      {circleTutor?.name?.charAt(0)?.toUpperCase() ?? "M"}
+                    </div>
+                  )}
 
               </div>
 
