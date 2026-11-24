@@ -5,6 +5,29 @@ import Logo from "./Logo";
 // Fixed value keeps server and client markup identical (no hydration mismatch).
 const COPYRIGHT_YEAR = 2026;
 
+// Brand icons are inlined so no extra icon dependency is needed. Each link
+// opens the platform itself; no pretend account URLs are used.
+const SOCIAL_LINKS = [
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
+        <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45z" />
+      </svg>
+    ),
+  },
+  {
+    label: "X (Twitter)",
+    href: "https://twitter.com/",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
+        <path d="M18.9 2H22l-6.77 7.74L23.2 22h-6.25l-4.9-6.4L6.5 22H3.4l7.24-8.28L2.8 2h6.4l4.43 5.86L18.9 2Zm-1.1 18h1.73L7.36 3.9H5.5L17.8 20Z" />
+      </svg>
+    ),
+  },
+];
+
 export default function Footer() {
   return (
     <footer className="mt-auto bg-[#0c2b2a] text-slate-300">
@@ -40,6 +63,21 @@ export default function Footer() {
             <li>{BRAND.email}</li>
             <li>{BRAND.location}</li>
           </ul>
+          <div className="mt-5 flex items-center gap-3">
+            {SOCIAL_LINKS.map(({ label, href, icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                title={label}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-slate-300 transition hover:border-emerald-300 hover:bg-emerald-300/10 hover:text-emerald-300"
+              >
+                {icon}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 
