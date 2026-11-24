@@ -61,9 +61,10 @@ export default function HomePage() {
   }, []);
 
   // Real tutors from the API power both the hero circle and the floating card.
+  // `heroTutorsLoading` already starts as true, so no synchronous state reset is
+  // needed here; the first client render must match the server markup.
   useEffect(() => {
     const controller = new AbortController();
-    setHeroTutorsLoading(true);
 
     apiFetch<{ tutors: Tutor[] }>("/tutors?limit=50", { signal: controller.signal })
       .then((data) => {
@@ -87,19 +88,25 @@ export default function HomePage() {
   const floatingTutor = featuredTutor;
   const circleTutor = featuredTutor;
   const circleImageSrc = circleTutor?.image?.trim() || "";
-  const [circleImageState, setCircleImageState] = useState<
-    "loading" | "loaded" | "error"
-  >("loading");
+  const [circleImage, setCircleImage] = useState<{
+    src: string;
+    status: "loading" | "loaded" | "error";
+  }>({ src: "", status: "loading" });
   const circleImageRef = useRef<HTMLImageElement | null>(null);
 
-  // A new tutor photo must never paint the previous image while it loads.
+  // A new tutor photo must never paint the previous image while it loads. The
+  // status is tied to the src it describes, so a changed src reads as loading
+  // during render instead of requiring a state reset inside the effect.
+  const circleImageState =
+    circleImage.src === circleImageSrc ? circleImage.status : "loading";
   useEffect(() => {
-    setCircleImageState("loading");
-
     // A cached image can finish before React attaches onLoad, so inspect it here too.
     const img = circleImageRef.current;
     if (img?.complete) {
-      setCircleImageState(img.naturalWidth > 0 ? "loaded" : "error");
+      setCircleImage({
+        src: circleImageSrc,
+        status: img.naturalWidth > 0 ? "loaded" : "error",
+      });
     }
   }, [circleImageSrc]);
 
@@ -288,8 +295,12 @@ export default function HomePage() {
                     ref={circleImageRef}
                     src={circleImageSrc}
                     alt={`${circleTutor?.name ?? "Featured tutor"}, ${circleTutor?.subject ?? "tutor"}`.trim()}
-                    onLoad={() => setCircleImageState("loaded")}
-                    onError={() => setCircleImageState("error")}
+                    onLoad={() =>
+                      setCircleImage({ src: circleImageSrc, status: "loaded" })
+                    }
+                    onError={() =>
+                      setCircleImage({ src: circleImageSrc, status: "error" })
+                    }
                     className={`relative h-full w-full object-cover transition-opacity duration-300 ${
                       circleImageState === "loaded" ? "opacity-100" : "opacity-0"
                     }`}

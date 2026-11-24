@@ -48,7 +48,9 @@ export default function ShareButtons({
   // Start from the canonical URL on both server and first client render, then
   // switch to the browser's real origin after mount (no hydration mismatch).
   const [origin, setOrigin] = useState(SITE_URL);
-  useEffect(() => setOrigin(window.location.origin), []);
+  useEffect(() => {
+    Promise.resolve().then(() => setOrigin(window.location.origin));
+  }, []);
   const url = `${origin}${path}`;
   const text = `${title} | MentorLagbe`;
 

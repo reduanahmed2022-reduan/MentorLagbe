@@ -7,18 +7,18 @@ import { dashboardPathFor } from "@/lib/auth";
 
 export default function DashboardIndexPage() {
   const router = useRouter();
-  const { user, ready } = useAuth();
+  const { user, ready, isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (!ready) return;
 
-    if (!user) {
+    if (!isAuthenticated || !user) {
       router.replace("/sign-in");
       return;
     }
 
     router.replace(dashboardPathFor(user.role));
-  }, [ready, user, router]);
+  }, [ready, user, isAuthenticated, router]);
 
   return (
     <div className="flex min-h-[50vh] items-center justify-center">

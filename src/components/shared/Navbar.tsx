@@ -29,7 +29,8 @@ export default function Navbar() {
   const router = useRouter();
 
   const isActive = (href: string) => {
-    if (href.includes("#")) return pathname === "/";
+    // Hash links point at a section on Home; Home alone should be highlighted.
+    if (href.includes("#")) return false;
     if (href === "/") return pathname === "/";
 
     return pathname.startsWith(href);
@@ -95,6 +96,7 @@ export default function Navbar() {
                   onClick={() => setProfileOpen((open) => !open)}
                   className="flex items-center gap-2 rounded-full border border-gray-200 bg-white py-1 pl-1 pr-3 transition hover:border-[#0f9f6e]"
                   aria-expanded={profileOpen}
+                  aria-controls="profile-menu"
                 >
                   {user?.image ? (
                     <img
@@ -110,10 +112,16 @@ export default function Navbar() {
                   <span className="max-w-24 truncate text-sm font-semibold text-slate-800">
                     {user?.name}
                   </span>
+                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold capitalize text-[#0f9f6e]">
+                    {user?.role}
+                  </span>
                 </button>
 
                 {profileOpen && (
-                  <div className="absolute right-0 mt-2 w-60 rounded-2xl border border-gray-100 bg-white p-4 shadow-xl">
+                  <div
+                    id="profile-menu"
+                    className="absolute right-0 mt-2 w-60 rounded-2xl border border-gray-100 bg-white p-4 shadow-xl"
+                  >
                     <p className="truncate text-sm font-bold text-slate-900">{user?.name}</p>
                     <p className="mt-0.5 truncate text-xs text-slate-500">{user?.email}</p>
                     <span className="mt-2 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold capitalize text-[#0f9f6e]">
@@ -151,6 +159,7 @@ export default function Navbar() {
             className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-slate-700 transition hover:border-[#0f9f6e] focus:outline-none focus:ring-2 focus:ring-[#0f9f6e]"
             aria-label="Toggle navigation"
             aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {mobileMenuOpen ? (
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
@@ -207,12 +216,25 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <p className="px-1 text-sm font-bold text-slate-900">
-                  {user?.name}{" "}
-                  <span className="ml-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-bold capitalize text-[#0f9f6e]">
-                    {user?.role}
-                  </span>
-                </p>
+                <div className="flex items-center gap-2 px-1">
+                  {user?.image ? (
+                    <img
+                      src={user.image}
+                      alt={user.name}
+                      className="h-8 w-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-[#0f9f6e]">
+                      {initials(user?.name)}
+                    </span>
+                  )}
+                  <p className="text-sm font-bold text-slate-900">
+                    {user?.name}{" "}
+                    <span className="ml-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-bold capitalize text-[#0f9f6e]">
+                      {user?.role}
+                    </span>
+                  </p>
+                </div>
                 <Link
                   href={dashboardPathFor(user?.role)}
                   onClick={() => setMobileMenuOpen(false)}

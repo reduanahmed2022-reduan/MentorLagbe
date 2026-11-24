@@ -28,7 +28,9 @@ export default function BookmarkButton({
     if (!ready || !isAuthenticated || user?.role !== "student") return;
 
     const controller = new AbortController();
-    setChecking(true);
+    Promise.resolve().then(() => {
+      if (!controller.signal.aborted) setChecking(true);
+    });
 
     apiFetch<{ isBookmarked: boolean }>(
       `/bookmarks/check/${tuitionId}`,

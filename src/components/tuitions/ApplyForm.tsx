@@ -19,6 +19,7 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
   const [existingApplication, setExistingApplication] =
     useState<TuitionApplication | null>(null);
   const [checking, setChecking] = useState(false);
+  const [duplicateNotice, setDuplicateNotice] = useState(false);
 
   // Restore the application state after a reload. A rejected row is kept so the
   // student can restore it to pending instead of being blocked by the unique index.
@@ -26,7 +27,9 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
     if (!ready || !isAuthenticated || user?.role !== "student") return;
 
     const controller = new AbortController();
-    setChecking(true);
+    Promise.resolve().then(() => {
+      if (!controller.signal.aborted) setChecking(true);
+    });
 
     apiFetch<{ applications: TuitionApplication[] }>("/applications/my-applications", {
       auth: true,
@@ -132,22 +135,10 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
     } catch (error) {
       const message = error instanceof Error ? error.message : "Could not submit application";
       if (message.toLowerCase().includes("already applied")) {
-        setExistingApplication({
-          _id: "local",
-          tuitionId,
-          tuitionTitle: "",
-          subject: "",
-          monthlyFee: 0,
-          tutorEmail: "",
-          studentName: user?.name || "",
-          studentEmail: user?.email || "",
-          studentPhone,
-          preferredSchedule,
-          studentNote,
-          status: "pending",
-          appliedAt: new Date().toISOString(),
-        });
-        toast.success("You have already applied to this tuition");
+        // The duplicate row already exists on the server — never fabricate a
+        // fresh "pending" application or report a submission that never happened.
+        setDuplicateNotice(true);
+        toast.info("You have already applied to this tuition. Check its status below.");
       } else {
         toast.error(message);
       }
@@ -268,7 +259,7 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
     return (
       <>
         <Link
-          href="/sign-in"
+          href={`/sign-in?next=${encodeURIComponent(`/tuitions/${tuitionId}`)}`}
           className="flex w-full items-center justify-center rounded-xl bg-emerald-600 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-emerald-700"
         >
           Apply for This Tuition
@@ -289,6 +280,26 @@ export default function ApplyForm({ tuitionId }: { tuitionId: string }) {
             ? "Tutors cannot apply to tuition posts. Use your student account instead."
             : "Admin accounts cannot apply to tuition posts."}
         </p>
+      </div>
+    );
+  }
+
+  if (duplicateNotice) {
+    return (
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-5 text-center">
+        <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-600" />
+        <p className="mt-3 text-sm font-bold text-emerald-800">
+          Application already on record
+        </p>
+        <p className="mt-1 text-xs leading-5 text-emerald-700">
+          You have applied to this tuition before. Check the latest status in My Applications.
+        </p>
+        <Link
+          href="/dashboard/student/my-applications"
+          className="mt-4 inline-block text-xs font-bold text-emerald-700 underline"
+        >
+          Track my applications
+        </Link>
       </div>
     );
   }

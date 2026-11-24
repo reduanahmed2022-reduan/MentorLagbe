@@ -56,10 +56,12 @@ const subjects = [
     "Coding",
     "Music",
     "Language",
+    "IELTS",
 ];
 
 const classLevels = [
     "All Classes",
+    "Primary",
     "Class 1",
     "Class 2",
     "Class 3",
@@ -70,6 +72,8 @@ const classLevels = [
     "Class 8",
     "Class 9",
     "Class 10",
+    "Class 11",
+    "Class 12",
     "SSC",
     "HSC",
     "University",

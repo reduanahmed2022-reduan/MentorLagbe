@@ -1,13 +1,13 @@
 
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import GoogleButton from "@/components/auth/GoogleButton";
 import { apiFetch } from "@/lib/api";
-import { dashboardPathFor, saveSession } from "@/lib/auth";
+import { dashboardPathFor, safeNextPath, saveSession } from "@/lib/auth";
 import type { AuthUser } from "@/lib/types";
 
 export default function LoginPage() {
@@ -16,6 +16,17 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [nextPath, setNextPath] = useState<string | null>(null);
+    const [googleRole, setGoogleRole] = useState<"student" | "tutor">("student");
+
+    // Read redirect/role hints from the URL after mount to keep SSR markup stable.
+    useEffect(() => {
+        Promise.resolve().then(() => {
+            const params = new URLSearchParams(window.location.search);
+            setNextPath(params.get("next"));
+            if (params.get("role") === "tutor") setGoogleRole("tutor");
+        });
+    }, []);
 
     const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -49,7 +60,7 @@ export default function LoginPage() {
 
             saveSession(data.token, data.user, remember);
             toast.success(`Welcome back, ${data.user.name}!`);
-            router.push(dashboardPathFor(data.user.role));
+            router.push(safeNextPath(nextPath, dashboardPathFor(data.user.role)));
 
         } catch (err) {
             const message =
@@ -171,7 +182,7 @@ export default function LoginPage() {
                         </div>
 
                         {/* Google Button */}
-                        <GoogleButton role="student" />
+                        <GoogleButton role={googleRole} />
 
                         {/* Divider */}
                         <div className="my-5 flex items-center gap-4">

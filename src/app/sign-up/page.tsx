@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import GoogleButton from "@/components/auth/GoogleButton";
 import { apiFetch } from "@/lib/api";
-import { dashboardPathFor, saveSession } from "@/lib/auth";
+import { dashboardPathFor, safeNextPath, saveSession } from "@/lib/auth";
 import type { AuthUser } from "@/lib/types";
 
 export default function RegisterPage() {
@@ -19,16 +19,19 @@ export default function RegisterPage() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [role, setRole] = useState("student");
+    const [nextPath, setNextPath] = useState<string | null>(null);
 
     // "Become a Tutor" from the home page preselects the tutor role.
     // Deferred so the server-rendered markup and first client render match.
     useEffect(() => {
         Promise.resolve().then(() => {
-            const preset = new URLSearchParams(window.location.search).get("role");
+            const params = new URLSearchParams(window.location.search);
+            const preset = params.get("role");
 
             if (preset === "tutor" || preset === "student") {
                 setRole(preset);
             }
+            setNextPath(params.get("next"));
         });
     }, []);
 
@@ -58,37 +61,51 @@ export default function RegisterPage() {
             return;
         }
 
-        if (password.length < 8) {
-            setError("Password must be at least 8 characters.");
+        if (password.length < 8 || password.length > 128) {
+            setError("Password must be between 8 and 128 characters.");
             return;
         }
 
         setLoading(true);
 
         try {
-            await apiFetch("/auth/register", {
+            const registered = await apiFetch<{
+                token?: string;
+                user?: AuthUser;
+            }>("/auth/register", {
                 method: "POST",
                 body: { name, email, password, role },
             });
 
-            const loginData = await apiFetch<{
-                token: string;
-                user: AuthUser;
-            }>("/auth/login", {
-                method: "POST",
-                body: { email, password },
-            });
+            let session: { token: string; user: AuthUser } | null =
+                registered?.token && registered?.user
+                    ? { token: registered.token, user: registered.user }
+                    : null;
 
-            if (!loginData.token || !loginData.user) {
+            if (!session) {
+                const loginData = await apiFetch<{
+                    token: string;
+                    user: AuthUser;
+                }>("/auth/login", {
+                    method: "POST",
+                    body: { email, password },
+                });
+
+                if (loginData.token && loginData.user) {
+                    session = { token: loginData.token, user: loginData.user };
+                }
+            }
+
+            if (!session) {
                 setSuccess("Account created! Please sign in manually.");
                 form.reset();
                 setRole("student");
                 return;
             }
 
-            saveSession(loginData.token, loginData.user);
+            saveSession(session.token, session.user);
             toast.success("Account created. Welcome to MentorLagbe!");
-            router.push(dashboardPathFor(loginData.user.role));
+            router.push(safeNextPath(nextPath, dashboardPathFor(session.user.role)));
 
         } catch (err) {
             const message =

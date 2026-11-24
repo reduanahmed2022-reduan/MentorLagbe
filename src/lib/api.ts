@@ -1,7 +1,8 @@
 import { clearSession, getToken } from "./auth";
 
-export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+export const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+).replace(/\/+$/, "");
 
 export class ApiError extends Error {
   constructor(message: string, public status: number) {

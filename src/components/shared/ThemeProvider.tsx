@@ -8,10 +8,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { THEME_STORAGE_KEY } from "@/lib/theme";
 
 export type Theme = "light" | "dark";
 
-export const THEME_STORAGE_KEY = "mentorlagbe-theme";
+// Re-exported so existing imports from this module keep working.
+export { THEME_STORAGE_KEY };
 
 type ThemeContextValue = {
   theme: Theme;

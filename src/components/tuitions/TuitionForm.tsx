@@ -249,7 +249,7 @@ export default function TuitionForm({
       </div>
 
       <p className="text-xs text-slate-500">
-        Free plan: up to 2 active posts at a time.
+        Free plan: up to 2 tuition posts. Upgrade to Pro for unlimited posts.
       </p>
 
       <div className="flex flex-wrap gap-3 border-t border-slate-100 pt-5">

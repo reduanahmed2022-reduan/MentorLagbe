@@ -4,6 +4,28 @@ export const TOKEN_KEY = "token";
 export const USER_KEY = "user";
 export const AUTH_CHANGE_EVENT = "mentorlagbe:auth-change";
 
+const KNOWN_ROLES = ["student", "tutor", "admin"];
+
+/**
+ * `/auth/me` returns the raw Mongo document (`_id` / `profileImage`) while the
+ * rest of the client expects the canonical AuthUser shape (`id` / `image`).
+ * Normalizing here keeps avatars and stored sessions intact after a reload.
+ */
+export function normalizeUser(raw: AuthUser & { _id?: string; profileImage?: string }): AuthUser {
+  return {
+    ...raw,
+    id: raw.id || String(raw._id || ""),
+    image: raw.image || raw.profileImage || "",
+  };
+}
+
+/** Only allow internal relative paths as post-login redirect targets. */
+export function safeNextPath(value: string | null | undefined, fallback: string): string {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) return fallback;
+  if (value.startsWith("/sign-in") || value.startsWith("/sign-up")) return fallback;
+  return value;
+}
+
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
 
@@ -37,9 +59,12 @@ export function getStoredUser(): AuthUser | null {
   if (!raw) return null;
 
   try {
-    const parsed = JSON.parse(raw) as AuthUser;
+    const parsed = normalizeUser(JSON.parse(raw) as AuthUser & { _id?: string });
 
-    return parsed?.id || parsed?.email ? parsed : null;
+    if (!parsed.id || !parsed.email) return null;
+    if (parsed.role && !KNOWN_ROLES.includes(parsed.role)) return null;
+
+    return parsed;
   } catch {
     // Do not clear the token here: a malformed cached user must not log the
     // user out of an otherwise valid session.
@@ -52,6 +77,8 @@ export function saveSession(
   user: AuthUser,
   remember = true,
 ): void {
+  if (typeof window === "undefined") return;
+
   const storage = remember ? window.localStorage : window.sessionStorage;
   const otherStorage = remember ? window.sessionStorage : window.localStorage;
 
@@ -74,6 +101,8 @@ export function updateStoredUser(user: AuthUser): void {
 }
 
 export function clearSession(): void {
+  if (typeof window === "undefined") return;
+
   window.localStorage.removeItem(TOKEN_KEY);
   window.localStorage.removeItem(USER_KEY);
   window.sessionStorage.removeItem(TOKEN_KEY);

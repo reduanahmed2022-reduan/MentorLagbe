@@ -2,11 +2,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
-import {
-  THEME_STORAGE_KEY,
-  ThemeProvider,
-} from "@/components/shared/ThemeProvider";
+import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import { SITE_URL } from "@/lib/site";
+import { THEME_STORAGE_KEY } from "@/lib/theme";
 import "./globals.css";
 
 

@@ -67,7 +67,7 @@ const titles: Record<string, string> = {
 };
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
-  const { user, ready, logout } = useAuth();
+  const { user, ready, logout, isAuthenticated } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
@@ -80,7 +80,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   useEffect(() => {
     if (!ready) return;
 
-    if (!user) {
+    if (!isAuthenticated || !user) {
       router.replace("/sign-in");
       return;
     }
@@ -90,9 +90,9 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     if (["student", "tutor", "admin"].includes(segment) && segment !== user.role) {
       router.replace(dashboardPathFor(user.role));
     }
-  }, [ready, user, pathname, router]);
+  }, [ready, user, isAuthenticated, pathname, router]);
 
-  if (!ready || !user) {
+  if (!ready || !isAuthenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50">
         <div className="h-10 w-10 animate-spin rounded-full border-2 border-indigo-200 border-t-indigo-600" />

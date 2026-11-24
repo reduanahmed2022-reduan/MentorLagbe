@@ -20,10 +20,10 @@ type FeaturedTuitionsProps = {
 };
 
 export default function FeaturedTuitions({
-  query = "/tuitions?limit=6&minFee=500&maxFee=800",
+  query = "/tuitions?limit=6",
   eyebrow = "FEATURED TUITIONS",
   heading = "Latest approved batches for you",
-  description = "Handpicked monthly batches between $500 & $800 — verified and ready to join.",
+  description = "Handpicked approved batches — verified and ready to join.",
   emptyMessage = "No approved tuitions yet. Check back soon — new batches are added every week.",
   className = "bg-white py-16 sm:py-20",
   excludeIds = [],
@@ -44,8 +44,6 @@ export default function FeaturedTuitions({
         ? query.replace(/([?&])limit=\d+/, "$1limit=50")
         : `${query}${query.includes("?") ? "&" : "?"}limit=50`
       : query;
-
-    setLoading(true);
 
     apiFetch<{ tuitions: Tuition[] }>(requestQuery, {
       signal: controller.signal,

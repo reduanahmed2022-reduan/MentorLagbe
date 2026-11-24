@@ -7,6 +7,7 @@ import {
   clearSession,
   getStoredUser,
   getToken,
+  normalizeUser,
   updateStoredUser,
 } from "@/lib/auth";
 import type { AuthUser } from "@/lib/types";
@@ -20,7 +21,7 @@ let sharedProfile: { token: string; promise: Promise<AuthUser> } | null = null;
 function loadProfile(token: string): Promise<AuthUser> {
   if (!sharedProfile || sharedProfile.token !== token) {
     const promise = apiFetch<{ user: AuthUser }>("/auth/me", { auth: true })
-      .then(({ user }) => user)
+      .then(({ user }) => normalizeUser(user))
       .finally(() => {
         if (sharedProfile?.promise === promise) sharedProfile = null;
       });
@@ -77,7 +78,10 @@ export function useAuth() {
 
         if (
           stored &&
-          (stored.role !== freshUser.role || stored.plan !== freshUser.plan)
+          (stored.role !== freshUser.role ||
+            stored.plan !== freshUser.plan ||
+            stored.name !== freshUser.name ||
+            stored.image !== freshUser.image)
         ) {
           updateStoredUser(freshUser);
         }

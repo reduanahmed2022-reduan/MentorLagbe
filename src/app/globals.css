@@ -104,7 +104,8 @@ body {
 .dark .bg-slate-50\/60,
 .dark .bg-gray-50,
 .dark .bg-\[\#f8faf9\],
-.dark .bg-\[\#f9fafb\] {
+.dark .bg-\[\#f9fafb\],
+.dark .bg-\[\#f5f7ff\] {
   background-color: #0d1626;
 }
 
