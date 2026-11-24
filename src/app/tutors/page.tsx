@@ -5,9 +5,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
+import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/api";
+import { dashboardPathFor } from "@/lib/auth";
 import {
     Search,
     MapPin,
@@ -63,6 +66,8 @@ const locations = [
 const modes = ["All Modes", "Online", "Offline"];
 
 export default function TutorsPage() {
+    const router = useRouter();
+    const { ready, user, isAuthenticated } = useAuth();
     const [tutors, setTutors] = useState<Tutor[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -73,6 +78,15 @@ export default function TutorsPage() {
     const [mode, setMode] = useState("All Modes");
     const [sort, setSort] = useState("recommended");
     const [showFilters, setShowFilters] = useState(false);
+
+    // A signed-in tutor belongs on their own dashboard, not on the public
+    // "Discover the right Tutor" catalog.
+    useEffect(() => {
+        if (!ready) return;
+        if (isAuthenticated && user?.role === "tutor") {
+            router.replace(dashboardPathFor(user.role));
+        }
+    }, [ready, isAuthenticated, user?.role, router]);
 
     // Honour filters coming from the home page search. Deferring keeps the
     // SSR markup and first client render identical.
