@@ -13,7 +13,7 @@ export default function FeaturedTuitions() {
   useEffect(() => {
     const controller = new AbortController();
 
-    apiFetch<{ tuitions: Tuition[] }>("/tuitions?limit=6", {
+    apiFetch<{ tuitions: Tuition[] }>("/tuitions?limit=6&minFee=500&maxFee=800", {
       signal: controller.signal,
     })
       .then((data) => setTuitions(data.tuitions.slice(0, 6)))
@@ -35,7 +35,7 @@ export default function FeaturedTuitions() {
               Latest approved batches for you
             </h2>
             <p className="mt-2 text-sm text-slate-500">
-              Handpicked, verified and ready to join.
+              Handpicked monthly batches between $500 &amp; $800 — verified and ready to join.
             </p>
           </div>
           <Link
