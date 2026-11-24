@@ -19,7 +19,7 @@
 | ⚙️ Live REST API (Render) | https://mentorlagbe-server-q3fr.onrender.com/api |
 | 💻 Client GitHub Repository | https://github.com/reduanahmed2022-reduan/MentorLagbe |
 | 🖥️ Server GitHub Repository | https://github.com/reduanahmed2022-reduan/MentorLagbe-Server |
-| 📮 Contact | reduanahmed@gmail.com |
+| 📮 Contact | reduanahmed2022@gmail.com |
 
 ---
 
