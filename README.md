@@ -1,181 +1,183 @@
-# MentorLagbe Client
+# 🎓 MentorLagbe — Client
 
-The Next.js frontend for **MentorLagbe**, a Bangladesh-based tuition and mentorship marketplace. Students can discover and apply for tuitions, tutors can publish listings and manage applicants, and admins can moderate the platform.
+> **Smart tuition & mentorship, made personal.**  
+> A polished, role-based tuition marketplace built with the Next.js App Router. Students discover and apply for tuitions, tutors publish listings and manage applicants, and admins moderate the whole platform.
 
-## বাংলা কুইক স্টার্ট
+[![Next.js](https://img.shields.io/badge/Next.js-16.4.6-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.3.0-149eca?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.3.3-06b6d4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-0f9f6e?logo=vercel&logoColor=white)](https://mentorlagbe-client-weld.vercel.app)
 
-১. প্রথমে `npm install` দিয়ে ডিপেন্ডেন্সি ইনস্টল করুন।
-২. রুট ফোল্ডারে `.env.local` বানিয়ে লিখুন: `NEXT_PUBLIC_API_URL=http://localhost:5000/api`।
-৩. তারপর `npm run dev` চালিয়ে http://localhost:3000 এ অ্যাপ দেখুন।
-৪. ডেমো লগইন (প্রথমে server ফোল্ডারে `npm run seed` দিন):
-- অ্যাডমিন: `admin@mentorlagbe.com` / `Admin@12345`
-- টিউটর: `sarah@mentorlagbe.com` / `Tutor@12345`
-- স্টুডেন্ট: `student1@mentorlagbe.com` / `Tutor@12345`
-৫. CORS সমস্যা এড়াতে server-এ `CLIENT_URL` ঠিক `http://localhost:3000` রাখতে হবে।
+---
 
-## Live URL
+## 🔗 Assignment Links
 
-`https://mentorlagbe-client-weld.vercel.app`
+| What | Link |
+| --- | --- |
+| 🌐 **Live Website (Vercel)** | **https://mentorlagbe-client-weld.vercel.app** |
+| ⚙️ Live REST API (Render) | https://mentorlagbe-server-q3fr.onrender.com/api |
+| 💻 Client GitHub Repository | https://github.com/reduanahmed2022-reduan/MentorLagbe |
+| 🖥️ Server GitHub Repository | https://github.com/reduanahmed2022-reduan/MentorLagbe-Server |
+| 📮 Contact | reduanahmed@gmail.com |
 
-> Production deployment on Vercel (auto-deploys from the `main` branch).
-> API: `https://mentorlagbe-server-q3fr.onrender.com/api` (Render).
+---
 
-## Tech Stack
+## 🔑 Demo Login (Admin)
 
-- **Framework:** Next.js 16.4.6 (App Router)
-- **UI:** React 19.3.0, TypeScript, Tailwind CSS 4.3.3
-- **Icons & toasts:** lucide-react, sonner
-- **Auth / styling libraries:** better-auth (BetterAuth client; the server pairs it with the MongoDB adapter), styled-components
-- **API:** Express REST API (separate `server` project) with JWT bearer tokens on protected REST routes
+| Role | Email | Password |
+| --- | --- | --- |
+| **Admin** | `admin@mentorlagbe.com` | `Admin@12345` |
+| Tutor | `sarah@mentorlagbe.com` | `Tutor@12345` |
+| Student | `student1@mentorlagbe.com` | `Tutor@12345` |
 
-## Getting Started
+> Admin panel: **https://mentorlagbe-client-weld.vercel.app/dashboard/admin**
 
-### Prerequisites
+---
 
-- Node.js and npm
-- The MentorLagbe API server running locally (see the `server` project)
+## ✅ Assignment Requirements Coverage
 
-### Installation
+| Requirement | Status | Where |
+| --- | --- | --- |
+| Next.js **App Router** + TypeScript | ✅ | `src/app/`, `tsconfig.json` |
+| Tailwind CSS responsive UI | ✅ | `src/app/globals.css` |
+| Express + MongoDB REST backend | ✅ | separate [server repo](https://github.com/reduanahmed2022-reduan/MentorLagbe-Server) |
+| BetterAuth (+ MongoDB adapter) in stack | ✅ | `src/lib/better-auth.ts`, server `config/betterAuth.js` |
+| Google sign-up / sign-in | ✅ | `GET /api/auth/google/start` → `/auth/google/callback` |
+| JWT bearer auth for REST routes | ✅ | `src/lib/api.ts`, `src/lib/auth.ts` |
+| Stripe Checkout (Student $10 / Tutor $15) | ✅ | `/pricing`, `/payment/success` |
+| ImgBB image upload | ✅ | tutor tuition form → server `/api/upload/image` |
+| Student / Tutor / Admin dashboards | ✅ | `src/app/(dashboard)/dashboard/` |
+| Live deployment | ✅ | Vercel (client) + Render (API) |
+| README with live URL, credentials, features, packages | ✅ | this file |
+| Version control history | ✅ | 50+ meaningful client commits |
+
+---
+
+## ✨ Features
+
+- **Role-based experience** — separate dashboards, navigation and protected routes for students, tutors and admins.
+- **Tuition discovery** — search, filter by subject / class / mode / location / fee, sort, paginate, and view details.
+- **Applications** — students apply with schedule & notes and track status; tutors review and accept/reject applicants.
+- **Tutor tools** — post, edit and close tuitions; upload banners through the ImgBB-backed API.
+- **Admin tools** — manage users and roles, approve/reject tuitions, inspect payment transactions and stats.
+- **Authentication** — email/password with JWT, plus Google OAuth bridged into the same session contract.
+- **Pro plans** — Stripe one-time upgrades ($10 student / $15 tutor) with success and cancel pages.
+- **Sharing & SEO** — LinkedIn / X / Facebook share buttons + copy-link on detail pages, generated OG image, sitemap and robots.
+- **Polished states** — sonner toasts, loading screens, error boundary, custom 404, responsive mobile layout.
+
+---
+
+## 🧱 Tech Stack & npm Packages
+
+### Dependencies
+
+| Package | Version | Purpose |
+| --- | --- | --- |
+| `next` | `16.4.6` | App Router framework |
+| `react` / `react-dom` | `19.3.0` | UI runtime |
+| `better-auth` | `^1.7.27` | BetterAuth client |
+| `tailwindcss` | `4.3.3` | Utility CSS |
+| `@tailwindcss/turbopack` | `4.3.3` | Tailwind build integration |
+| `lucide-react` | `^1.75.0` | Icons |
+| `sonner` | `^2.0.8` | Toast notifications |
+| `styled-components` | `^6.6.0` | Component styling |
+
+### Dev dependencies
+
+`@types/node`, `@types/react`, `@types/react-dom`, `@types/styled-components`, `eslint`, `eslint-config-next`, `typescript`.
+
+---
+
+## 🚀 Quick Start (বাংলা)
 
 ```bash
+# 1. Install dependencies
 npm install
-```
 
-Copy the environment example and keep the default local API URL:
-
-```bash
-# macOS / Linux
-cp .env.local.example .env.local
-
-# Windows (PowerShell)
+# 2. Create the environment file (this is the ONLY client env var)
 copy .env.local.example .env.local
+#    NEXT_PUBLIC_API_URL=http://localhost:5000/api
+
+# 3. Start the app
+npm run dev
 ```
 
-`.env.local` should contain:
+Open **http://localhost:3000**. For full functionality, run the [server](https://github.com/reduanahmed2022-reduan/MentorLagbe-Server) on port `5000` and seed it once with `npm run seed`.
+
+### Available scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Development server on port 3000 |
+| `npm run build` | Production build |
+| `npm start` | Serve the production build |
+| `npm run lint` | ESLint checks |
+
+---
+
+## 🔐 Environment Variables
+
+The client needs **exactly one** variable:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
-If `.env.local.example` is not present in your checkout, create `.env.local` with the value above. The app also falls back to `http://localhost:5000/api` when the variable is unset.
+Production value: `https://mentorlagbe-server-q3fr.onrender.com/api`
 
-BetterAuth is part of the client stack but needs no separate client environment variable: its endpoint is derived from `NEXT_PUBLIC_API_URL` (`<NEXT_PUBLIC_API_URL>/better-auth`, i.e. the API's `/api/better-auth` path), while the server pairs it with the MongoDB adapter. Google sign-in also adds no client secret: the buttons call `GET /api/auth/google/status` and stay disabled when the server has no Google keys. Google keys belong only in the server environment.
+> ⚠️ Never add `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, Stripe or ImgBB keys here. Those are **server-only**. Google availability is discovered at runtime via `GET /api/auth/google/status`.
 
-### Run and verify
+---
 
-```bash
-npm run dev     # Start the development server at http://localhost:3000
-npm run build   # Create a production build
-npm run lint    # Run ESLint
-npm start       # Serve the production build (after npm run build)
-```
+## 🔄 Authentication Flow
 
-## Demo Credentials
+1. **Email / password** → `POST /api/auth/login` returns a JWT; stored in `localStorage` and sent as `Authorization: Bearer <token>`. A `401` signs the user out automatically.
+2. **Google** → the button performs a **top-level navigation** to `GET /api/auth/google/start?role=student|tutor`. The API sets the BetterAuth state cookie, redirects to Google, then converts the session to the same JWT and returns to `/auth/google/callback`. Errors also finish on the client origin — never on the API domain.
 
-From `server/seedDemoData.js`. Seed the database from the **server** directory first:
+---
 
-```bash
-cd ../server
-npm run seed
-```
-
-| Role | Email | Password |
-| --- | --- | --- |
-| Admin | `admin@mentorlagbe.com` | `Admin@12345` |
-| Tutor | `sarah@mentorlagbe.com` | `Tutor@12345` |
-| Tutor | `rahim@mentorlagbe.com` | `Tutor@12345` |
-| Tutor | `nusrat@mentorlagbe.com` | `Tutor@12345` |
-| Tutor | `sabbir@mentorlagbe.com` | `Tutor@12345` |
-| Tutor | `ayesha@mentorlagbe.com` | `Tutor@12345` |
-| Tutor | `tanvir@mentorlagbe.com` | `Tutor@12345` |
-| Student | `student1@mentorlagbe.com` | `Tutor@12345` |
-| Student | `student2@mentorlagbe.com` | `Tutor@12345` |
-
-The admin email/password can be overridden with `ADMIN_EMAIL` and `ADMIN_PASSWORD` in the server environment. The seed script also creates 12 approved tuitions and sample applications. It only inserts missing users, so existing accounts keep their current passwords.
-
-## Key Features
-
-- **Role-based dashboards:** dedicated overviews and navigation for students, tutors, and admins, including profile updates.
-- **Authentication:** BetterAuth is part of the stack alongside JWT-based REST auth: JWT stored in `localStorage`, sent as a `Bearer` token on protected API requests, with automatic sign-out on `401` responses.
-- **Protected routes:** the dashboard shell redirects unauthenticated users to sign-in and sends users to the dashboard for their role; role-specific links keep each area separate.
-- **Tuition discovery:** search, filter by subject/class level/mode/location/fee, sorting, and paginated results, plus tuition detail pages.
-- **Applications:** students apply to tuitions with schedule and notes, then track application status; tutors review and respond to applicants.
-- **Tutor tools:** create, edit, and delete tuition posts, upload images through the server's ImgBB-backed endpoint, and review incoming applicants.
-- **Admin tools:** manage users and roles, approve or reject tuitions, and review payment transactions.
-- **Pro plans:** Stripe checkout for one-time upgrades — **$15 for tutors** and **$10 for students** — with success/cancel return pages.
-- **Public experience:** featured mentors/tuitions on the home page, tutor browsing, pricing, terms, privacy, and password recovery flows.
-- **Feedback and states:** sonner toast notifications, loading indicators, inline error handling, and custom loading, error, and 404 pages.
-
-## Folder Structure
+## 📁 Project Structure
 
 ```text
 client/
-├── public/                      # Static assets
+├── public/
+│   ├── og-image.png              # 1200×630 social preview
+│   └── hero-*.svg / tutor images
 ├── src/
 │   ├── app/
-│   │   ├── (dashboard)/dashboard/# Role-protected student, tutor, and admin areas
-│   │   ├── payment/             # Stripe success and cancel pages
-│   │   ├── pricing/             # Free and Pro plan checkout
-│   │   ├── sign-in/             # Authentication pages
-│   │   ├── sign-up/
-│   │   ├── forgot-password/
-│   │   ├── terms/ privacy/      # Legal pages
-│   │   ├── tutors/ tuitions/    # Listings and detail pages
-│   │   ├── error.tsx            # Global error boundary
-│   │   ├── loading.tsx          # Global loading state
-│   │   └── not-found.tsx        # Custom 404 page
+│   │   ├── (dashboard)/dashboard/  # student, tutor, admin areas
+│   │   ├── auth/google/callback/   # Google OAuth landing page
+│   │   ├── payment/{success,cancel}/
+│   │   ├── pricing/ sign-in/ sign-up/ forgot-password/
+│   │   ├── tutors/ tuitions/       # listings + [id] detail pages
+│   │   ├── terms/ privacy/
+│   │   ├── layout.tsx              # metadata, Open Graph, Twitter card
+│   │   ├── sitemap.ts robots.ts
+│   │   └── error.tsx loading.tsx not-found.tsx
 │   ├── components/
-│   │   ├── dashboard/           # Dashboard shell, stat cards, status badges
-│   │   ├── home/                # Featured listings, highlights, pricing preview
-│   │   ├── shared/              # Navbar, footer, logo, tuition card
-│   │   └── tuitions/            # Tuition form and application form
-│   ├── hooks/useAuth.ts         # Auth state and session helpers
-│   └── lib/
-│       ├── api.ts               # API client, Bearer token, image upload
-│       ├── auth.ts              # localStorage session utilities
-│       ├── constants.ts         # Public filters, pricing, brand config
-│       └── types.ts             # Shared TypeScript types
-├── .env.local.example           # Environment template
-├── next.config.ts
-├── tsconfig.json
+│   │   ├── auth/                   # GoogleButton
+│   │   ├── dashboard/              # shell, navbar, stats, badges
+│   │   ├── home/                   # featured tutors/tuitions, highlights
+│   │   ├── shared/                 # Navbar, Footer, Logo, ShareButtons
+│   │   └── tuitions/               # post + apply forms
+│   ├── hooks/useAuth.ts
+│   └── lib/{api,auth,better-auth,constants,site,types}.ts
+├── .env.local.example
 └── package.json
 ```
 
-## npm Packages
+---
 
-### Dependencies
+## 🚀 Deployment
 
-| Package | Version |
-| --- | --- |
-| `better-auth` | `^1.7.27` |
-| `lucide-react` | `^1.75.0` |
-| `next` | `16.4.6` |
-| `react` | `19.3.0` |
-| `react-dom` | `19.3.0` |
-| `sonner` | `^2.0.8` |
-| `styled-components` | `^6.6.0` |
+1. Deploy the [server](https://github.com/reduanahmed2022-reduan/MentorLagbe-Server) first (Render) and note its base URL.
+2. Import this folder into Vercel and set `NEXT_PUBLIC_API_URL=https://mentorlagbe-server-q3fr.onrender.com/api`.
+3. On the server, set `CLIENT_URL=https://mentorlagbe-client-weld.vercel.app` so CORS and Stripe redirects use the correct origin.
+4. Push to `main` — Vercel auto-deploys.
 
-### Development Dependencies
+---
 
-| Package | Version |
-| --- | --- |
-| `@tailwindcss/turbopack` | `4.3.3` |
-| `@types/node` | `^20` |
-| `@types/react` | `^19` |
-| `@types/react-dom` | `^19` |
-| `@types/styled-components` | `^5.1.36` |
-| `eslint` | `^9` |
-| `eslint-config-next` | `16.4.6` |
-| `tailwindcss` | `4.3.3` |
-| `typescript` | `^5` |
+## 📄 License
 
-## Deployment
-
-1. Deploy the API server first and note its base URL.
-2. In the Vercel project, set `NEXT_PUBLIC_API_URL` to the **deployed API URL including `/api`** (for example, `https://<your-api-host>/api`). This value is embedded in the client bundle at build time, so redeploy after changing it.
-3. On the server, set `CLIENT_URL` to this client's exact origin (for example, `https://mentorlagbe-client-weld.vercel.app`) so CORS allows browser requests to the API. A mismatched origin will cause blocked requests.
-4. Run `npm run build` locally or let Vercel build the project; BetterAuth needs no separate client environment variables (its endpoint is derived from `NEXT_PUBLIC_API_URL` as `<NEXT_PUBLIC_API_URL>/better-auth`), so no other client variables are required.
-
-## License
-
-Private project. All rights reserved.
+Private project — all rights reserved. Built with 💚 for the MentorLagbe assignment.
