@@ -80,11 +80,15 @@ export default function HomePage() {
     return () => controller.abort();
   }, []);
 
-  // Ahmed Rahman is the featured mentor in both the circle and the floating card.
+  // Rahim Hasan is the featured mentor in both the circle and the floating
+  // card; fall back to the first tutor with a photo if his account is absent.
   const featuredTutor =
     heroTutors.find(
-      (tutor) => tutor.name.trim().toLowerCase() === "ahmed rahman"
-    ) ?? heroTutors[0] ?? null;
+      (tutor) => tutor.name.trim().toLowerCase() === "rahim hasan"
+    ) ??
+    heroTutors.find((tutor) => tutor.image?.trim()) ??
+    heroTutors[0] ??
+    null;
   const floatingTutor = featuredTutor;
   const circleTutor = featuredTutor;
   const circleImageSrc = circleTutor?.image?.trim() || "";
