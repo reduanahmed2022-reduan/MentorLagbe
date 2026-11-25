@@ -18,10 +18,18 @@ import type { AuthUser } from "@/lib/types";
  */
 let sharedProfile: { token: string; promise: Promise<AuthUser> } | null = null;
 
+type ProfileUser = AuthUser & { _id?: string; profileImage?: string };
+
 function loadProfile(token: string): Promise<AuthUser> {
   if (!sharedProfile || sharedProfile.token !== token) {
-    const promise = apiFetch<{ user: AuthUser }>("/auth/me", { auth: true })
-      .then(({ user }) => normalizeUser(user))
+    const promise = apiFetch<{ user: ProfileUser }>("/auth/me", { auth: true })
+      .then(({ user }) =>
+        normalizeUser({
+          ...user,
+          id: user.id ?? user._id?.toString() ?? "",
+          image: user.image ?? user.profileImage ?? "",
+        })
+      )
       .finally(() => {
         if (sharedProfile?.promise === promise) sharedProfile = null;
       });

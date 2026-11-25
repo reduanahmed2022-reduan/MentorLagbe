@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   Clock3,
   PlusCircle,
+  Sparkles,
   UsersRound,
 } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
@@ -85,11 +86,17 @@ export default function TutorOverviewPage() {
         </p>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard label="My Tuitions" value={tuitions.length} icon={BookOpenCheck} />
         <StatCard label="Active Batches" value={activeCount} icon={CheckCircle2} tone="emerald" />
         <StatCard label="Pending Review" value={pendingCount} icon={Clock3} tone="amber" />
         <StatCard label="New Applicants" value={pendingApplicants} icon={UsersRound} tone="rose" />
+        <StatCard
+          label="Current Plan"
+          value={user?.plan === "pro" ? "Pro" : "Free"}
+          icon={Sparkles}
+          tone="indigo"
+        />
       </div>
 
       <section className="rounded-2xl border border-slate-200 bg-white p-6">

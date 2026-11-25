@@ -16,7 +16,7 @@
 | What | Link |
 | --- | --- |
 | 🌐 **Live Website (Vercel)** | **https://mentorlagbe-client-weld.vercel.app** |
-| ⚙️ Live REST API (Render) | https://mentorlagbe-server-q3fr.onrender.com/api |
+| ⚙️ Live REST API (Render) | [Health check](https://mentorlagbe-server-q3fr.onrender.com/health) — REST routes live under `/api` |
 | 💻 Client GitHub Repository | https://github.com/reduanahmed2022-reduan/MentorLagbe |
 | 🖥️ Server GitHub Repository | https://github.com/reduanahmed2022-reduan/MentorLagbe-Server |
 | 📮 Contact | reduanahmed2022@gmail.com |
@@ -61,6 +61,9 @@
 - **Applications** — students apply with schedule & notes and track status; tutors review and accept/reject applicants.
 - **Tutor tools** — post, edit and close tuitions; upload banners through the ImgBB-backed API.
 - **Admin tools** — manage users and roles, approve/reject tuitions, inspect payment transactions and stats.
+- **Bookmarks** — save tuitions from listings or detail pages and manage them in a dedicated "My Bookmarks" dashboard, with free/pro limits.
+- **Reviews** — students with accepted applications leave star ratings and feedback that appear on tuition pages.
+- **Theme toggle** — switch between light and dark mode from the navbar or dashboard; the choice persists across reloads without a first-paint flash.
 - **Authentication** — email/password with JWT, plus Google OAuth bridged into the same session contract.
 - **Pro plans** — recurring monthly Stripe subscriptions ($10/mo student, $15/mo tutor) with success and cancel pages.
 - **Sharing & SEO** — LinkedIn / X / Facebook share buttons + copy-link on detail pages, generated OG image, sitemap and robots.

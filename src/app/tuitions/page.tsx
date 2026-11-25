@@ -57,8 +57,10 @@ const subjects = [
     "Music",
     "Language",
     "IELTS",
+    "Programming",
 ];
 
+// Match the values tutors can actually create (see lib/constants.ts).
 const classLevels = [
     "All Classes",
     "Primary",
@@ -79,6 +81,28 @@ const classLevels = [
     "University",
     "Adult",
 ];
+
+type PageItem = { type: "page"; page: number } | { type: "ellipsis" };
+
+function getPageItems(currentPage: number, totalPages: number): PageItem[] {
+    const visible = [...new Set([
+        1,
+        totalPages,
+        currentPage - 1,
+        currentPage,
+        currentPage + 1,
+    ])]
+        .filter((pageNumber) => pageNumber >= 1 && pageNumber <= totalPages)
+        .sort((a, b) => a - b);
+
+    return visible.reduce<PageItem[]>((items, pageNumber, index) => {
+        if (index > 0 && pageNumber - visible[index - 1] > 1) {
+            items.push({ type: "ellipsis" });
+        }
+        items.push({ type: "page", page: pageNumber });
+        return items;
+    }, []);
+}
 
 export default function TuitionsPage() {
     const router = useRouter();
@@ -115,10 +139,10 @@ export default function TuitionsPage() {
             const initialSort = urlParams.get("sort");
 
             // Keep one canonical label per platform; old links still resolve.
+            // IELTS and Programming are standalone filters, so only the
+            // legacy ICT label needs normalizing.
             const subjectAliases: Record<string, string> = {
                 ICT: "Coding",
-                Programming: "Coding",
-                IELTS: "English",
             };
             const normalizedSubject = initialSubject
                 ? subjectAliases[initialSubject] || initialSubject
@@ -206,6 +230,9 @@ export default function TuitionsPage() {
         setAppliedFilterKey(filterKey);
         setPage(1);
     }
+
+    const currentPage = Math.min(Math.max(page, 1), pagination.totalPages);
+    const pageItems = getPageItems(currentPage, pagination.totalPages);
 
     const sortedTuitions = useMemo(() => {
         const result = [...tuitions];
@@ -621,29 +648,58 @@ export default function TuitionsPage() {
 
                 {/* Server-side pagination */}
                 {!loading && pagination.total > 9 && (
-                    <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-                        <button
-                            type="button"
-                            disabled={page <= 1}
-                            onClick={() => setPage((value) => Math.max(1, value - 1))}
-                            className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition disabled:opacity-40 hover:border-emerald-500 hover:text-emerald-700"
-                        >
-                            Previous
-                        </button>
-                        <span className="text-sm font-semibold text-slate-600">
-                            Page {page} of {pagination.totalPages}
+                    <div className="mt-10 flex flex-col items-center gap-4">
+                        <nav aria-label="Tuition pages" className="flex flex-wrap items-center justify-center gap-2">
+                            <button
+                                type="button"
+                                disabled={currentPage <= 1}
+                                onClick={() => setPage((value) => Math.max(1, value - 1))}
+                                className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition disabled:opacity-40 hover:border-emerald-500 hover:text-emerald-700"
+                            >
+                                Previous
+                            </button>
+
+                            {pageItems.map((item, index) =>
+                                item.type === "ellipsis" ? (
+                                    <span
+                                        key={`ellipsis-${index}`}
+                                        aria-hidden="true"
+                                        className="px-1 text-sm font-semibold text-slate-400"
+                                    >
+                                        ...
+                                    </span>
+                                ) : (
+                                    <button
+                                        key={item.page}
+                                        type="button"
+                                        aria-current={item.page === currentPage ? "page" : undefined}
+                                        onClick={() => setPage(item.page)}
+                                        className={`h-10 w-10 rounded-xl border text-sm font-semibold transition ${item.page === currentPage
+                                            ? "border-emerald-600 bg-emerald-600 text-white"
+                                            : "border-slate-200 bg-white text-slate-700 hover:border-emerald-500 hover:text-emerald-700"
+                                            }`}
+                                    >
+                                        {item.page}
+                                    </button>
+                                )
+                            )}
+
+                            <button
+                                type="button"
+                                disabled={currentPage >= pagination.totalPages}
+                                onClick={() => setPage((value) => Math.min(pagination.totalPages, value + 1))}
+                                className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition disabled:opacity-40 hover:border-emerald-500 hover:text-emerald-700"
+                            >
+                                Next
+                            </button>
+                        </nav>
+
+                        <p className="text-sm font-semibold text-slate-600">
+                            Page {currentPage} of {pagination.totalPages}
                             <span className="ml-2 font-normal text-slate-400">
                                 ({pagination.total} results)
                             </span>
-                        </span>
-                        <button
-                            type="button"
-                            disabled={page >= pagination.totalPages}
-                            onClick={() => setPage((value) => Math.min(pagination.totalPages, value + 1))}
-                            className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition disabled:opacity-40 hover:border-emerald-500 hover:text-emerald-700"
-                        >
-                            Next
-                        </button>
+                        </p>
                     </div>
                 )}
             </section>

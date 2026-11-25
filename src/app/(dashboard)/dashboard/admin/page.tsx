@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   BadgeDollarSign,
+  BookMarked,
   BookOpenCheck,
+  CheckCircle2,
   CircleX,
   Clock3,
   GraduationCap,
@@ -79,6 +81,9 @@ export default function AdminOverviewPage() {
         <StatCard label="Approved Tuitions" value={loading ? "…" : stats.approvedTuitions || 0} icon={ShieldCheck} tone="emerald" />
         <StatCard label="Rejected Tuitions" value={loading ? "…" : stats.rejectedTuitions || 0} icon={CircleX} tone="rose" />
         <StatCard label="Total Applications" value={loading ? "…" : stats.totalApplications || 0} icon={BookOpenCheck} />
+        <StatCard label="Total Applied" value={loading ? "…" : stats.totalApplications || 0} icon={BookMarked} />
+        <StatCard label="Accepted Applications" value={loading ? "…" : stats.acceptedApplications || 0} icon={CheckCircle2} tone="emerald" />
+        <StatCard label="Pending Applications" value={loading ? "…" : stats.pendingApplications || 0} icon={Clock3} tone="amber" />
       </div>
 
       <section>

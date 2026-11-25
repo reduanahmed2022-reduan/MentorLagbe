@@ -229,9 +229,20 @@ export default function HomePage() {
 
             </form>
 
-            <p className="text-xs text-gray-500">
-              Find the right tutor based on your skills and preferred location.
-            </p>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+              <p className="text-xs text-gray-500">
+                Find the right tutor based on your skills and preferred location.
+              </p>
+
+              {/* Direct path to every approved tuition batch, alongside search. */}
+              <Link
+                href="/tuitions"
+                className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-2.5 text-sm font-semibold text-emerald-700 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-100"
+              >
+                Browse all tuitions
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
 
           </div>
 
