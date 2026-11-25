@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { Loader2, MessageSquareQuote, Star } from "lucide-react";
 import { toast } from "sonner";
@@ -226,11 +227,33 @@ export default function TuitionReviews({ tuitionId }: { tuitionId: string }) {
           )}
 
           {!canReview && !alreadyReviewed && (
-            <p className="mt-6 rounded-xl bg-slate-50 px-4 py-3 text-xs text-slate-500">
-              {!isAuthenticated
-                ? "Sign in with a student account and get accepted to this tuition to leave a review."
-                : "Only students with an accepted application can review this tuition."}
-            </p>
+            <div className="mt-6 rounded-xl bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-500">
+              {!isAuthenticated ? (
+                <>
+                  Sign in with a student account and get accepted to this tuition
+                  to leave a review.{" "}
+                  <Link
+                    href="/sign-in"
+                    className="font-bold text-[#0f9f6e] hover:underline"
+                  >
+                    Sign in →
+                  </Link>
+                </>
+              ) : user?.role === "student" ? (
+                <>
+                  Only students with an accepted application can review this
+                  tuition.{" "}
+                  <Link
+                    href="/dashboard/student/my-applications"
+                    className="font-bold text-[#0f9f6e] hover:underline"
+                  >
+                    Check My Applications →
+                  </Link>
+                </>
+              ) : (
+                "Only students with an accepted application can review this tuition."
+              )}
+            </div>
           )}
 
           {alreadyReviewed && (
