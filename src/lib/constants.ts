@@ -52,7 +52,7 @@ export const PUBLIC_NAV = [
   { label: "Browse Tuitions", href: "/tuitions" },
   { label: "Find Tutors", href: "/tutors" },
   { label: "Pricing", href: "/pricing" },
-  { label: "How It Works", href: "/#how-it-works" },
+  { label: "About", href: "/#how-it-works" },
 ] as const;
 
 export const BRAND = {
