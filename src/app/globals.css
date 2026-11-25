@@ -61,6 +61,94 @@ body {
 }
 
 /* --------------------------------------------------------------------------
+   MentorLagbe signature design system
+   A warm canvas, teal/amber accents and soft elevated surfaces. These classes
+   are intentionally standalone so no page logic or API contract changes.
+   -------------------------------------------------------------------------- */
+.ml-hero {
+  position: relative;
+  isolation: isolate;
+  border-radius: 32px;
+  border: 1px solid rgba(14, 124, 134, 0.12);
+  background:
+    radial-gradient(circle at 88% 8%, rgba(255, 184, 77, 0.22), transparent 40%),
+    radial-gradient(circle at 8% 92%, rgba(14, 124, 134, 0.16), transparent 46%),
+    linear-gradient(135deg, #fbfaf6 0%, #edf6f4 100%);
+}
+
+.ml-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-image: radial-gradient(rgba(14, 124, 134, 0.22) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.ml-accent {
+  background: linear-gradient(100deg, #0e7c86 10%, #16b8a6 55%, #e09b28 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ml-cta {
+  background: linear-gradient(135deg, #0e7c86, #16b8a6);
+  box-shadow: 0 14px 30px -14px rgba(14, 124, 134, 0.7);
+}
+
+.ml-cta:hover {
+  background: linear-gradient(135deg, #0b6b74, #129c8e);
+}
+
+.ml-pill {
+  border-color: rgba(224, 155, 40, 0.45);
+  background: #fffaf0;
+  color: #9a6410;
+}
+
+.ml-pill:hover {
+  border-color: #e09b28;
+  background: #fff3d9;
+}
+
+.ml-card {
+  border-radius: 24px;
+  border-color: rgba(14, 124, 134, 0.14);
+  box-shadow: 0 14px 32px -24px rgba(14, 124, 134, 0.55);
+  transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+}
+
+.ml-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(224, 155, 40, 0.4);
+  box-shadow: 0 24px 48px -26px rgba(14, 124, 134, 0.65);
+}
+
+.ml-portrait {
+  border-color: #ffffff;
+  box-shadow:
+    0 0 0 2px rgba(224, 155, 40, 0.55),
+    0 30px 70px -28px rgba(14, 124, 134, 0.7);
+}
+
+.dark .ml-hero {
+  border-color: rgba(52, 211, 153, 0.16);
+  background:
+    radial-gradient(circle at 88% 8%, rgba(255, 184, 77, 0.12), transparent 40%),
+    radial-gradient(circle at 8% 92%, rgba(52, 211, 153, 0.1), transparent 46%),
+    linear-gradient(135deg, #0d1a26 0%, #102331 100%);
+}
+
+.dark .ml-pill {
+  background: #2a2415;
+  color: #fcd68a;
+}
+
+/* --------------------------------------------------------------------------
    Dark theme
    The pages use many light utility classes. Mapping those utilities inside
    `.dark` keeps every landing and dashboard screen readable without rewriting

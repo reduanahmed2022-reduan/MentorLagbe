@@ -139,7 +139,7 @@ export default function HomePage() {
 
       {/* ================= HERO SECTION ================= */}
 
-      <section className="mx-auto max-w-7xl px-4 pb-16 pt-12 sm:px-8 sm:pt-16 lg:px-16 lg:pt-20">
+      <section className="ml-hero mx-auto max-w-7xl px-5 pb-16 pt-12 sm:px-10 sm:pt-16 lg:px-16 lg:pt-20">
 
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
 
@@ -156,7 +156,7 @@ export default function HomePage() {
               <br className="hidden sm:block" />
               long-standing goals
               <br />
-              <span className="text-[#0f9f6e]">with us.</span>
+              <span className="ml-accent">with us.</span>
             </h1>
 
             <p className="max-w-lg text-base leading-8 text-gray-600 sm:text-lg">
@@ -226,7 +226,7 @@ export default function HomePage() {
 
               <button
                 type="submit"
-                className="w-full shrink-0 rounded-xl bg-[#0f9f6e] px-7 py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-[#087a54] sm:w-auto"
+                className="ml-cta w-full shrink-0 rounded-xl px-7 py-3.5 text-sm font-semibold text-white transition sm:w-auto"
               >
                 Search
               </button>
@@ -241,7 +241,7 @@ export default function HomePage() {
               {/* Direct path to every approved tuition batch, alongside search. */}
               <Link
                 href="/tuitions"
-                className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-2.5 text-sm font-semibold text-emerald-700 shadow-sm transition hover:border-emerald-400 hover:bg-emerald-100"
+                className="ml-pill inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold shadow-sm transition"
               >
                 Browse all tuitions
                 <span aria-hidden="true">→</span>
@@ -263,7 +263,7 @@ export default function HomePage() {
               {/* Floating Tutor Card — uses a real tutor from the API */}
 
               {floatingTutor && (
-                <div className="absolute right-0 top-2 z-20 flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-3 shadow-xl sm:right-2">
+                <div className="ml-card absolute right-0 top-2 z-20 flex items-center gap-3 border bg-white p-3 shadow-xl sm:right-2">
                   {floatingTutor.image?.trim() ? (
                     <img
                       src={floatingTutor.image}
@@ -289,7 +289,7 @@ export default function HomePage() {
 
               {/* Main Tutor Image */}
 
-              <div className="relative z-10 h-56 w-56 overflow-hidden rounded-full border-[8px] border-white bg-emerald-100 shadow-2xl sm:h-72 sm:w-72">
+              <div className="ml-portrait relative z-10 h-56 w-56 overflow-hidden rounded-full border-[8px] bg-emerald-100 sm:h-72 sm:w-72">
 
                 {/* Neutral skeleton while the real tutor/photo is loading.
                     The old placeholder illustration is never shown here. */}
